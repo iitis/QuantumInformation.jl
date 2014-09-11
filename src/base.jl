@@ -45,7 +45,7 @@ applykraus(kraus_list,stin) = sum(k-> k*stin*k', kraus_list)
 
 function ptrace(rho,idims,isystems)
     # convert notation to column-major form
-    dims=reverse(idims) 
+    dims=reverse(idims)
     systems=length(idims)-isystems+1
 
     if size(rho,1)!=size(rho,2)
@@ -56,7 +56,7 @@ function ptrace(rho,idims,isystems)
     end
     if ! ((maximum(systems) <= length(dims) |  (minimum(systems) > length(dims))))
         error("System index out of range")
-    end 
+    end
     offset=length(dims)
     keep=setdiff(1:offset, systems)
     dispose=systems
@@ -118,7 +118,7 @@ end
 function grover(dim)
   return ones(Complex128,dim,dim)*2/dim-diag(Complex128,ones(dim,1))
 end
- 
+
 function hadamard(dim)
   if(floor(log2(dim))!=log2(dim))
     error("hadamard: dim has to be power of 2")
@@ -128,4 +128,22 @@ function hadamard(dim)
   mtx=reduce(kron, [H for i=1:d])
   return mtx
 end
- 
+
+function reshuffle(rho::Matrix)
+  """
+    Performs reshuffling of indices of a matrix.
+    Given multiindexed matrix M_{(m,\mu),(n,\nu)} it returns
+    matrix M_{(m,n),(\mu,\nu)}.
+  """
+  (r,c) = size(rho)
+  sqrtr = int(sqrt(r))
+  sqrtc = int(sqrt(c))
+  dimrows = [sqrtr, sqrtr]
+  dimcolumns = [sqrtc, sqrtc]
+  tensor=reshape(rho, [dimrows, dimcolumns]...)
+  perm=[1:4]
+  (perm[2],perm[3])=(perm[3],perm[2])
+  tensor=permutedims(tensor, perm)
+  (r1,r2,c1,c2)=size(tensor)
+  return reshape(tensor, (r1*r2,c1*c2)...)
+end
