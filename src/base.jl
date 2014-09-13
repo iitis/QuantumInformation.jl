@@ -2,7 +2,9 @@ ket(val, dim) = (k=zeros(Complex128,dim);k[val+1]=1.0;k)
 bra(val, dim) = ket(val,dim)'
 ketbra(valk, valb, dim) = (kb=zeros(Complex128,dim,dim);kb[valk+1,valb+1]=1.0;kb)
 proj(ket) = ket*ket'
-superoperator(kraus_list) = sum(k -> kron(k,k'), kraus_list)
+function superoperator(kraus_list)
+  return sum((k) -> kron(k,k'), kraus_list)
+end
 
 random_ginibre_matrix(m,n) = G=randn(n,m)+im*randn(n,m)
 function random_mixed_state_hs(d)
@@ -146,4 +148,19 @@ function reshuffle(rho::Matrix)
   tensor=permutedims(tensor, perm)
   (r1,r2,c1,c2)=size(tensor)
   return reshape(tensor, (r1*r2,c1*c2)...)
+end
+
+function fidelity_sqrt(ρ, σ)
+  if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
+    error("Non square matrix detected")
+  end
+  vals = real(eigvals(ρ * σ))
+  return sum(sqrt(real(vals[vals.>0])))
+end
+
+function fidelity(ρ, σ)
+  if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
+    error("Non square matrix detected")
+  end
+  return fidelity_sqrt(ρ, σ)^2
 end
