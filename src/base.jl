@@ -1,3 +1,5 @@
+include("utils.jl")
+
 ket(val, dim) = (k=zeros(Complex128,dim);k[val+1]=1.0;k)
 bra(val, dim) = ket(val,dim)'
 ketbra(valk, valb, dim) = (kb=zeros(Complex128,dim,dim);kb[valk+1,valb+1]=1.0;kb)
@@ -14,6 +16,13 @@ function random_mixed_state_hs(d)
   return A
 end
 
+function random_dynamical_matrix(n)
+  X = random_ginibre_matrix(n^2, n^2)
+  Y = ptrace(X*X', [n, n], [1])
+  sY = funcmh(Y, x -> 1 / sqrt(x))
+  return kron(eye(n,n),sY)*X*X'*kron(eye(n,n),sY)
+end
+  
 function random_ket(d)
   c=randn(d,1)+i*randn(d,1)
   c=c/norm(c)
