@@ -159,6 +159,8 @@ function reshuffle(rho::Matrix)
   return reshape(tensor, (r1*r2,c1*c2)...)
 end
 
+trace_distance(ρ, σ) = sum(abs(eigvals(Hermitian(ρ - σ))))
+
 function fidelity_sqrt(ρ, σ)
   if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
     error("Non square matrix detected")
