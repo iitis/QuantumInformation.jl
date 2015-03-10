@@ -8,15 +8,15 @@ function superoperator(kraus_list)
   return sum((k) -> kron(k,k'), kraus_list)
 end
 
-random_ginibre_matrix(m,n) = G=randn(n,m)+im*randn(n,m)
-function random_mixed_state_hs(d)
+random_ginibre_matrix(m::Int,n::Int) = G=randn(n,m)+im*randn(n,m)
+function random_mixed_state_hs(d::Int)
   A=random_ginibre_matrix(d,d)
   A=A*A'
   A=A/trace(A)
   return A
 end
 
-function random_dynamical_matrix(n)
+function random_dynamical_matrix(n::Int)
   X = random_ginibre_matrix(n^2, n^2)
   Y = ptrace(X*X', [n, n], [1])
   sY = funcmh(Y, x -> 1 / sqrt(x))
