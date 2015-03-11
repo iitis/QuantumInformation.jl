@@ -16,5 +16,11 @@ function random_ket(d::Int)
 end
 
 function random_pure_state(d::Int)
-    return proj(random_ket(d))
+  return proj(random_ket(d))
+end
+
+function fixed_purity_random_mixed_state(d::Int, p::Real)
+  l = abs(random_sphere(d)) * sqrt(p)
+  u = random_unitary(d)
+  return u' * diagm(l) * u
 end
