@@ -1,48 +1,17 @@
 include("utils.jl")
 
 ket(val, dim) = (k=zeros(Complex128,dim);k[val+1]=1.0;k)
+
 bra(val, dim) = ket(val,dim)'
+
 ketbra(valk, valb, dim) = (kb=zeros(Complex128,dim,dim);kb[valk+1,valb+1]=1.0;kb)
+
 proj(ket) = ket*ket'
-function superoperator(kraus_list)
-  return sum((k) -> kron(k,k'), kraus_list)
-end
-
-random_ginibre_matrix(m::Int,n::Int) = G=randn(n,m)+im*randn(n,m)
-function random_mixed_state_hs(d::Int)
-  A=random_ginibre_matrix(d,d)
-  A=A*A'
-  A=A/trace(A)
-  return A
-end
-
-function random_dynamical_matrix(n::Int)
-  X = random_ginibre_matrix(n^2, n^2)
-  Y = ptrace(X*X', [n, n], [1])
-  sY = funcmh(Y, x -> 1 / sqrt(x))
-  return kron(eye(n,n),sY)*X*X'*kron(eye(n,n),sY)
-end
-  
-function random_ket(d)
-  c=randn(d,1)+i*randn(d,1)
-  c=c/norm(c)
-  return c
-end
-
-function random_pure_state(d)
-    return proj(random_ket(d))
-end
 
 base_matrices(dim) = @task for i=0:dim-1
   for j=0:dim-1
     produce(ketbra(i,j,dim))
   end
-end
-
-function channel_to_superoperator(channel,dim)
-    Eijs=base_matrices(dim)
-    A=[res(channel(e)) for e in Eijs]
-    return A
 end
 
 res(X) = vec(permutedims(X,[2 1]))
@@ -52,7 +21,17 @@ function unres(X)
   Xu=permutedims(reshape(X,s,s),invperm([2,1]))
 end
 
-applykraus(kraus_list,stin) = sum(k-> k*stin*k', kraus_list)
+function kraus_to_superoperator(kraus_list)
+  return sum((k) -> kron(k,k'), kraus_list)
+end
+
+function channel_to_superoperator(channel,dim)
+    Eijs=base_matrices(dim)
+    A=[res(channel(e)) for e in Eijs]
+    return A
+end
+
+apply_kraus(kraus_list,stin) = sum(k-> k*stin*k', kraus_list)
 
 function ptrace(rho,idims,isystems)
     # convert notation to column-major form
@@ -112,32 +91,6 @@ function mixedradix2number(digits, bases)
     res = res * bases[i] + digits[i]
   end
   return res
-end
-
-function qft(dim)
-  mtx=zeros(Complex128,dim,dim)
-  twopii = 2*pi*1im
-  for i=0:dim-1
-    for j=0:dim-1
-      mtx[i+1,j+1]=exp(twopii*i*j/dim)
-    end
-  end
-  mtx=mtx/sqrt(dim)
-  return mtx
-end
-
-function grover(dim)
-  return ones(Complex128,dim,dim)*2/dim-diag(Complex128,ones(dim,1))
-end
-
-function hadamard(dim)
-  if(floor(log2(dim))!=log2(dim))
-    error("hadamard: dim has to be power of 2")
-  end
-  d=floor(log2(dim))
-  H=1/sqrt(2)*[1 1;1 -1]
-  mtx=reduce(kron, [H for i=1:d])
-  return mtx
 end
 
 function reshuffle(rho::Matrix)
