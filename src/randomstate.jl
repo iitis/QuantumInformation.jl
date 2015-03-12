@@ -1,4 +1,5 @@
 include("randommatrix.jl")
+include("utils.jl")
 
 function random_mixed_state_hs(d::Int)
   A=random_ginibre_matrix(d,d)
@@ -19,8 +20,8 @@ function random_pure_state(d::Int)
   return proj(random_ket(d))
 end
 
-function fixed_purity_random_mixed_state(d::Int, p::Real)
-  l = abs(random_sphere(d)) * sqrt(p)
+function random_mixed_state_fixed_purity(d::Int, p::Real)
+  l = random_vector_fixed_l1_l2(1., p, d)
   u = random_unitary(d)
   return u' * diagm(l) * u
 end
