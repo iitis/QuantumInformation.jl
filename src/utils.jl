@@ -13,11 +13,11 @@ random_ball(dim::Int) = rand()^(1/dim) * random_sphere(dim)
 
 function random_vector_fixed_l1_l2(l1::Real, l2::Real, d::Int)
   #from here http://stats.stackexchange.com/questions/61692/generating-vectors-under-constraints-on-1-and-2-norm
-  z = random_sphere(d - 1)
-  z = [0; z]
   u, _ = qr(ones(d, d))
   u = -u
-  r = sqrt(l2 - l1^1 / d)
-  v = u \ z * r
+  z = random_sphere(d - 1)
+  z = [0; z]
+  r = sqrt(l2 - l1^2 / d)
+  v = u * z * r
   return v + l1 / d * ones(d)
 end
