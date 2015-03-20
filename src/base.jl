@@ -17,7 +17,7 @@ end
 res(X) = vec(permutedims(X,[2 1]))
 
 function unres(X)
-  s=sqrt(size(X,1))
+  s=int(sqrt(size(X,1)))
   Xu=permutedims(reshape(X,s,s),invperm([2,1]))
 end
 
@@ -105,8 +105,7 @@ function reshuffle(rho::Matrix)
   dimrows = [sqrtr, sqrtr]
   dimcolumns = [sqrtc, sqrtc]
   tensor=reshape(rho, [dimrows, dimcolumns]...)
-  perm=[1:4]
-  (perm[2],perm[3])=(perm[3],perm[2])
+  perm = [4, 2, 3, 1]
   tensor=permutedims(tensor, perm)
   (r1,r2,c1,c2)=size(tensor)
   return reshape(tensor, (r1*r2,c1*c2)...)
