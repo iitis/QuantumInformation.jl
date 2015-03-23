@@ -8,11 +8,7 @@ ketbra(valk, valb, dim) = (kb=zeros(Complex128,dim,dim);kb[valk+1,valb+1]=1.0;kb
 
 proj(ket) = ket*ket'
 
-base_matrices(dim) = @task for i=0:dim-1
-  for j=0:dim-1
-    produce(ketbra(i,j,dim))
-  end
-end
+base_matrices(dim) = [ketbra(i,j,dim)for i=0:dim-1, j=0:dim-1]
 
 res(X) = vec(permutedims(X,[2 1]))
 
