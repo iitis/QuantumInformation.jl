@@ -8,7 +8,7 @@ ketbra(valk, valb, dim) = (kb=zeros(Complex128,dim,dim);kb[valk+1,valb+1]=1.0;kb
 
 proj(ket) = ket*ket'
 
-base_matrices(dim) = [ketbra(i,j,dim)for i=0:dim-1, j=0:dim-1]
+base_matrices(dim) = [ketbra(j,i,dim)for i=0:dim-1, j=0:dim-1]
 
 res(X) = vec(permutedims(X,[2 1]))
 
@@ -23,8 +23,7 @@ end
 
 function channel_to_superoperator(channel,dim)
     Eijs=base_matrices(dim)
-    A=[res(channel(e)) for e in Eijs]
-    return A
+    return hcat([res(channel(e)) for e in Eijs]...)
 end
 
 apply_kraus(kraus_list,stin) = sum(k-> k*stin*k', kraus_list)

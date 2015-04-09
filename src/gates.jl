@@ -10,7 +10,7 @@ function qft(dim::Int)
   return mtx
 end
 
-grover(dim::Int) = ones(Complex128,dim,dim)*2/dim-diag(Complex128,ones(dim,1))
+grover(dim::Int) = ones(Complex128,dim,dim)*2/dim-diagm(ones(Complex128,dim))
 
 function hadamard(dim::Int)
   if(floor(log2(dim))!=log2(dim))
