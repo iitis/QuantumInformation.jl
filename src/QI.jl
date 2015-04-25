@@ -1,5 +1,6 @@
 module QI
 
+export ket, bra, ketbra
 include("base.jl")
 include("randommatrix.jl")
 include("randomstate.jl")

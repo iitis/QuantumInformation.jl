@@ -1,25 +1,34 @@
+using Devectorize
 include("utils.jl")
 
-ket(val, dim) = (k=zeros(Complex128,dim);k[val+1]=1.0;k)
-
-bra(val, dim) = ket(val,dim)'
-
-ketbra(valk, valb, dim) = (kb=zeros(Complex128,dim,dim);kb[valk+1,valb+1]=1.0;kb)
-
-proj(ket) = ket*ket'
-
-base_matrices(dim) = [ketbra(j,i,dim)for i=0:dim-1, j=0:dim-1]
-
-res(X) = vec(permutedims(X,[2 1]))
-
-function unres(X)
-  s=int(sqrt(size(X,1)))
-  Xu=permutedims(reshape(X,s,s),invperm([2,1]))
+function ket{T<:Number}(M::Type{T}, val::Int64, dim::Int64)
+    ϕ=zeros(M, dim)
+    ϕ[val+1]=1.0
+    ϕ
 end
 
-function kraus_to_superoperator(kraus_list)
-  return sum((k) -> kron(k,k'), kraus_list)
+ket(val::Int64, dim::Int64) = ket(Complex128, val, dim)
+bra{T<:Number}(M::Type{T}, val::Int64, dim::Int64) = ket(M, val, dim)'
+bra(val::Int64, dim::Int64) = bra(Complex128, val, dim)
+
+function ketbra{T<:Number}(M::Type{T}, valk::Int64, valb::Int64, dim::Int64)
+    ϕψ=zeros(Complex128,dim,dim)
+    ϕψ[valk+1,valb+1]=1.0
+    ϕψ
 end
+
+proj{T<:Number}(ket::Vector{T}) = ket * ket'
+
+base_matrices(dim) = [ketbra(j,i,dim)for i=0:dim-1, j=0:dim-1] #TODO: should be a generator, but sometimes causes errors in applications
+
+res{T<:Number}(ρ::Matrix{T}) = vec(permutedims(ρ, [2 1]))
+
+function unres{T<:Number}(ϕ::Vector{T})
+    s=int(sqrt(size(ϕ, 1)))
+    permutedims(reshape(ϕ, s, s),invperm([2,1]))
+end
+
+kraus_to_superoperator(kraus_list) = sum((k) -> kron(k, k'), kraus_list)
 
 function channel_to_superoperator(channel,dim)
     Eijs=base_matrices(dim)
@@ -121,4 +130,19 @@ function fidelity(ρ, σ)
     error("Non square matrix detected")
   end
   return fidelity_sqrt(ρ, σ)^2
+end
+
+function entropy(p::Vector{Float64})
+    @devec r = -sum(p .* log(p))
+    r
+end
+
+function entropy(ρ::Hermitian)
+    λ = eigvals(ρ)
+    @devec r = -sum(λ .* log(λ))
+    r
+end
+
+function entropy(A::Matrix)
+    entropy(Hermitian(A))
 end
