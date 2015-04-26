@@ -4,7 +4,6 @@ function test_ket()
     @test_approx_eq norm(ϕ - ψ) 0.
     @test typeof(ket(Float64, 0, 4)) == Vector{Float64}
     @test typeof(ket(Complex128, 0, 4)) == Vector{Complex128}
-    @test typeof(ket(Int64, 0, 4)) == Vector{Int64}
 end
 
 function test_bra()
@@ -23,7 +22,6 @@ function test_ketbra()
     @test_approx_eq norm(ϕψ - αβ) 0.
     @test typeof(ketbra(Float64, 0, 0, 4)) == Matrix{Float64}
     @test typeof(ketbra(Complex128, 0, 0, 4)) == Matrix{Complex128}
-    @test typeof(ketbra(Int64, 0, 0, 4)) == Matrix{Int64}
 end
 
 function test_proj()

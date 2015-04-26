@@ -1,17 +1,17 @@
 using Devectorize
 include("utils.jl")
 
-function ket{T<:Number}(M::Type{T}, val::Int64, dim::Int64)
+function ket{T<:Union(Float64, Complex128)}(M::Type{T}, val::Int64, dim::Int64)
     ϕ=zeros(M, dim)
     ϕ[val+1]=1.0
     ϕ
 end
 
 ket(val::Int64, dim::Int64) = ket(Complex128, val, dim)
-bra{T<:Number}(M::Type{T}, val::Int64, dim::Int64) = ket(M, val, dim)'
+bra{T<:Union(Float64, Complex128)}(M::Type{T}, val::Int64, dim::Int64) = ket(M, val, dim)'
 bra(val::Int64, dim::Int64) = bra(Complex128, val, dim)
 
-function ketbra{T<:Number}(M::Type{T}, valk::Int64, valb::Int64, dim::Int64)
+function ketbra{T<:Union(Float64, Complex128)}(M::Type{T}, valk::Int64, valb::Int64, dim::Int64)
     ϕψ=zeros(M, dim, dim)
     ϕψ[valk+1,valb+1]=1.0
     ϕψ
@@ -19,18 +19,18 @@ end
 
 ketbra(valk::Int64, valb::Int64, dim::Int64) = ketbra(Complex128, valk, valb, dim)
 
-proj{T<:Number}(ket::Vector{T}) = ket * ket'
+proj{T<:Union(Float64, Complex128)}(ket::Vector{T}) = ket * ket'
 
 base_matrices(dim) = [ketbra(j, i, dim) for i=0:dim-1, j=0:dim-1] #TODO: should be a generator, but sometimes causes errors in applications
 
-res{T<:Number}(ρ::Matrix{T}) = vec(permutedims(ρ, [2 1]))
+res{T<:Union(Float64, Complex128)}(ρ::Matrix{T}) = vec(permutedims(ρ, [2 1]))
 
-function unres{T<:Number}(ϕ::Vector{T})
+function unres{T<:Union(Float64, Complex128)}(ϕ::Vector{T})
     s=int(sqrt(size(ϕ, 1)))
     permutedims(reshape(ϕ, s, s),invperm([2,1]))
 end
 
-kraus_to_superoperator{T<:Number}(kraus_list::Vector{Matrix{T}}) = sum((k) -> kron(k, k'), kraus_list)
+kraus_to_superoperator{T<:Union(Float64, Complex128)}(kraus_list::Vector{Matrix{T}}) = sum((k) -> kron(k, k'), kraus_list)
 
 function channel_to_superoperator(channel::Function, dim::Int64)
     #TODO: create a matrix of zeros first, then only set columns
@@ -38,7 +38,7 @@ function channel_to_superoperator(channel::Function, dim::Int64)
     hcat([res(channel(e)) for e in Eijs]...)
 end
 
-apply_kraus{T<:Number}(kraus_list::Vector{Matrix{T}}, ρ::Matrix{T}) = sum(k-> k*ρ*k', kraus_list)
+apply_kraus{T<:Union(Float64, Complex128)}(kraus_list::Vector{Matrix{T}}, ρ::Matrix{T}) = sum(k-> k*ρ*k', kraus_list)
 
 function ptrace(ρ::Matrix, idims::Vector, isystems::Vector)
     # convert notation to column-major form
