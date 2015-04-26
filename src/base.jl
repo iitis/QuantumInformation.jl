@@ -12,7 +12,7 @@ bra{T<:Number}(M::Type{T}, val::Int64, dim::Int64) = ket(M, val, dim)'
 bra(val::Int64, dim::Int64) = bra(Complex128, val, dim)
 
 function ketbra{T<:Number}(M::Type{T}, valk::Int64, valb::Int64, dim::Int64)
-    ϕψ=zeros(Complex128,dim,dim)
+    ϕψ=zeros(M, dim, dim)
     ϕψ[valk+1,valb+1]=1.0
     ϕψ
 end
