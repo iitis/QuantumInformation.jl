@@ -1,4 +1,16 @@
-random_ginibre_matrix(m::Int,n::Int) = G=randn(n,m)+im*randn(n,m)
+random_ginibre_matrix!{T<:Float64}(A::Matrix{T}) = randn!(A)
+
+function random_ginibre_matrix!{T<:Complex128}(A::Matrix{T})
+    for i=1:length(A)
+        A[i] = randn() + 1im * randn()
+    end
+end
+
+function random_ginibre_matrix{T<:Union(Float64, Complex128)}(M::Type{T}, m::Int64, n::Int64)
+    A = zeros(M, m, n)
+    random_ginibre_matrix!(A)
+    A
+end
 
 function random_unitary(n::Integer)
   z = random_ginibre_matrix(n,n)/sqrt(2.0)
