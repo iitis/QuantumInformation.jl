@@ -1,23 +1,61 @@
 include("randommatrix.jl")
-#include("utils.jl")
+include("utils.jl")
 
-function random_mixed_state_hs(d::Int)
-  A=random_ginibre_matrix(d,d)
-  A=A*A'
-  A=A/trace(A)
-  return A
+function random_ket!{T<:Float64}(ϕ::Vector{T})
+    randn!(ϕ)
+    renormalize!(ϕ)
 end
 
-random_jamiolkowski_state(n::Int) = random_dynamical_matrix(n) / n
-
-function random_ket(d::Int)
-  c=randn(d,1)+1im*randn(d,1)
-  c=c/norm(c)
-  return c
+function random_ket!{T<:Complex128}(ϕ::Vector{T})
+    for i=1:length(ϕ)
+        ϕ[i] = randn() + 1im * randn()
+    end
+    renormalize!(ϕ)
 end
 
-function random_pure_state(d::Int)
-  return proj(random_ket(d))
+function random_ket{T<:Union(Float64, Complex128)}(M::Type{T}, d::Int64)
+    ϕ=zeros(M, d)
+    random_ket!(ϕ)
+    ϕ
+end
+
+function random_mixed_state_hs!{T<:Float64}(ρ::Matrix{T}, A::Matrix{T})
+    random_ginibre_matrix!(A)
+    A_mul_Bt!(ρ, A, A)
+    renormalize!(ρ)
+end
+
+function random_mixed_state_hs!{T<:Complex128}(ρ::Matrix{T}, A::Matrix{T})
+    random_ginibre_matrix!(A)
+    A_mul_Bc!(ρ, A, A)
+    renormalize!(ρ)
+end
+
+function random_mixed_state_hs!{T<:Union(Float64, Complex128)}(ρ::Matrix{T})
+    A = zeros(ρ)
+    random_mixed_state_hs!(ρ, A)
+    renormalize!(ρ)
+end
+
+function random_mixed_state_hs{T<:Union(Float64, Complex128)}(M::Type{T}, d::Int64)
+    ρ = zeros(M, d, d)
+    random_mixed_state_hs!(ρ)
+    renormalize!(ρ)
+    ρ
+end
+
+function random_jamiolkowski_state!{T<:Union(Float64, Complex128)}(J::Matrix{T})
+    random_dynamical_matrix!(J)
+    n = int(sqrt(size(J, 1)))
+    for i=1:length(J)
+        J[i] = J[i] / n
+    end
+end
+
+function random_jamiolkowski_state{T<:Union(Float64, Complex128)}(M::Type{T}, n::Int64)
+    J = zeros(M, n*n, n*n)
+    random_jamiolkowski_state!(J)
+    J
 end
 
 #function random_mixed_state_fixed_purity(d::Int, p::Real)
