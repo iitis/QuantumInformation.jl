@@ -96,7 +96,7 @@ end
 #  res
 #end
 
-function reshuffle{T<:Number}(ρ::Matrix{T})
+function reshuffle{T<:Union(Float64, Complex128)}(ρ::Matrix{T})
   """
     Performs reshuffling of indices of a matrix.
     Given multiindexed matrix M_{(m,\mu),(n,\nu)} it returns
@@ -114,9 +114,9 @@ function reshuffle{T<:Number}(ρ::Matrix{T})
   return reshape(tensor, (r1*r2,c1*c2)...)
 end
 
-trace_distance{T<:Number}(ρ::Matrix{T}, σ::Matrix{T}) = sum(abs(eigvals(Hermitian(ρ - σ))))
+trace_distance{T<:Union(Float64, Complex128)}(ρ::Matrix{T}, σ::Matrix{T}) = sum(abs(eigvals(Hermitian(ρ - σ))))
 
-function fidelity_sqrt{T<:Number}(ρ::Matrix{T}, σ::Matrix{T})
+function fidelity_sqrt{T<:Union(Float64, Complex128)}(ρ::Matrix{T}, σ::Matrix{T})
   if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
     error("Non square matrix detected")
   end
@@ -124,16 +124,16 @@ function fidelity_sqrt{T<:Number}(ρ::Matrix{T}, σ::Matrix{T})
   @devec r = sum(sqrt(λ[λ.>0]))
 end
 
-function fidelity{T<:Number}(ρ::Matrix{T}, σ::Matrix{T})
+function fidelity{T<:Union(Float64, Complex128)}(ρ::Matrix{T}, σ::Matrix{T})
   if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
     error("Non square matrix detected")
   end
   return fidelity_sqrt(ρ, σ)^2
 end
 
-fidelity{T<:Number}(ϕ::Vector{T}, ψ::Vector{T}) = abs2(dot(ϕ, ψ))
-fidelity{T<:Number}(ϕ::Vector{T}, ρ::Matrix{T}) = ϕ' * ρ * ϕ
-fidelity{T<:Number}(ρ::Matrix{T}, ϕ::Vector{T}) = fidelity(ϕ, ρ)
+fidelity{T<:Union(Float64, Complex128)}(ϕ::Vector{T}, ψ::Vector{T}) = abs2(dot(ϕ, ψ))
+fidelity{T<:Union(Float64, Complex128)}(ϕ::Vector{T}, ρ::Matrix{T}) = ϕ' * ρ * ϕ
+fidelity{T<:Union(Float64, Complex128)}(ρ::Matrix{T}, ϕ::Vector{T}) = fidelity(ϕ, ρ)
 
 function shannon_entropy{T<:Real}(p::Vector{T})
     @devec r = -sum(p .* log(p))
@@ -141,11 +141,11 @@ end
 
 shannon_entropy{T<:Real}(x::T) = x > 0 ? -x * log(x) - (1 - x) * log(1 - x) : error("Negative number passed to shannon_entropy")
 
-function entropy{T<:Number}(ρ::Hermitian{T})
+function entropy{T<:Union(Float64, Complex128)}(ρ::Hermitian{T})
     λ = eigvals(ρ)
     λ = λ[λ .> 0]
     @devec r = -sum(λ .* log(λ))
 end
 
-entropy{T<:Number}(H::Matrix{T}) = ishermitian(H) ? entropy(Hermitian(H)) : error("Non-hermitian matrix passed to entropy")
-entropy{T<:Number}(ϕ::Vector{T}) = 0.
+entropy{T<:Union(Float64, Complex128)}(H::Matrix{T}) = ishermitian(H) ? entropy(Hermitian(H)) : error("Non-hermitian matrix passed to entropy")
+entropy{T<:Union(Float64, Complex128)}(ϕ::Vector{T}) = 0.
