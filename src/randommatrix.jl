@@ -38,9 +38,17 @@ function random_GUE(n::Integer)
     return (H+H')/2
 end
 
-function random_dynamical_matrix(n::Int)
-  X = random_ginibre_matrix(n^2, n^2)
-  Y = ptrace(X*X', [n, n], [1])
-  sY = funcmh(Y, x -> 1 / sqrt(x))
-  return kron(eye(n,n),sY)*X*X'*kron(eye(n,n),sY)
+function random_dynamical_matrix!{T<:Union(Float64, Complex128)}(J::Matrix{T})
+    random_ginibre_matrix!(J)
+    n = int(sqrt(size(J, 1)))
+    X = A_mul_Bc(J, J)
+    Y = ptrace(X, [n, n], [1])
+    sY = funcmh!(x -> 1 / sqrt(x), Y)
+    A_mul_B!(J, eye(n,n) ⊗ sY * X, eye(n,n) ⊗ sY)
+end
+
+function random_dynamical_matrix{T<:Union(Float64, Complex128)}(M::Type{T}, n::Int64)
+    J = zeros(M, n*n, n*n)
+    random_dynamical_matrix!(J)
+    J
 end
