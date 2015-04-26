@@ -1,6 +1,10 @@
 module QI
 
-export ket, bra, ketbra
+export ket, bra, ketbra, proj, base_matrices, res, unres,
+kraus_to_superoperator, channel_to_superoperator, apply_kraus, fidelity,
+ptrace, reshuffle, trace_distance,
+fidelity_sqrt, fidelity, shannon_entropy, entropy
+
 include("base.jl")
 include("randommatrix.jl")
 include("randomstate.jl")
