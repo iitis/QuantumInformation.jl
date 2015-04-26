@@ -2,7 +2,7 @@ using QI
 ⊗ = kron
 using Base.Test
 
-my_tests = ["base.jl",]
+my_tests = ["utils.jl", "base.jl", "randommatrix.jl", "randomstate.jl"]
 
 println("Running tests:")
 

@@ -1,12 +1,17 @@
 module QI
-
+⊗ = kron
 export ket, bra, ketbra, proj, base_matrices,
 res, unres,
 kraus_to_superoperator, channel_to_superoperator, apply_kraus,
 ptrace, reshuffle,
 trace_distance, fidelity_sqrt, fidelity,
 shannon_entropy, entropy,
-random_ket
+random_ket, random_ket!,
+random_ginibre_matrix!, random_ginibre_matrix,
+random_mixed_state_hs!, random_mixed_state_hs,
+random_dynamical_matrix!, random_dynamical_matrix,
+random_jamiolkowski_state!, random_jamiolkowski_state,
+funcmh, funcmh!, renormalize!
 
 include("base.jl")
 include("randommatrix.jl")
