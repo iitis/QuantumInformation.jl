@@ -1,4 +1,6 @@
 using QI
+⊗ = kron
+using Base.Test
 
 my_tests = ["base.jl",]
 
