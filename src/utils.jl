@@ -1,3 +1,17 @@
+function renormalize!{T<:Union(Float64, Complex128)}(ϕ::Vector{T})
+    n = norm(ϕ)
+    for i=1:length(ϕ)
+        ϕ[i] = ϕ[i]/n
+    end
+end
+
+function renormalize!{T<:Union(Float64, Complex128)}(ρ::Matrix{T})
+    t = trace(ρ)
+    for i=1:length(ρ)
+        ρ[i] = ρ[i]/t
+    end
+end
+
 function funcmh(H::Matrix, f::Function)
   w,v = eig(Hermitian(H))
   fw=diagm(Float64[f(x) for x in w])
