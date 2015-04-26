@@ -12,7 +12,6 @@ function test_bra()
     @test_approx_eq norm(ϕ - ψ) 0.
     @test typeof(bra(Float64, 0, 4)) == Matrix{Float64}
     @test typeof(bra(Complex128, 0, 4)) == Matrix{Complex128}
-    @test typeof(bra(Int64, 0, 4)) == Matrix{Int64}
 end
 
 function test_ketbra()
@@ -110,7 +109,7 @@ end
 #end
 
 function test_reshuffle()
-    X = reshape([1:16], 4, 4)'
+    X = reshape(Float64[1:16], 4, 4)'
     T = [1 2 5 6; 3 4 7 8; 9 10 13 14; 11 12 15 16]
     @test reshuffle(X) == T
 end
