@@ -2,12 +2,18 @@ function test_ket()
     ϕ = ket(0, 4)
     ψ = Complex128[1, 0, 0, 0]
     @test_approx_eq norm(ϕ - ψ) 0.
+    @test typeof(ket(Float64, 0, 4)) == Vector{Float64}
+    @test typeof(ket(Complex128, 0, 4)) == Vector{Complex128}
+    @test typeof(ket(Int64, 0, 4)) == Vector{Int64}
 end
 
 function test_bra()
     ϕ = bra(0, 4)
     ψ = Complex128[1 0 0 0]
     @test_approx_eq norm(ϕ - ψ) 0.
+    @test typeof(bra(Float64, 0, 4)) == Matrix{Float64}
+    @test typeof(bra(Complex128, 0, 4)) == Matrix{Complex128}
+    @test typeof(bra(Int64, 0, 4)) == Matrix{Int64}
 end
 
 function test_ketbra()
@@ -15,6 +21,9 @@ function test_ketbra()
     αβ = zeros(Complex128, 4, 4)
     αβ[1, 1] = 1
     @test_approx_eq norm(ϕψ - αβ) 0.
+    @test typeof(ketbra(Float64, 0, 0, 4)) == Matrix{Float64}
+    @test typeof(ketbra(Complex128, 0, 0, 4)) == Matrix{Complex128}
+    @test typeof(ketbra(Int64, 0, 0, 4)) == Matrix{Int64}
 end
 
 function test_proj()
@@ -146,3 +155,57 @@ function test_entropy()
     @test entropy(ϕ) == 0
     #TODO: add tests for mixed states
 end
+
+println("testing ket")
+test_ket()
+
+println("testing bra")
+test_bra()
+
+println("testing ketbra")
+test_ketbra()
+
+println("testing proj")
+test_proj()
+
+println("testing base_matrices")
+test_base_matrices()
+
+println("testing res")
+test_res()
+
+println("testing unres")
+test_unres()
+
+println("testing kraus_to_superoperator")
+test_kraus_to_superoperator()
+
+println("testing channel_to_superoperator")
+test_channel_to_superoperator()
+
+println("testing apply_kraus")
+test_apply_kraus()
+
+println("testing ptrace")
+test_ptrace()
+
+#println("testing number2mixedradix")
+#test_number2mixedradix()
+
+#println("testing mixedradix2number")
+#test_mixedradix2number()
+
+println("testing reshuffle")
+test_reshuffle()
+
+println("testing trace_distance")
+test_trace_distance()
+
+println("testing fidelity_sqrt")
+test_fidelity_sqrt()
+
+println("testing fidelity")
+test_fidelity()
+
+println("testing entropy")
+test_entropy()
