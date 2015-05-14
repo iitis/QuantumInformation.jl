@@ -25,10 +25,14 @@ base_matrices(dim) = [ketbra(j, i, dim) for i=0:dim-1, j=0:dim-1] #TODO: should 
 
 res{T<:Union(Float64, Complex128)}(ρ::Matrix{T}) = vec(permutedims(ρ, [2 1]))
 
+#TODO: verify whether invperm is squivalent to transpose in this case
+#TODO: user array views for reshaping?
 function unres{T<:Union(Float64, Complex128)}(ϕ::Vector{T})
     s=int(sqrt(size(ϕ, 1)))
     permutedims(reshape(ϕ, s, s),invperm([2,1]))
 end
+# TODO: write tests for this
+unres{T<:Union(Float64, Complex128)}(ϕ::Vector{T}, m::Int64, n::Int64) = permutedims(reshape(ϕ, n, m), invperm([2,1]))
 
 kraus_to_superoperator{T<:Union(Float64, Complex128)}(kraus_list::Vector{Matrix{T}}) = sum((k) -> kron(k, k'), kraus_list)
 
@@ -40,8 +44,8 @@ end
 
 apply_kraus{T<:Union(Float64, Complex128)}(kraus_list::Vector{Matrix{T}}, ρ::Matrix{T}) = sum(k-> k*ρ*k', kraus_list)
 
-function ptrace(ρ::Matrix, idims::Vector, isystems::Vector)
-    # convert notation to column-major form
+function ptrace{T<:Union(Float64, Complex128)}(ρ::Matrix{T}, idims::Vector, isystems::Vector)
+    # TODO: convert notation to column-major form
     dims=reverse(idims)
     systems=length(idims)-isystems+1
 
@@ -72,6 +76,18 @@ function ptrace(ρ::Matrix, idims::Vector, isystems::Vector)
     end
     return ret
 end
+#TODO: write tests for thuis
+#TODO: allow for more than bipartite systems???
+function ptrace{T<:Union(Float64, Complex128)}(ϕ::Vector{T}, idims::Vector, isystem::Int64)
+    A = unres(ϕ, idims...)
+    if isystem == 1
+        return A'*A
+    elseif isystem == 2
+        return A*A'
+    end
+end
+
+#TODO: write tests and fix number conversion
 
 #function number2mixedradix(n::Int64, bases::Vector{Int64})
 #  if n >= prod(bases)
