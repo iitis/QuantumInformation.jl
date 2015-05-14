@@ -18,6 +18,11 @@ function test_random_ket()
     @test typeof(ψ) == Vector{Complex128}
     @test_approx_eq_eps sum(abs2(ϕ)) 1. 1e-15
     @test_approx_eq_eps sum(abs2(ψ)) 1. 1e-15
+    
+    ϕ = random_ket(100)
+    @test length(ϕ) == 100
+    @test typeof(ϕ) == Vector{Complex128}
+    @test_approx_eq_eps sum(abs2(ϕ)) 1. 1e-15
 end
 
 function test_random_mixed_state_hs()
@@ -44,6 +49,12 @@ function test_random_mixed_state_hs()
     @test ishermitian(σ)
     @test_approx_eq_eps trace(ρ) 1. 1e-15
     @test_approx_eq_eps trace(σ) 1. 1e-15
+    
+    ρ = random_mixed_state_hs(20)
+    @test size(ρ) == (20, 20)
+    @test typeof(ρ) == Matrix{Complex128}
+    @test ishermitian(ρ)
+    @test_approx_eq_eps trace(ρ) 1. 1e-15
 end
 
 function test_random_jamiolkowski_state()

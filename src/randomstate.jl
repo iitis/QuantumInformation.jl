@@ -18,8 +18,8 @@ function random_ket{T<:Union(Float64, Complex128)}(M::Type{T}, d::Int64)
     random_ket!(ϕ)
     ϕ
 end
-#TODO: add calls without explicit type - make them produce complex outputs
-#TODO: no need to use M, just move the template part to the function arguments
+
+random_ket(d::Int64) = random_ket(Complex128, d)
 
 function random_mixed_state_hs!!{T<:Float64}(ρ::Matrix{T}, A::Matrix{T})
     random_ginibre_matrix!(A)
@@ -35,7 +35,7 @@ end
 
 function random_mixed_state_hs!{T<:Union(Float64, Complex128)}(ρ::Matrix{T})
     A = zeros(ρ)
-    random_mixed_state_hs!(ρ, A)
+    random_mixed_state_hs!!(ρ, A)
     renormalize!(ρ)
 end
 
@@ -44,6 +44,8 @@ function random_mixed_state_hs{T<:Union(Float64, Complex128)}(M::Type{T}, d::Int
     random_mixed_state_hs!(ρ)
     ρ
 end
+
+random_mixed_state_hs(d::Int64) = random_mixed_state_hs(Complex128, d)
 
 function random_jamiolkowski_state!{T<:Union(Float64, Complex128)}(J::Matrix{T})
     random_dynamical_matrix!(J)

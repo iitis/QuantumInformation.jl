@@ -31,7 +31,7 @@ function unres{T<:Union(Float64, Complex128)}(ϕ::Vector{T})
     s=int(sqrt(size(ϕ, 1)))
     permutedims(reshape(ϕ, s, s),invperm([2,1]))
 end
-# TODO: write tests for this
+
 unres{T<:Union(Float64, Complex128)}(ϕ::Vector{T}, m::Int64, n::Int64) = permutedims(reshape(ϕ, n, m), invperm([2,1]))
 
 kraus_to_superoperator{T<:Union(Float64, Complex128)}(kraus_list::Vector{Matrix{T}}) = sum((k) -> kron(k, k'), kraus_list)

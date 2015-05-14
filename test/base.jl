@@ -51,6 +51,8 @@ function test_unres()
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = unres(res(ρ))
     @test_approx_eq norm(ρ - σ) 0.
+    a = [1 2.1 3; 4 5 6]
+    @test_approx_eq norm(unres([1, 2.1, 3, 4 ,5, 6], 2, 3) - a) 0.
 end
 
 function test_kraus_to_superoperator()
