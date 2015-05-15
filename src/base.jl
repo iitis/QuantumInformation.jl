@@ -62,7 +62,7 @@ function ptrace{T<:Union(Float64, Complex128)}(ρ::Matrix{T}, idims::Vector, isy
     keep = setdiff(1:offset, systems)
     dispose = systems
     perm  = [dispose,keep, dispose+offset,keep+offset]
-    tensor = reshape(ρ, dims, dims)
+    tensor = reshape(ρ, [dims, dims]...)
     keepdim = prod([size(tensor,x) for x in keep])
     disposedim = prod([size(tensor,x) for x in dispose])
     tensor = permutedims(tensor,perm)
@@ -123,7 +123,7 @@ function reshuffle{T<:Union(Float64, Complex128)}(ρ::Matrix{T})
   sqrtc = int(sqrt(c))
   dimrows = [sqrtr, sqrtr]
   dimcolumns = [sqrtc, sqrtc]
-  tensor = reshape(ρ, dimrows, dimcolumns)
+  tensor = reshape(ρ, [dimrows, dimcolumns]...)
   perm = [4, 2, 3, 1]
   tensor = permutedims(tensor, perm)
   (r1, r2, c1, c2) = size(tensor)
