@@ -58,16 +58,16 @@ function ptrace{T<:Union(Float64, Complex128)}(ρ::Matrix{T}, idims::Vector, isy
     if ! ((maximum(systems) <= length(dims) |  (minimum(systems) > length(dims))))
         error("System index out of range")
     end
-    offset=length(dims)
-    keep=setdiff(1:offset, systems)
-    dispose=systems
-    perm =[dispose,keep, dispose+offset,keep+offset]
-    tensor=reshape(ρ,[dims, dims]...)
-    keepdim=prod([size(tensor,x) for x in keep])
-    disposedim=prod([size(tensor,x) for x in dispose])
-    tensor=permutedims(tensor,perm)
+    offset = length(dims)
+    keep = setdiff(1:offset, systems)
+    dispose = systems
+    perm  = [dispose,keep, dispose+offset,keep+offset]
+    tensor = reshape(ρ, dims, dims)
+    keepdim = prod([size(tensor,x) for x in keep])
+    disposedim = prod([size(tensor,x) for x in dispose])
+    tensor = permutedims(tensor,perm)
 
-    tensor=reshape(tensor,disposedim,keepdim,disposedim,keepdim)
+    tensor=reshape(tensor, disposedim, keepdim, disposedim, keepdim)
     ret = zeros(typeof(ρ[1,1]),keepdim,keepdim)
     for i=1:keepdim
       for j=1:keepdim
@@ -123,11 +123,11 @@ function reshuffle{T<:Union(Float64, Complex128)}(ρ::Matrix{T})
   sqrtc = int(sqrt(c))
   dimrows = [sqrtr, sqrtr]
   dimcolumns = [sqrtc, sqrtc]
-  tensor=reshape(ρ, [dimrows, dimcolumns]...)
+  tensor = reshape(ρ, dimrows, dimcolumns)
   perm = [4, 2, 3, 1]
-  tensor=permutedims(tensor, perm)
-  (r1,r2,c1,c2)=size(tensor)
-  return reshape(tensor, (r1*r2,c1*c2)...)
+  tensor = permutedims(tensor, perm)
+  (r1, r2, c1, c2) = size(tensor)
+  return reshape(tensor, r1*r2, c1*c2)
 end
 
 trace_distance{T<:Union(Float64, Complex128)}(ρ::Matrix{T}, σ::Matrix{T}) = sum(abs(eigvals(Hermitian(ρ - σ))))
