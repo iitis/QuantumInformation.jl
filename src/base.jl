@@ -87,30 +87,30 @@ function ptrace{T<:Union(Float64, Complex128)}(ϕ::Vector{T}, idims::Vector, isy
     end
 end
 
-#TODO: write tests and fix number conversion
+function number2mixedradix(n::Int64, bases::Vector{Int64})
+    if n >= prod(bases)
+        error("number to big to transform")
+    end
 
-#function number2mixedradix(n::Int64, bases::Vector{Int64})
-#  if n >= prod(bases)
-#    error("number to big to transform")
-#  end
-#
-#  digits = Array(Int64, length(bases))
-#  for (i, base) in enumerate(reverse(bases))
-#      n, digits[i] = divrem(n, base)
-#  end
-#  digits
-#end
+    digits = Array(Int64, length(bases))
+    for (i, base) in enumerate(reverse(bases))
+        n, digits[i] = divrem(n, base)
+    end
+    digits
+end
 
-#function mixedradix2number(digits::Vector{Int64}, bases::Vector{Int64})
-#  if length(digits)>length(bases)
-#    error("more digits than radices")
-#  end
-#  res = 0
-#  for i=1:length(digits)
-#    res = res * bases[i] + digits[i]
-#  end
-#  res
-#end
+function mixedradix2number(digits::Vector{Int64}, bases::Vector{Int64})
+    if length(digits)>length(bases)
+        error("more digits than radices")
+    end
+    
+    res = 0
+    digitsreversed = reverse(digits)
+    for i=1:length(digits)
+        res = res * bases[i] + digitsreversed[i]
+    end
+    res
+end
 
 function reshuffle{T<:Union(Float64, Complex128)}(ρ::Matrix{T})
   """
