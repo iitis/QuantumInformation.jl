@@ -21,25 +21,32 @@ ketbra(valk::Int64, valb::Int64, dim::Int64) = ketbra(Complex128, valk, valb, di
 
 proj{T<:Union(Float64, Complex128)}(ket::Vector{T}) = ket * ket'
 
-base_matrices(dim) = [ketbra(j, i, dim) for i=0:dim-1, j=0:dim-1] #TODO: should be a generator, but sometimes causes errors in applications
-
-res{T<:Union(Float64, Complex128)}(ρ::Matrix{T}) = vec(permutedims(ρ, [2 1]))
-
-#TODO: verify whether invperm is squivalent to transpose in this case
-#TODO: user array views for reshaping?
-function unres{T<:Union(Float64, Complex128)}(ϕ::Vector{T})
-    s=int(sqrt(size(ϕ, 1)))
-    permutedims(reshape(ϕ, s, s),invperm([2,1]))
+function base_matrices(dim)
+    function _it()
+        for i=0:dim-1, j=0:dim-1
+            produce(ketbra(j, i, dim))
+        end
+    end
+    Task(_it)
 end
 
-unres{T<:Union(Float64, Complex128)}(ϕ::Vector{T}, m::Int64, n::Int64) = permutedims(reshape(ϕ, n, m), invperm([2,1]))
+res{T<:Union(Float64, Complex128)}(ρ::Matrix{T}) = vec(transpose(ρ))
+
+function unres{T<:Union(Float64, Complex128)}(ϕ::Vector{T})
+    s=int(sqrt(size(ϕ, 1)))
+    transpose(reshape(ϕ, s, s))
+end
+
+unres{T<:Union(Float64, Complex128)}(ϕ::Vector{T}, m::Int64, n::Int64) = transpose(reshape(ϕ, n, m))
 
 kraus_to_superoperator{T<:Union(Float64, Complex128)}(kraus_list::Vector{Matrix{T}}) = sum((k) -> kron(k, k'), kraus_list)
 
 function channel_to_superoperator(channel::Function, dim::Int64)
-    #TODO: create a matrix of zeros first, then only set columns
-    Eijs=base_matrices(dim)
-    hcat([res(channel(e)) for e in Eijs]...)
+    M = zeros(Complex128, dim*dim, dim*dim)
+    for (i, e) in enumerate(base_matrices(dim))
+        M[:, i] = res(channel(e))
+    end
+    M
 end
 
 apply_kraus{T<:Union(Float64, Complex128)}(kraus_list::Vector{Matrix{T}}, ρ::Matrix{T}) = sum(k-> k*ρ*k', kraus_list)
@@ -76,7 +83,6 @@ function ptrace{T<:Union(Float64, Complex128)}(ρ::Matrix{T}, idims::Vector, isy
     end
     return ret
 end
-#TODO: write tests for thuis
 #TODO: allow for more than bipartite systems???
 function ptrace{T<:Union(Float64, Complex128)}(ϕ::Vector{T}, idims::Vector, isystem::Int64)
     A = unres(ϕ, idims...)
@@ -98,7 +104,7 @@ function number2mixedradix(n::Int64, bases::Vector{Int64})
     end
     digits
 end
-
+# FIX THESE
 function mixedradix2number(digits::Vector{Int64}, bases::Vector{Int64})
     if length(digits)>length(bases)
         error("more digits than radices")

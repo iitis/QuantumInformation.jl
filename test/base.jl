@@ -33,7 +33,7 @@ end
 
 function test_base_matrices()
     d = 4
-    m = base_matrices(4)
+    m = collect(Matrix{Complex128}, base_matrices(4))
     for i=1:d, j=1:d
         v = trace(m[i]' * m[j])
         i == j ? @test(v == 1.) : @test(v == 0.)
@@ -94,6 +94,8 @@ function test_ptrace()
     
     ϕ = 1/sqrt(2) * (ket(0, 4) + ket(3, 4))
     ξ = ptrace(proj(ϕ), [2, 2], [2,])
+    @test_approx_eq_eps norm(ξ - eye(2)/2) 0. 1e-15
+    ξ = ptrace(ϕ, [2, 2], 2)
     @test_approx_eq_eps norm(ξ - eye(2)/2) 0. 1e-15
 end
 
