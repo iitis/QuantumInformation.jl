@@ -12,6 +12,10 @@ function random_ginibre_matrix{T<:Union(Float64, Complex128)}(M::Type{T}, m::Int
     A
 end
 
+random_ginibre_matrix(m::Int64, n::Int64) = random_ginibre_matrix(Complex128, m, n)
+random_ginibre_matrix(m::Int64) = random_ginibre_matrix(m, m)
+random_ginibre_matrix{T<:Union(Float64, Complex128)}(M::Type{T}, m::Int64) = random_ginibre_matrix(M, m, m)
+
 function random_unitary(n::Integer)
   z = random_ginibre_matrix(n,n)/sqrt(2.0)
   q,r = qr(complex128(z))
