@@ -13,8 +13,8 @@ function random_ket!{T<:Complex128}(ϕ::Vector{T})
     renormalize!(ϕ)
 end
 
-function random_ket{T<:Union(Float64, Complex128)}(M::Type{T}, d::Int64)
-    ϕ=zeros(M, d)
+function random_ket{T<:Union{Float64, Complex128}}(::Type{T}, d::Int64)
+    ϕ=zeros(T, d)
     random_ket!(ϕ)
     ϕ
 end
@@ -33,30 +33,30 @@ function random_mixed_state_hs!!{T<:Complex128}(ρ::Matrix{T}, A::Matrix{T})
     renormalize!(ρ)
 end
 
-function random_mixed_state_hs!{T<:Union(Float64, Complex128)}(ρ::Matrix{T})
+function random_mixed_state_hs!{T<:Union{Float64, Complex128}}(ρ::Matrix{T})
     A = zeros(ρ)
     random_mixed_state_hs!!(ρ, A)
     renormalize!(ρ)
 end
 
-function random_mixed_state_hs{T<:Union(Float64, Complex128)}(M::Type{T}, d::Int64)
-    ρ = zeros(M, d, d)
+function random_mixed_state_hs{T<:Union{Float64, Complex128}}(::Type{T}, d::Int64)
+    ρ = zeros(T, d, d)
     random_mixed_state_hs!(ρ)
     ρ
 end
 
 random_mixed_state_hs(d::Int64) = random_mixed_state_hs(Complex128, d)
 
-function random_jamiolkowski_state!{T<:Union(Float64, Complex128)}(J::Matrix{T})
+function random_jamiolkowski_state!{T<:Union{Float64, Complex128}}(J::Matrix{T})
     random_dynamical_matrix!(J)
-    n = int(sqrt(size(J, 1)))
+    n = round(Int, sqrt(size(J, 1)), RoundDown)
     for i=1:length(J)
         J[i] = J[i] / n
     end
 end
 
-function random_jamiolkowski_state{T<:Union(Float64, Complex128)}(M::Type{T}, n::Int64)
-    J = zeros(M, n*n, n*n)
+function random_jamiolkowski_state{T<:Union{Float64, Complex128}}(::Type{T}, n::Int64)
+    J = zeros(T, n*n, n*n)
     random_jamiolkowski_state!(J)
     J
 end

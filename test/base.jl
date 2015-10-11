@@ -113,7 +113,7 @@ end
 #end
 
 function test_reshuffle()
-    X = reshape(Float64[1:16], 4, 4)'
+    X = reshape(Float64[1:16;], 4, 4)'
     T = [1 2 5 6; 3 4 7 8; 9 10 13 14; 11 12 15 16]
     @test reshuffle(X) == T
 end

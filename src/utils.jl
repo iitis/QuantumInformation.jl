@@ -1,18 +1,18 @@
-function renormalize!{T<:Union(Float64, Complex128)}(ϕ::Vector{T})
+function renormalize!{T<:Union{Float64, Complex128}}(ϕ::Vector{T})
     n = norm(ϕ)
     for i=1:length(ϕ)
         ϕ[i] = ϕ[i]/n
     end
 end
 
-function renormalize!{T<:Union(Float64, Complex128)}(ρ::Matrix{T})
+function renormalize!{T<:Union{Float64, Complex128}}(ρ::Matrix{T})
     t = trace(ρ)
     for i=1:length(ρ)
         ρ[i] = ρ[i]/t
     end
 end
 
-function funcmh!{T<:Union(Float64, Complex128)}(f::Function, H::Hermitian{T}, R::Matrix{T})
+function funcmh!{T<:Union{Float64, Complex128}}(f::Function, H::Hermitian{T}, R::Matrix{T})
     F = eigfact!(H)
     for i=1:length(F[:values])
         F[:values][i] = f(F[:values][i])
@@ -24,27 +24,27 @@ function funcmh!{T<:Union(Float64, Complex128)}(f::Function, H::Hermitian{T}, R:
     A_mul_Bc!(R, times_diag, F[:vectors])
 end
 
-function funcmh!{T<:Union(Float64, Complex128)}(f::Function, H::Hermitian{T})
+function funcmh!{T<:Union{Float64, Complex128}}(f::Function, H::Hermitian{T})
     R = zeros(T, size(H))
     funcmh!(f, H, R)
     R
 end
 
-function funcmh{T<:Union(Float64, Complex128)}(f::Function, H::Hermitian{T})
+function funcmh{T<:Union{Float64, Complex128}}(f::Function, H::Hermitian{T})
     R = zeros(T, size(H))
     funcmh!(f, copy(H), R)
     R
 end
 
-function funcmh!{T<:Union(Float64, Complex128)}(f::Function, H::Matrix{T}, R::Matrix{T})
+function funcmh!{T<:Union{Float64, Complex128}}(f::Function, H::Matrix{T}, R::Matrix{T})
     ishermitian(H) ? funcmh!(f, Hermitian(H), R) : error("Non-hermitian matrix passed to funcmh")
 end
 
-function funcmh!{T<:Union(Float64, Complex128)}(f::Function, H::Matrix{T})
+function funcmh!{T<:Union{Float64, Complex128}}(f::Function, H::Matrix{T})
     ishermitian(H) ? funcmh!(f, Hermitian(H)) : error("Non-hermitian matrix passed to funcmh")
 end
 
-function funcmh{T<:Union(Float64, Complex128)}(f::Function, H::Matrix{T})
+function funcmh{T<:Union{Float64, Complex128}}(f::Function, H::Matrix{T})
     ishermitian(H) ? funcmh(f, Hermitian(H)) : error("Non-hermitian matrix passed to funcmh")
 end
 

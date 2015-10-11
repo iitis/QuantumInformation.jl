@@ -16,13 +16,13 @@ function test_random_dynamical_matrix()
     tr = ptrace(J, [n, n], [1])
     @test size(J) == (n^2, n^2)
     @test_approx_eq_eps trace(J) n 1e-13
-    @test_approx_eq_eps norm(tr - eye(n)) 0. 1e-14
+    @test_approx_eq_eps norm(tr - eye(n)) 0. 1e-13
     @test typeof(J) == Matrix{Float64}
     J = random_dynamical_matrix(Complex128, n)
     tr = ptrace(J, [n, n], [1])
     @test size(J) == (n^2, n^2)
     @test_approx_eq_eps trace(J) n 1e-13
-    @test_approx_eq_eps norm(tr - eye(n)) 0. 1e-14
+    @test_approx_eq_eps norm(tr - eye(n)) 0. 1e-13
     @test typeof(J) == Matrix{Complex128}
 end
 
