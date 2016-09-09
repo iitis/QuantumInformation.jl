@@ -93,6 +93,32 @@ function ptrace{T<:Union{Float64, Complex128}}(ϕ::Vector{T}, idims::Vector, isy
     end
 end
 
+function ptranspose{T<:Union{Float64, Complex128}}(ρ::Matrix{T}, idims::Vector, isystems::Vector)
+    dims=reverse(idims)
+    systems=length(idims)-isystems+1
+
+    if size(ρ,1)!=size(ρ,2)
+        error("Non square matrix passed to ptrace")
+    end
+    if prod(dims)!=size(ρ,1)
+        error("Product of dimensions do not match shape of matrix.")
+    end
+    if ! ((maximum(systems) <= length(dims) |  (minimum(systems) > length(dims))))
+        error("System index out of range")
+    end
+
+    offset = length(dims)
+    tensor = reshape(ρ, [dims; dims]...)
+    perm = collect(1:(2offset))
+    for s in systems
+        idx1 = find(x->x==s, perm)[1]
+        idx2 = find(x->x==(s + offset), perm)[1]
+        perm[idx1], perm[idx2] = perm[idx2], perm[idx1]
+    end
+    tensor = permutedims(tensor, invperm(perm))
+    reshape(tensor, size(ρ))
+end
+
 function number2mixedradix(n::Int64, bases::Vector{Int64})
     if n >= prod(bases)
         error("number to big to transform")
@@ -109,7 +135,7 @@ function mixedradix2number(digits::Vector{Int64}, bases::Vector{Int64})
     if length(digits)>length(bases)
         error("more digits than radices")
     end
-    
+
     res = 0
     digitsreversed = reverse(digits)
     for i=1:length(digits)

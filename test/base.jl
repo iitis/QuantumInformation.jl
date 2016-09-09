@@ -91,12 +91,20 @@ function test_ptrace()
     σ = [0.4 0.1im; -0.1im 0.6]
     ξ = ptrace(ρ ⊗ σ, [2, 2], [2,])
     @test_approx_eq_eps norm(ρ - ξ) 0. 1e-15
-    
+
     ϕ = 1/sqrt(2) * (ket(0, 4) + ket(3, 4))
     ξ = ptrace(proj(ϕ), [2, 2], [2,])
     @test_approx_eq_eps norm(ξ - eye(2)/2) 0. 1e-15
     ξ = ptrace(ϕ, [2, 2], 2)
     @test_approx_eq_eps norm(ξ - eye(2)/2) 0. 1e-15
+end
+
+function test_ptranspose()
+  ρ =  Complex128[1 2 3 4; 5 6 7 8; 9 10 11 12; 13 14 15 16]
+  trans1 = [1 2 9 10; 5 6 13 14; 3 4 11 12; 7 8 15 16]
+  trans2 = [1 5 3 7; 2 6 4 8; 9 13 11 15; 10 14 12 16]
+  @test_approx_eq_eps norm(ptranspose(ρ, [2, 2], [1]) - trans1) 0. 1e-15
+  @test_approx_eq_eps norm(ptranspose(ρ, [2, 2], [2]) - trans2) 0. 1e-15
 end
 
 #function test_number2mixedradix()
@@ -121,7 +129,7 @@ end
 function test_trace_distance()
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = [0.4 0.1im; -0.1im 0.6]
-    
+
     @test_approx_eq_eps trace_distance(ρ, ρ) 0 1e-15
     @test_approx_eq_eps trace_distance(ρ, σ) 0.42426406871192857 1e-15
 end
@@ -189,6 +197,9 @@ test_apply_kraus()
 
 println("testing ptrace")
 test_ptrace()
+
+println("testing ptranspose")
+test_ptranspose()
 
 #println("testing number2mixedradix")
 #test_number2mixedradix()

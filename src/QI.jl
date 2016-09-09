@@ -3,7 +3,7 @@ module QI
 export ket, bra, ketbra, proj, base_matrices,
 res, unres,
 kraus_to_superoperator, channel_to_superoperator, apply_kraus,
-ptrace, reshuffle,
+ptrace, ptranspose, reshuffle,
 number2mixedradix, mixedradix2number,
 trace_distance, fidelity_sqrt, fidelity,
 shannon_entropy, entropy,
