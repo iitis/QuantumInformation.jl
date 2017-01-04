@@ -26,5 +26,14 @@ function test_random_dynamical_matrix()
     @test typeof(J) == Matrix{Complex128}
 end
 
+function test_random_unitary()
+  n = 10
+  U = random_unitary(n)
+  @test_approx_eq_eps norm(U*U' - eye(n)) 0 1e-13
+end
+
 println("testing random_dynamical_matrix")
 test_random_dynamical_matrix()
+
+println("testing random_unitary")
+test_random_unitary()
