@@ -19,6 +19,7 @@ include("base.jl")
 include("randommatrix.jl")
 include("randomstate.jl")
 include("gates.jl")
+include("utils.jl")
 
 sx = Complex128[0 1; 1 0]
 sy = Complex128[0 1im; -1im 0]

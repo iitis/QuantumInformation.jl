@@ -1,5 +1,4 @@
 using Devectorize
-include("utils.jl")
 
 function ket{T<:Union{Float64, Complex128}}(::Type{T}, val::Int64, dim::Int64)
     ϕ=zeros(T, dim)

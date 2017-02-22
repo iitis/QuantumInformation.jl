@@ -1,6 +1,3 @@
-include("randommatrix.jl")
-include("utils.jl")
-
 function random_ket!{T<:Float64}(ϕ::Vector{T})
     randn!(ϕ)
     renormalize!(ϕ)

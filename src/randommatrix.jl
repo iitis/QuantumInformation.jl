@@ -56,3 +56,5 @@ function random_dynamical_matrix{T<:Union{Float64, Complex128}}(::Type{T}, n::In
     random_dynamical_matrix!(J)
     J
 end
+
+random_dynamical_matrix(n::Int64) = random_dynamical_matrix(Complex128, n)
