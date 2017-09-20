@@ -1,5 +1,3 @@
-using Devectorize
-
 function ket{T<:Union{Float64, Complex128}}(::Type{T}, val::Int64, dim::Int64)
     ϕ=zeros(T, dim)
     ϕ[val+1]=1.0
@@ -166,7 +164,7 @@ function fidelity_sqrt{T<:Union{Float64, Complex128}}(ρ::Matrix{T}, σ::Matrix{
     error("Non square matrix detected")
   end
   λ = real(eigvals(ρ * σ))
-  @devec r = sum(sqrt(λ[λ.>0]))
+  r = sum(sqrt.(λ[λ.>0]))
 end
 
 function fidelity{T<:Union{Float64, Complex128}}(ρ::Matrix{T}, σ::Matrix{T})
@@ -180,16 +178,14 @@ fidelity{T<:Union{Float64, Complex128}}(ϕ::Vector{T}, ψ::Vector{T}) = abs2(dot
 fidelity{T<:Union{Float64, Complex128}}(ϕ::Vector{T}, ρ::Matrix{T}) = ϕ' * ρ * ϕ
 fidelity{T<:Union{Float64, Complex128}}(ρ::Matrix{T}, ϕ::Vector{T}) = fidelity(ϕ, ρ)
 
-function shannon_entropy{T<:Real}(p::Vector{T})
-    @devec r = -sum(p .* log(p))
-end
+shannon_entropy{T<:Real}(p::Vector{T}) = -sum(p .* log.(p))
 
 shannon_entropy{T<:Real}(x::T) = x > 0 ? -x * log(x) - (1 - x) * log(1 - x) : error("Negative number passed to shannon_entropy")
 
 function entropy{T<:Union{Float64, Complex128}}(ρ::Hermitian{T})
     λ = eigvals(ρ)
     λ = λ[λ .> 0]
-    @devec r = -sum(λ .* log(λ))
+    -sum(λ .* log(λ))
 end
 
 entropy{T<:Union{Float64, Complex128}}(H::Matrix{T}) = ishermitian(H) ? entropy(Hermitian(H)) : error("Non-hermitian matrix passed to entropy")

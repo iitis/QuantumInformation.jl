@@ -10,8 +10,8 @@ function test_bra()
     ϕ = bra(0, 4)
     ψ = Complex128[1 0 0 0]
     @test_approx_eq norm(ϕ - ψ) 0.
-    @test typeof(bra(Float64, 0, 4)) == Matrix{Float64}
-    @test typeof(bra(Complex128, 0, 4)) == Matrix{Complex128}
+    @test typeof(bra(Float64, 0, 4)) == RowVector{Float64, Vector{Float64}}
+    @test typeof(bra(Complex128, 0, 4)) == RowVector{Complex128, ConjArray{Complex128, 1, Vector{Complex128}}}
 end
 
 function test_ketbra()
