@@ -13,7 +13,9 @@ random_mixed_state_hs!, random_mixed_state_hs,
 random_dynamical_matrix!, random_dynamical_matrix,
 random_jamiolkowski_state!, random_jamiolkowski_state,
 random_unitary,
-funcmh, funcmh!, renormalize!
+funcmh, funcmh!, renormalize!,
+sx,sy,sz,
+⊗
 
 include("base.jl")
 include("randommatrix.jl")
