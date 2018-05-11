@@ -1,6 +1,6 @@
-random_ginibre_matrix!(A::Matrix{T}) where T<:Real = randn!(A)
+random_ginibre_matrix!(A::AbstractMatrix{T}) where T<:Real = randn!(A)
 
-function random_ginibre_matrix!(A::Matrix{T}) where T<:Complex
+function random_ginibre_matrix!(A::AbstractMatrix{T}) where T<:Complex
     for i=1:length(A)
         A[i] = randn() + 1im * randn()
     end
@@ -20,7 +20,7 @@ function random_unitary(n::Int)
   z = random_ginibre_matrix(n,n)/sqrt(2.0)
   q,r = qr(z)
   d = diag(r)
-  ph = d./abs(d)
+  ph = d./abs.(d)
   return q.*repmat(ph,1,size(ph)[1])'
 end
 
@@ -28,21 +28,21 @@ function random_orthogonal(n::Int)
      z = randn(n,n)
      q,r = qr(z)
      d = diag(r)
-     ph = d./abs(d)
+     ph = d./abs.(d)
      return q.*repmat(ph,1,size(ph)[1])'
 end
 
 function random_GOE(n::Int)
-    H=randn(n,n)
+    H = randn(n,n)
     return (H+H')/2
 end
 
 function random_GUE(n::Int)
-    H=randn(n,n)+1im*randn(n,n)
+    H = randn(n,n)+1im*randn(n,n)
     return (H+H')/2
 end
 
-function random_dynamical_matrix!(J::Matrix{T}) where T<:Union{Real, Complex}
+function random_dynamical_matrix!(J::AbstractMatrix{T}) where T<:Union{Real, Complex}
     random_ginibre_matrix!(J)
     n = round(Int, sqrt(size(J, 1)), RoundDown)
     X = J*J' # A_mul_Bc(J, J) deprecated
@@ -50,7 +50,7 @@ function random_dynamical_matrix!(J::Matrix{T}) where T<:Union{Real, Complex}
     sY = funcmh!(x -> 1 / sqrt(x), Y)
     # TODO: There is a bug here
     onesY = eye(n,n) ⊗ sY
-    J = onesY * X * onesY' # A_mul_B!(J, eye(n,n) ⊗ sY * X, eye(n,n) ⊗ sY) deprecated
+    J[:] = onesY * X * onesY' # A_mul_B!(J, eye(n,n) ⊗ sY * X, eye(n,n) ⊗ sY) deprecated
 end
 
 function random_dynamical_matrix(::Type{T}, n::Int) where T<:Union{Real, Complex}

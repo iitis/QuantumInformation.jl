@@ -52,7 +52,7 @@ function test_random_mixed_state_hs()
 
     ρ = random_mixed_state_hs(20)
     @test size(ρ) == (20, 20)
-    @test typeof(ρ) == Matrix{Complex{Float64}}}
+    @test typeof(ρ) == Matrix{Complex{Float64}}
     @test ishermitian(ρ)
     @test trace(ρ) ≈ 1. atol=1e-15
 end

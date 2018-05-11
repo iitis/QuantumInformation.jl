@@ -5,7 +5,7 @@ function renormalize!(ϕ::Vector{T}) where T<:Union{Real, Complex}
     end
 end
 
-function renormalize!(ρ::Matrix{T}) where T<:Union{Real, Complex}
+function renormalize!(ρ::AbstractMatrix{T}) where T<:Union{Real, Complex}
     t = trace(ρ)
     for i=1:length(ρ)
         ρ[i] = ρ[i]/t
@@ -21,7 +21,7 @@ function funcmh!(f::Function, H::Hermitian{T}, R::Matrix{T})  where T<:Union{Rea
     for i=1:size(F.vectors, 2)
         times_diag[:, i] = F.vectors[:, i] * F.values[i]
     end
-    R = times_diag * F.vectors' # A_mul_Bc!(R, times_diag, F.vectors) deprecated
+    R[:] = times_diag * F.vectors' # A_mul_Bc!(R, times_diag, F.vectors) deprecated
 end
 
 function funcmh!(f::Function, H::Hermitian{T}) where T<:Union{Real, Complex}

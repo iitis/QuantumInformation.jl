@@ -33,24 +33,22 @@ base_matrices(dim) = Channel() do c
     end
 end
 
-res(ρ::Matrix{T}) where T<:Number = vec(transpose(ρ))
+res(ρ::AbstractMatrix{T}) where T<:Number = vec(transpose(ρ))
 
-function unres(ϕ::Vector{T}) where T<:Number
+function unres(ϕ::AbstractVector{T}) where T<:Number
     s=round(Int, sqrt(size(ϕ, 1)), RoundDown)
     transpose(reshape(ϕ, s, s))
 end
 
-unres(ϕ::Vector{T}, m::Int64, n::Int64) where T<:Number = transpose(reshape(ϕ, n, m))
+unres(ϕ::AbstractVector{T}, m::Int64, n::Int64) where T<:Number = transpose(reshape(ϕ, n, m))
 
-# TODO: the following two functions are an ugly hack, they should inherit from AbstractVector
-unres(ϕ, m::Int64, n::Int64) where T<:Number = transpose(reshape(ϕ, n, m))
-function unres(ϕ) where T<:Number
+function unres(ϕ::AbstractVector{T}) where T<:Number
     s=round(Int, sqrt(size(ϕ, 1)), RoundDown)
     transpose(reshape(ϕ, s, s))
 end
-
-kraus_to_superoperator(kraus_list::Vector{Matrix{T}}) where T<:Number = sum((k) -> kron(k, k'), kraus_list)
-
+function kraus_to_superoperator(kraus_list::Vector{T}) where {T<:AbstractMatrix{T1}} where {T1<:Number}
+    sum((k) -> kron(k, k'), kraus_list)
+end
 function channel_to_superoperator(channel::Function, dim::Int)
     M = zeros(ComplexF64, dim*dim, dim*dim)
     for (i, e) in enumerate(base_matrices(dim))
@@ -59,9 +57,11 @@ function channel_to_superoperator(channel::Function, dim::Int)
     M
 end
 
-apply_kraus(kraus_list::Vector{Matrix{T}}, ρ::Matrix{T}) where T<:Number = sum(k-> k*ρ*k', kraus_list)
+function apply_kraus(kraus_list::Vector{T}, ρ::T) where {T<:AbstractMatrix{T1}} where {T1<:Number}
+    sum(k-> k*ρ*k', kraus_list)
+end
 
-function ptrace(ρ::Matrix{T}, idims::Vector, isystems::Vector) where T<:Number
+function ptrace(ρ::AbstractMatrix{T}, idims::Vector, isystems::Vector) where T<:Number
     # TODO: convert notation to column-major form
     dims=reverse(idims)
     systems=length(idims)-isystems+1
@@ -94,7 +94,7 @@ function ptrace(ρ::Matrix{T}, idims::Vector, isystems::Vector) where T<:Number
     return ret
 end
 #TODO: allow for more than bipartite systems???
-function ptrace(ϕ::Vector{T}, idims::Vector, isystem::Int) where T<:Number
+function ptrace(ϕ::AbstractVector{T}, idims::Vector, isystem::Int) where T<:Number
     A = unres(ϕ, idims...)
     if isystem == 1
         return A'*A
@@ -103,7 +103,7 @@ function ptrace(ϕ::Vector{T}, idims::Vector, isystem::Int) where T<:Number
     end
 end
 
-function ptranspose(ρ::Matrix{T}, idims::Vector, isystems::Vector) where T<:Number
+function ptranspose(ρ::AbstractMatrix{T}, idims::Vector, isystems::Vector) where T<:Number
     dims=reverse(idims)
     systems=length(idims)-isystems+1
 
@@ -159,7 +159,7 @@ end
   Given multiindexed matrix M_{(m,μ),(n,ν)} it returns
   matrix M_{(m,n),(μ,ν)}.
 """
-function reshuffle(ρ::Matrix{T}) where T<:Number
+function reshuffle(ρ::AbstractMatrix{T}) where T<:Number
   (r, c) = size(ρ)
   sqrtr = round(Int, sqrt(r), RoundDown)
   sqrtc = round(Int, sqrt(c), RoundDown)
@@ -170,8 +170,8 @@ function reshuffle(ρ::Matrix{T}) where T<:Number
   return reshape(tensor, r1*r2, c1*c2)
 end
 
-trace_distance(ρ::Matrix{T}, σ::Matrix{T}) where T<:Number = sum(abs.(eigvals(Hermitian(ρ - σ))))
-function fidelity_sqrt(ρ::Matrix{T}, σ::Matrix{T}) where T<:Number
+trace_distance(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number = sum(abs.(eigvals(Hermitian(ρ - σ))))
+function fidelity_sqrt(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
   if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
     error("Non square matrix detected")
   end
@@ -179,18 +179,18 @@ function fidelity_sqrt(ρ::Matrix{T}, σ::Matrix{T}) where T<:Number
   r = sum(sqrt.(λ[λ.>0]))
 end
 
-function fidelity(ρ::Matrix{T}, σ::Matrix{T}) where T<:Number
+function fidelity(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
   if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
     error("Non square matrix detected")
   end
   return fidelity_sqrt(ρ, σ)^2
 end
 
-fidelity(ϕ::Vector{T}, ψ::Vector{T}) where T<:Number = abs2(dot(ϕ, ψ))
-fidelity(ϕ::Vector{T}, ρ::Matrix{T}) where T<:Number = ϕ' * ρ * ϕ
-fidelity(ρ::Matrix{T}, ϕ::Vector{T}) where T<:Number = fidelity(ϕ, ρ)
+fidelity(ϕ::AbstractVector{T}, ψ::AbstractVector{T}) where T<:Number = abs2(dot(ϕ, ψ))
+fidelity(ϕ::AbstractVector{T}, ρ::AbstractMatrix{T}) where T<:Number = ϕ' * ρ * ϕ
+fidelity(ρ::AbstractMatrix{T}, ϕ::AbstractVector{T}) where T<:Number = fidelity(ϕ, ρ)
 
-shannon_entropy(p::Vector{T}) where T<:Real = -sum(p .* log.(p))
+shannon_entropy(p::AbstractVector{T}) where T<:Real = -sum(p .* log.(p))
 
 shannon_entropy(x::T) where T<:Real = x > 0 ? -x * log(x) - (1 - x) * log(1 - x) : error("Negative number passed to shannon_entropy")
 
@@ -200,5 +200,5 @@ function entropy(ρ::Hermitian{T}) where T<:Number
     -sum(λ .* log(λ))
 end
 
-entropy(H::Matrix{T}) where T<:Number = ishermitian(H) ? entropy(Hermitian(H)) : error("Non-hermitian matrix passed to entropy")
-entropy(ϕ::Vector{T}) where T<:Number = zero(T)
+entropy(H::AbstractMatrix{T}) where T<:Number = ishermitian(H) ? entropy(Hermitian(H)) : error("Non-hermitian matrix passed to entropy")
+entropy(ϕ::AbstractVector{T}) where T<:Number = zero(T)
