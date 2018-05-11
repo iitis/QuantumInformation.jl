@@ -1,22 +1,22 @@
-function ket{T<:Union{Float64, Complex128}}(::Type{T}, val::Int64, dim::Int64)
+function ket(::Type{T}, val::Int, dim::Int) where T<:Number
     ϕ=zeros(T, dim)
-    ϕ[val+1]=1.0
+    ϕ[val+1] = one(T)
     ϕ
 end
 
-ket(val::Int64, dim::Int64) = ket(Complex128, val, dim)
-bra{T<:Union{Float64, Complex128}}(::Type{T}, val::Int64, dim::Int64) = ket(T, val, dim)'
-bra(val::Int64, dim::Int64) = bra(Complex128, val, dim)
+ket(val::Int, dim::Int) = ket(Complex{Float64}, val, dim)
+bra(::Type{T}, val::Int, dim::Int) where T<:Number = ket(T, val, dim)'
+bra(val::Int, dim::Int) = bra(Complex{Float64}, val, dim)
 
-function ketbra{T<:Union{Float64, Complex128}}(::Type{T}, valk::Int64, valb::Int64, dim::Int64)
+function ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:Number
     ϕψ=zeros(T, dim, dim)
-    ϕψ[valk+1,valb+1]=1.0
+    ϕψ[valk+1,valb+1] = one(T)
     ϕψ
 end
 
-ketbra(valk::Int64, valb::Int64, dim::Int64) = ketbra(Complex128, valk, valb, dim)
+ketbra(valk::Int, valb::Int, dim::Int) = ketbra(Complex{Float64}, valk, valb, dim)
 
-proj{T<:Union{Float64, Complex128}}(ket::Vector{T}) = ket * ket'
+proj(ket::Vector{T}) where T<:Number = ket * ket'
 
 function base_matrices(dim)
     function _it()
@@ -27,28 +27,28 @@ function base_matrices(dim)
     Task(_it)
 end
 
-res{T<:Union{Float64, Complex128}}(ρ::Matrix{T}) = vec(transpose(ρ))
+res(ρ::Matrix{T}) where T<:Number = vec(transpose(ρ))
 
-function unres{T<:Union{Float64, Complex128}}(ϕ::Vector{T})
+function unres(ϕ::Vector{T}) where T<:Number
     s=round(Int, sqrt(size(ϕ, 1)), RoundDown)
     transpose(reshape(ϕ, s, s))
 end
 
-unres{T<:Union{Float64, Complex128}}(ϕ::Vector{T}, m::Int64, n::Int64) = transpose(reshape(ϕ, n, m))
+unres(ϕ::Vector{T}, m::Int64, n::Int64) where T<:Number = transpose(reshape(ϕ, n, m))
 
-kraus_to_superoperator{T<:Union{Float64, Complex128}}(kraus_list::Vector{Matrix{T}}) = sum((k) -> kron(k, k'), kraus_list)
+kraus_to_superoperator(kraus_list::Vector{Matrix{T}}) where T<:Number = sum((k) -> kron(k, k'), kraus_list)
 
-function channel_to_superoperator(channel::Function, dim::Int64)
-    M = zeros(Complex128, dim*dim, dim*dim)
+function channel_to_superoperator(channel::Function, dim::Int)
+    M = zeros(Complex{Float64}, dim*dim, dim*dim)
     for (i, e) in enumerate(base_matrices(dim))
         M[:, i] = res(channel(e))
     end
     M
 end
 
-apply_kraus{T<:Union{Float64, Complex128}}(kraus_list::Vector{Matrix{T}}, ρ::Matrix{T}) = sum(k-> k*ρ*k', kraus_list)
+apply_kraus(kraus_list::Vector{Matrix{T}}, ρ::Matrix{T}) where T<:Number = sum(k-> k*ρ*k', kraus_list)
 
-function ptrace{T<:Union{Float64, Complex128}}(ρ::Matrix{T}, idims::Vector, isystems::Vector)
+function ptrace(ρ::Matrix{T}, idims::Vector, isystems::Vector) where T<:Number
     # TODO: convert notation to column-major form
     dims=reverse(idims)
     systems=length(idims)-isystems+1
@@ -81,7 +81,7 @@ function ptrace{T<:Union{Float64, Complex128}}(ρ::Matrix{T}, idims::Vector, isy
     return ret
 end
 #TODO: allow for more than bipartite systems???
-function ptrace{T<:Union{Float64, Complex128}}(ϕ::Vector{T}, idims::Vector, isystem::Int64)
+function ptrace(ϕ::Vector{T}, idims::Vector, isystem::Int) where T<:Number
     A = unres(ϕ, idims...)
     if isystem == 1
         return A'*A
@@ -90,7 +90,7 @@ function ptrace{T<:Union{Float64, Complex128}}(ϕ::Vector{T}, idims::Vector, isy
     end
 end
 
-function ptranspose{T<:Union{Float64, Complex128}}(ρ::Matrix{T}, idims::Vector, isystems::Vector)
+function ptranspose(ρ::Matrix{T}, idims::Vector, isystems::Vector) where T<:Number
     dims=reverse(idims)
     systems=length(idims)-isystems+1
 
@@ -116,7 +116,7 @@ function ptranspose{T<:Union{Float64, Complex128}}(ρ::Matrix{T}, idims::Vector,
     reshape(tensor, size(ρ))
 end
 
-function number2mixedradix(n::Int64, bases::Vector{Int64})
+function number2mixedradix(n::Int, bases::Vector{Int})
     if n >= prod(bases)
         error("number to big to transform")
     end
@@ -128,7 +128,7 @@ function number2mixedradix(n::Int64, bases::Vector{Int64})
     digits
 end
 # FIX THESE
-function mixedradix2number(digits::Vector{Int64}, bases::Vector{Int64})
+function mixedradix2number(digits::Vector{Int}, bases::Vector{Int})
     if length(digits)>length(bases)
         error("more digits than radices")
     end
@@ -141,12 +141,12 @@ function mixedradix2number(digits::Vector{Int64}, bases::Vector{Int64})
     res
 end
 
-function reshuffle{T<:Union{Float64, Complex128}}(ρ::Matrix{T})
-  """
-    Performs reshuffling of indices of a matrix.
-    Given multiindexed matrix M_{(m,\mu),(n,\nu)} it returns
-    matrix M_{(m,n),(\mu,\nu)}.
-  """
+"""
+  Performs reshuffling of indices of a matrix.
+  Given multiindexed matrix M_{(m,μ),(n,ν)} it returns
+  matrix M_{(m,n),(μ,ν)}.
+"""
+function reshuffle(ρ::Matrix{T}) where T<:Number
   (r, c) = size(ρ)
   sqrtr = round(Int, sqrt(r), RoundDown)
   sqrtc = round(Int, sqrt(c), RoundDown)
@@ -157,9 +157,8 @@ function reshuffle{T<:Union{Float64, Complex128}}(ρ::Matrix{T})
   return reshape(tensor, r1*r2, c1*c2)
 end
 
-trace_distance{T<:Union{Float64, Complex128}}(ρ::Matrix{T}, σ::Matrix{T}) = sum(abs(eigvals(Hermitian(ρ - σ))))
-
-function fidelity_sqrt{T<:Union{Float64, Complex128}}(ρ::Matrix{T}, σ::Matrix{T})
+trace_distance(ρ::Matrix{T}, σ::Matrix{T}) where T<:Number = sum(abs(eigvals(Hermitian(ρ - σ))))
+function fidelity_sqrt(ρ::Matrix{T}, σ::Matrix{T}) where T<:Number
   if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
     error("Non square matrix detected")
   end
@@ -167,26 +166,26 @@ function fidelity_sqrt{T<:Union{Float64, Complex128}}(ρ::Matrix{T}, σ::Matrix{
   r = sum(sqrt.(λ[λ.>0]))
 end
 
-function fidelity{T<:Union{Float64, Complex128}}(ρ::Matrix{T}, σ::Matrix{T})
+function fidelity(ρ::Matrix{T}, σ::Matrix{T}) where T<:Number
   if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
     error("Non square matrix detected")
   end
   return fidelity_sqrt(ρ, σ)^2
 end
 
-fidelity{T<:Union{Float64, Complex128}}(ϕ::Vector{T}, ψ::Vector{T}) = abs2(dot(ϕ, ψ))
-fidelity{T<:Union{Float64, Complex128}}(ϕ::Vector{T}, ρ::Matrix{T}) = ϕ' * ρ * ϕ
-fidelity{T<:Union{Float64, Complex128}}(ρ::Matrix{T}, ϕ::Vector{T}) = fidelity(ϕ, ρ)
+fidelity(ϕ::Vector{T}, ψ::Vector{T}) where T<:Number = abs2(dot(ϕ, ψ))
+fidelity(ϕ::Vector{T}, ρ::Matrix{T}) where T<:Number = ϕ' * ρ * ϕ
+fidelity(ρ::Matrix{T}, ϕ::Vector{T}) where T<:Number = fidelity(ϕ, ρ)
 
-shannon_entropy{T<:Real}(p::Vector{T}) = -sum(p .* log.(p))
+shannon_entropy(p::Vector{T}) where T<:Real = -sum(p .* log.(p))
 
-shannon_entropy{T<:Real}(x::T) = x > 0 ? -x * log(x) - (1 - x) * log(1 - x) : error("Negative number passed to shannon_entropy")
+shannon_entropy(x::T) where T<:Real = x > 0 ? -x * log(x) - (1 - x) * log(1 - x) : error("Negative number passed to shannon_entropy")
 
-function entropy{T<:Union{Float64, Complex128}}(ρ::Hermitian{T})
+function entropy(ρ::Hermitian{T}) where T<:Number
     λ = eigvals(ρ)
     λ = λ[λ .> 0]
     -sum(λ .* log(λ))
 end
 
-entropy{T<:Union{Float64, Complex128}}(H::Matrix{T}) = ishermitian(H) ? entropy(Hermitian(H)) : error("Non-hermitian matrix passed to entropy")
-entropy{T<:Union{Float64, Complex128}}(ϕ::Vector{T}) = 0.
+entropy(H::Matrix{T}) where T<:Number = ishermitian(H) ? entropy(Hermitian(H)) : error("Non-hermitian matrix passed to entropy")
+entropy(ϕ::Vector{T}) where T<:Number = zero(T)
