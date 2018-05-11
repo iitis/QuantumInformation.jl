@@ -1,6 +1,11 @@
 using QI
-⊗ = kron
-using Base.Test
+if VERSION<=v"0.7"
+    const ComplexF64 = Complex128
+    using Base.Test
+else
+    using LinearAlgebra
+    using Test
+end
 
 my_tests = ["utils.jl", "base.jl", "randommatrix.jl", "randomstate.jl"]
 

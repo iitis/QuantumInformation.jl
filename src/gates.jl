@@ -1,5 +1,5 @@
 function qft(dim::Int)
-  mtx=zeros(Complex{Float64},dim,dim)
+  mtx=zeros(ComplexF64,dim,dim)
   twopii = 2*pi*1im
   for i=0:dim-1
     for j=0:dim-1
@@ -10,7 +10,7 @@ function qft(dim::Int)
   return mtx
 end
 
-grover(dim::Int) = ones(Complex{Float64},dim,dim)*2/dim-diagm(ones(Complex{Float64},dim))
+grover(dim::Int) = ones(ComplexF64,dim,dim)*2/dim-diagm(ones(ComplexF64,dim))
 
 function hadamard(dim::Int)
   if(floor(log2(dim))!=log2(dim))
@@ -22,6 +22,6 @@ function hadamard(dim::Int)
   return mtx
 end
 
-sx = Complex{Float64}[0 1; 1 0]
-sy = Complex{Float64}[0 1im; -1im 0]
-sz = Complex{Float64}[1 0; 0 -1]
+sx = ComplexF64[0 1; 1 0]
+sy = ComplexF64[0 1im; -1im 0]
+sz = ComplexF64[1 0; 0 -1]

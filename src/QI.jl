@@ -1,5 +1,12 @@
 module QI
-⊗ = kron
+if VERSION<=v"0.7"
+    const ComplexF64 = Complex128
+else
+    using LinearAlgebra
+end
+
+
+const ⊗ = kron
 export ket, bra, ketbra, proj, base_matrices,
 res, unres,
 kraus_to_superoperator, channel_to_superoperator, apply_kraus,

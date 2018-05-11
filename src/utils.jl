@@ -1,50 +1,50 @@
-function renormalize!{T<:Union{Float64, Complex{Float64}}}(ϕ::Vector{T})
+function renormalize!(ϕ::Vector{T}) where T<:Union{Real, Complex}
     n = norm(ϕ)
     for i=1:length(ϕ)
         ϕ[i] = ϕ[i]/n
     end
 end
 
-function renormalize!{T<:Union{Float64, Complex{Float64}}}(ρ::Matrix{T})
+function renormalize!(ρ::Matrix{T}) where T<:Union{Real, Complex}
     t = trace(ρ)
     for i=1:length(ρ)
         ρ[i] = ρ[i]/t
     end
 end
 
-function funcmh!{T<:Union{Float64, Complex{Float64}}}(f::Function, H::Hermitian{T}, R::Matrix{T})
+function funcmh!(f::Function, H::Hermitian{T}, R::Matrix{T})  where T<:Union{Real, Complex}
     F = eigfact!(H)
-    for i=1:length(F[:values])
-        F[:values][i] = f(F[:values][i])
+    for i=1:length(F.values)
+        F.values[i] = f(F.values[i])
     end
-    times_diag = zeros(F[:vectors])
-    for i=1:size(F[:vectors], 2)
-        times_diag[:, i] = F[:vectors][:, i] * F[:values][i]
+    times_diag = zero(F.vectors)
+    for i=1:size(F.vectors, 2)
+        times_diag[:, i] = F.vectors[:, i] * F.values[i]
     end
-    A_mul_Bc!(R, times_diag, F[:vectors])
+    R = times_diag * F.vectors' # A_mul_Bc!(R, times_diag, F.vectors) deprecated
 end
 
-function funcmh!{T<:Union{Float64, Complex{Float64}}}(f::Function, H::Hermitian{T})
+function funcmh!(f::Function, H::Hermitian{T}) where T<:Union{Real, Complex}
     R = zeros(T, size(H))
     funcmh!(f, H, R)
     R
 end
 
-function funcmh{T<:Union{Float64, Complex{Float64}}}(f::Function, H::Hermitian{T})
+function funcmh(f::Function, H::Hermitian{T}) where T<:Union{Real, Complex}
     R = zeros(T, size(H))
     funcmh!(f, copy(H), R)
     R
 end
 
-function funcmh!{T<:Union{Float64, Complex{Float64}}}(f::Function, H::Matrix{T}, R::Matrix{T})
+function funcmh!(f::Function, H::Matrix{T}, R::Matrix{T}) where T<:Union{Real, Complex}
     ishermitian(H) ? funcmh!(f, Hermitian(H), R) : error("Non-hermitian matrix passed to funcmh")
 end
 
-function funcmh!{T<:Union{Float64, Complex{Float64}}}(f::Function, H::Matrix{T})
+function funcmh!(f::Function, H::Matrix{T}) where T<:Union{Real, Complex}
     ishermitian(H) ? funcmh!(f, Hermitian(H)) : error("Non-hermitian matrix passed to funcmh")
 end
 
-function funcmh{T<:Union{Float64, Complex{Float64}}}(f::Function, H::Matrix{T})
+function funcmh(f::Function, H::Matrix{T}) where T<:Union{Real, Complex}
     ishermitian(H) ? funcmh(f, Hermitian(H)) : error("Non-hermitian matrix passed to funcmh")
 end
 

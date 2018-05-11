@@ -4,9 +4,9 @@ function ket(::Type{T}, val::Int, dim::Int) where T<:Number
     ϕ
 end
 
-ket(val::Int, dim::Int) = ket(Complex{Float64}, val, dim)
+ket(val::Int, dim::Int) = ket(ComplexF64, val, dim)
 bra(::Type{T}, val::Int, dim::Int) where T<:Number = ket(T, val, dim)'
-bra(val::Int, dim::Int) = bra(Complex{Float64}, val, dim)
+bra(val::Int, dim::Int) = bra(ComplexF64, val, dim)
 
 function ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:Number
     ϕψ=zeros(T, dim, dim)
@@ -14,17 +14,23 @@ function ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:Number
     ϕψ
 end
 
-ketbra(valk::Int, valb::Int, dim::Int) = ketbra(Complex{Float64}, valk, valb, dim)
+ketbra(valk::Int, valb::Int, dim::Int) = ketbra(ComplexF64, valk, valb, dim)
 
 proj(ket::Vector{T}) where T<:Number = ket * ket'
 
-function base_matrices(dim)
-    function _it()
-        for i=0:dim-1, j=0:dim-1
-            produce(ketbra(j, i, dim))
-        end
+# function base_matrices(dim)
+#     function _it()
+#         for i=0:dim-1, j=0:dim-1
+#             produce(ketbra(j, i, dim))
+#         end
+#     end
+#     Task(_it)
+# end
+
+base_matrices(dim) = Channel() do c
+    for i=0:dim-1, j=0:dim-1
+        push!(c, ketbra(j, i, dim))
     end
-    Task(_it)
 end
 
 res(ρ::Matrix{T}) where T<:Number = vec(transpose(ρ))
@@ -36,10 +42,17 @@ end
 
 unres(ϕ::Vector{T}, m::Int64, n::Int64) where T<:Number = transpose(reshape(ϕ, n, m))
 
+# TODO: the following two functions are an ugly hack, they should inherit from AbstractVector
+unres(ϕ, m::Int64, n::Int64) where T<:Number = transpose(reshape(ϕ, n, m))
+function unres(ϕ) where T<:Number
+    s=round(Int, sqrt(size(ϕ, 1)), RoundDown)
+    transpose(reshape(ϕ, s, s))
+end
+
 kraus_to_superoperator(kraus_list::Vector{Matrix{T}}) where T<:Number = sum((k) -> kron(k, k'), kraus_list)
 
 function channel_to_superoperator(channel::Function, dim::Int)
-    M = zeros(Complex{Float64}, dim*dim, dim*dim)
+    M = zeros(ComplexF64, dim*dim, dim*dim)
     for (i, e) in enumerate(base_matrices(dim))
         M[:, i] = res(channel(e))
     end
@@ -157,7 +170,7 @@ function reshuffle(ρ::Matrix{T}) where T<:Number
   return reshape(tensor, r1*r2, c1*c2)
 end
 
-trace_distance(ρ::Matrix{T}, σ::Matrix{T}) where T<:Number = sum(abs(eigvals(Hermitian(ρ - σ))))
+trace_distance(ρ::Matrix{T}, σ::Matrix{T}) where T<:Number = sum(abs.(eigvals(Hermitian(ρ - σ))))
 function fidelity_sqrt(ρ::Matrix{T}, σ::Matrix{T}) where T<:Number
   if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
     error("Non square matrix detected")
