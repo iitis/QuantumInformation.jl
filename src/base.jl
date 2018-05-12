@@ -1,4 +1,6 @@
 function ket(::Type{T}, val::Int, dim::Int) where T<:Number
+    dim > 0 ? () : error("Vector dimension has to be nonnegative")
+    val < dim ? () : error("Label have to be smaller than vector dimmension")
     ϕ=zeros(T, dim)
     ϕ[val+1] = one(T)
     ϕ
@@ -9,6 +11,8 @@ bra(::Type{T}, val::Int, dim::Int) where T<:Number = ket(T, val, dim)'
 bra(val::Int, dim::Int) = bra(ComplexF64, val, dim)
 
 function ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:Number
+    dim > 0 ? () : error("Vector dimension has to be nonnegative")
+    valk < dim && valb < dim ? () : error("Ket and bra labels have to be smaller than operator dimmension")
     ϕψ=zeros(T, dim, dim)
     ϕψ[valk+1,valb+1] = one(T)
     ϕψ
@@ -28,6 +32,7 @@ proj(ket::Vector{T}) where T<:Number = ket * ket'
 # end
 
 base_matrices(dim) = Channel() do c
+    dim > 0 ? () : error("Operator dimension has to be nonnegative")
     for i=0:dim-1, j=0:dim-1
         push!(c, ketbra(j, i, dim))
     end
@@ -36,20 +41,22 @@ end
 res(ρ::AbstractMatrix{T}) where T<:Number = vec(transpose(ρ))
 
 function unres(ϕ::AbstractVector{T}) where T<:Number
-    s=round(Int, sqrt(size(ϕ, 1)), RoundDown)
+    dim = size(ϕ, 1)
+    s = isqrt(dim)
+    s*s == dim ? () : error("Vector has to have dimensions being a square of an integer number")
     transpose(reshape(ϕ, s, s))
 end
 
-unres(ϕ::AbstractVector{T}, m::Int64, n::Int64) where T<:Number = transpose(reshape(ϕ, n, m))
+unres(ϕ::AbstractVector{T}, m::Int, n::Int) where T<:Number = transpose(reshape(ϕ, n, m))
 
-function unres(ϕ::AbstractVector{T}) where T<:Number
-    s=round(Int, sqrt(size(ϕ, 1)), RoundDown)
-    transpose(reshape(ϕ, s, s))
-end
 function kraus_to_superoperator(kraus_list::Vector{T}) where {T<:AbstractMatrix{T1}} where {T1<:Number}
+    # TODO: chceck if all Kraus operators are the same shape
     sum((k) -> kron(k, k'), kraus_list)
 end
+
 function channel_to_superoperator(channel::Function, dim::Int)
+    dim > 0 ? () : error("Channel dimension has to be nonnegative")
+
     M = zeros(ComplexF64, dim*dim, dim*dim)
     for (i, e) in enumerate(base_matrices(dim))
         M[:, i] = res(channel(e))
@@ -57,7 +64,9 @@ function channel_to_superoperator(channel::Function, dim::Int)
     M
 end
 
+# TODO: allow different type of Kraus operators and the quantum state
 function apply_kraus(kraus_list::Vector{T}, ρ::T) where {T<:AbstractMatrix{T1}} where {T1<:Number}
+    # TODO: chceck if all Kraus operators are the same shape and fit the input state
     sum(k-> k*ρ*k', kraus_list)
 end
 
@@ -93,7 +102,8 @@ function ptrace(ρ::AbstractMatrix{T}, idims::Vector, isystems::Vector) where T<
     end
     return ret
 end
-#TODO: allow for more than bipartite systems???
+
+# TODO: allow for more than bipartite systems???
 function ptrace(ϕ::AbstractVector{T}, idims::Vector, isystem::Int) where T<:Number
     A = unres(ϕ, idims...)
     if isystem == 1
@@ -161,8 +171,8 @@ end
 """
 function reshuffle(ρ::AbstractMatrix{T}) where T<:Number
   (r, c) = size(ρ)
-  sqrtr = round(Int, sqrt(r), RoundDown)
-  sqrtc = round(Int, sqrt(c), RoundDown)
+  sqrtr = isqrt(r)
+  sqrtc = isqrt(c)
   tensor = reshape(ρ, sqrtr, sqrtr, sqrtc, sqrtc)
   perm = [4, 2, 3, 1]
   tensor = permutedims(tensor, perm)
@@ -171,9 +181,10 @@ function reshuffle(ρ::AbstractMatrix{T}) where T<:Number
 end
 
 trace_distance(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number = sum(abs.(eigvals(Hermitian(ρ - σ))))
+
 function fidelity_sqrt(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
   if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
-    error("Non square matrix detected")
+    error("Non square matrix")
   end
   λ = real(eigvals(ρ * σ))
   r = sum(sqrt.(λ[λ.>0]))
@@ -181,7 +192,7 @@ end
 
 function fidelity(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
   if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
-    error("Non square matrix detected")
+    error("Non square matrix")
   end
   return fidelity_sqrt(ρ, σ)^2
 end

@@ -1,6 +1,6 @@
 function qft(dim::Int)
   mtx=zeros(ComplexF64,dim,dim)
-  twopii = 2*pi*1im
+  twopii = 2*π*1im
   for i=0:dim-1
     for j=0:dim-1
       mtx[i+1,j+1]=exp(twopii*i*j/dim)
