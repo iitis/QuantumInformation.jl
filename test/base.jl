@@ -1,4 +1,6 @@
-function test_ket()
+@testset "Basic functions" begin
+
+@testset "test_ket" begin
     ϕ = ket(0, 4)
     ψ = ComplexF64[1, 0, 0, 0]
     @test norm(ϕ - ψ) ≈ 0.
@@ -7,7 +9,7 @@ function test_ket()
     # @test typeof(ket(ComplexF64, 0, 4)) == Vector{ComplexF64}
 end
 
-function test_bra()
+@testset "test_bra" begin
     ϕ = bra(0, 4)
     ψ = ComplexF64[1 0 0 0]
     @test norm(ϕ - ψ) ≈ 0.
@@ -16,7 +18,7 @@ function test_bra()
     # @test typeof(bra(ComplexF64, 0, 4)) == LinearAlgebra.Adjoint{Complex{Float64},Array{Complex{Float64},1}}
 end
 
-function test_ketbra()
+@testset "test_ketbra" begin
     ϕψ = ketbra(0, 0, 4)
     αβ = zeros(ComplexF64, 4, 4)
     αβ[1, 1] = 1
@@ -25,7 +27,7 @@ function test_ketbra()
     @test typeof(ketbra(ComplexF64, 0, 0, 4)) == Matrix{ComplexF64}
 end
 
-function test_proj()
+@testset "test_proj" begin
     ϕ = ket(0, 4)
     ϕϕ = proj(ϕ)
     ψψ = zeros(ComplexF64, 4 ,4)
@@ -33,7 +35,7 @@ function test_proj()
     @test norm(ϕϕ - ψψ) ≈ 0.
 end
 
-function test_base_matrices()
+@testset "test_base_matrices" begin
     d = 4
     m = collect(Matrix{ComplexF64}, base_matrices(4))
     for i=1:d, j=1:d
@@ -42,14 +44,14 @@ function test_base_matrices()
     end
 end
 
-function test_res()
+@testset "test_res" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     ϕ = res(ρ)
     ψ = [0.25, 0.25im, -0.25im, 0.75]
     @test norm(ϕ - ψ) ≈ 0.
 end
 
-function test_unres()
+@testset "test_unres" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = unres(res(ρ))
     @test norm(ρ - σ) ≈ 0.
@@ -57,7 +59,7 @@ function test_unres()
     @test norm(unres([1, 2.1, 3, 4 ,5, 6], 2, 3) - a) ≈ 0.
 end
 
-function test_kraus_to_superoperator()
+@testset "test_kraus_to_superoperator" begin
     α = 0.25
     K₁ = ComplexF64[0 sqrt(α); 0 0]
     K₂ = ComplexF64[1 0; 0 sqrt(1 - α)]
@@ -68,14 +70,14 @@ function test_kraus_to_superoperator()
     @test norm(T-M) ≈ 0 atol=1e-15
 end
 
-function test_channel_to_superoperator()
+@testset "test_channel_to_superoperator" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     T = hcat([ComplexF64[0.25, 0.25im, -0.25im, 0.75] for i=1:4]...) #stack res ρ
     M = channel_to_superoperator(x -> ρ, 2)
     @test norm(T-M) ≈ 0. atol=1e-15
 end
 
-function test_apply_kraus()
+@testset "test_apply_kraus" begin
     α = 0.25
     K₁ = ComplexF64[0 sqrt(α); 0 0]
     K₂ = ComplexF64[1 0; 0 sqrt(1 - α)]
@@ -88,7 +90,7 @@ function test_apply_kraus()
     @test norm(σ - ξ) ≈ 0. atol=1e-15
 end
 
-function test_ptrace()
+@testset "test_ptrace" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = [0.4 0.1im; -0.1im 0.6]
     ξ = ptrace(ρ ⊗ σ, [2, 2], [2,])
@@ -101,7 +103,7 @@ function test_ptrace()
     @test norm(ξ - eye(2)/2) ≈ 0. atol=1e-15
 end
 
-function test_ptranspose()
+@testset "test_ptranspose" begin
   ρ =  ComplexF64[1 2 3 4; 5 6 7 8; 9 10 11 12; 13 14 15 16]
   trans1 = [1 2 9 10; 5 6 13 14; 3 4 11 12; 7 8 15 16]
   trans2 = [1 5 3 7; 2 6 4 8; 9 13 11 15; 10 14 12 16]
@@ -109,26 +111,26 @@ function test_ptranspose()
   @test norm(ptranspose(ρ, [2, 2], [2]) - trans2) ≈ 0. atol=1e-15
 end
 
-#function test_number2mixedradix()
+#@testset "test_number2mixedradix" begin
 #    number = 486
 #    bases = Int64[8, 42, 2]
 #    println(number2mixedradix(number, bases))
 #    @test number2mixedradix(number, bases) == Int64[3, 7, 0]
 #end
 
-#function test_mixedradix2number()
+#@testset "test_mixedradix2number" begin
 #    number = Int64[3, 7, 0]
 #    bases = Int64[8, 42, 2]
 #    @test mixedradix2number(number, bases) == 486
 #end
 
-function test_reshuffle()
+@testset "test_reshuffle" begin
     X = reshape([1:16;], 4, 4)'
     T = [1 2 5 6; 3 4 7 8; 9 10 13 14; 11 12 15 16]
     @test reshuffle(X) == T
 end
 
-function test_trace_distance()
+@testset "test_trace_distance" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = [0.4 0.1im; -0.1im 0.6]
 
@@ -136,13 +138,13 @@ function test_trace_distance()
     @test trace_distance(ρ, σ) ≈ 0.42426406871192857 atol=1e-15
 end
 
-function test_fidelity_sqrt()
+@testset "test_fidelity_sqrt" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = [0.4 0.1im; -0.1im 0.6]
     @test fidelity_sqrt(ρ, σ) ≈ real(trace(sqrtm(sqrtm(ρ) * σ * sqrtm(ρ)))) atol=1e-15
 end
 
-function test_fidelity()
+@testset "test_fidelity" begin
     ϕ = ket(0, 2)
     ψ = ket(1, 2)
     ρ = [0.25 0.25im; -0.25im 0.75]
@@ -154,72 +156,17 @@ function test_fidelity()
     @test fidelity(ρ, σ) ≈ real(trace(sqrtm(sqrtm(ρ) * σ * sqrtm(ρ))))^2 atol=1e-15
 end
 
-function test_shannon_entropy()
+@testset "test_shannon_entropy" begin
     @test shannon_entropy(1/2) ≈ log(2) atol=1e-15
-    @test shannon_entropy(1/4) ≈ 0.562335 atol=1e-15
+    @test shannon_entropy(1/4) ≈ 0.5623351446188083 atol=1e-15
     @test shannon_entropy(0.5*ones(20)) ≈ 10log(2) atol=1e-15
 end
 
-function test_entropy()
+@testset "test_entropy" begin
     ϕ = ket(0, 2)
     ρ = [0.25 0.25im; -0.25im 0.75]
     @test entropy(ϕ) == 0
     #TODO: add tests for mixed states
 end
 
-println("testing ket")
-test_ket()
-
-println("testing bra")
-test_bra()
-
-println("testing ketbra")
-test_ketbra()
-
-println("testing proj")
-test_proj()
-
-println("testing base_matrices")
-test_base_matrices()
-
-println("testing res")
-test_res()
-
-println("testing unres")
-test_unres()
-
-println("testing kraus_to_superoperator")
-test_kraus_to_superoperator()
-
-println("testing channel_to_superoperator")
-test_channel_to_superoperator()
-
-println("testing apply_kraus")
-test_apply_kraus()
-
-println("testing ptrace")
-test_ptrace()
-
-println("testing ptranspose")
-test_ptranspose()
-
-#println("testing number2mixedradix")
-#test_number2mixedradix()
-
-#println("testing mixedradix2number")
-#test_mixedradix2number()
-
-println("testing reshuffle")
-test_reshuffle()
-
-println("testing trace_distance")
-test_trace_distance()
-
-println("testing fidelity_sqrt")
-test_fidelity_sqrt()
-
-println("testing fidelity")
-test_fidelity()
-
-println("testing entropy")
-test_entropy()
+end

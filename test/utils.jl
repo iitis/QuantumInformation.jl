@@ -1,4 +1,6 @@
-function test_funcmh()
+@testset "Utility functions" begin
+
+@testset "test_funcmh" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     R = zeros(ρ)
     ref = expm(ρ)
@@ -9,5 +11,4 @@ function test_funcmh()
     @test R ≈ ref atol=1e-15
 end
 
-println("testing funcmh")
-test_funcmh() 
+end

@@ -1,4 +1,6 @@
-function test_random_ket()
+@testset "Random states" begin
+
+@testset "test_random_ket" begin
     ϕ = zeros(Float64, 20)
     ψ = zeros(ComplexF64, 20)
     random_ket!(ϕ)
@@ -25,7 +27,7 @@ function test_random_ket()
     @test sum(abs2.(ϕ)) ≈ 1. atol=1e-15
 end
 
-function test_random_mixed_state_hs()
+@testset "test_random_mixed_state_hs" begin
     ρ = zeros(Float64, 20, 20)
     σ = zeros(ComplexF64, 20, 20)
     random_mixed_state_hs!(ρ)
@@ -57,7 +59,7 @@ function test_random_mixed_state_hs()
     @test trace(ρ) ≈ 1. atol=1e-15
 end
 
-function test_random_jamiolkowski_state()
+@testset "test_random_jamiolkowski_state" begin
     n = 10
     J = zeros(Float64, n^2, n^2)
     random_jamiolkowski_state!(J)
@@ -85,11 +87,4 @@ function test_random_jamiolkowski_state()
     @test typeof(J) == Matrix{ComplexF64}
 end
 
-println("testing random_ket")
-test_random_ket()
-
-println("testing random_mixed_state_hs")
-test_random_mixed_state_hs()
-
-println("testing random_jamiolkowski_state")
-test_random_jamiolkowski_state()
+end
