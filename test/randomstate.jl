@@ -1,6 +1,6 @@
 @testset "Random states" begin
 
-@testset "test_random_ket" begin
+@testset "random_ket" begin
     ϕ = zeros(Float64, 20)
     ψ = zeros(ComplexF64, 20)
     random_ket!(ϕ)
@@ -27,7 +27,7 @@
     @test sum(abs2.(ϕ)) ≈ 1. atol=1e-15
 end
 
-@testset "test_random_mixed_state_hs" begin
+@testset "random_mixed_state_hs" begin
     ρ = zeros(Float64, 20, 20)
     σ = zeros(ComplexF64, 20, 20)
     random_mixed_state_hs!(ρ)
@@ -59,7 +59,7 @@ end
     @test trace(ρ) ≈ 1. atol=1e-15
 end
 
-@testset "test_random_jamiolkowski_state" begin
+@testset "random_jamiolkowski_state" begin
     n = 10
     J = zeros(Float64, n^2, n^2)
     random_jamiolkowski_state!(J)
