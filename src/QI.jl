@@ -3,8 +3,8 @@ if VERSION<=v"0.7"
     const ComplexF64 = Complex128
 else
     using LinearAlgebra
+    using SparseArrays
 end
-
 
 const ⊗ = kron
 export ket, bra, ketbra, proj, base_matrices,

@@ -1,26 +1,62 @@
-function ket(::Type{T}, val::Int, dim::Int) where T<:Number
+function ket(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractVector{T} where T<:Number
     dim > 0 ? () : error("Vector dimension has to be nonnegative")
     val < dim ? () : error("Label have to be smaller than vector dimmension")
-    ϕ=zeros(T, dim)
+    ϕ = zeros(T, dim)
     ϕ[val+1] = one(T)
     ϕ
 end
 
-ket(val::Int, dim::Int) = ket(ComplexF64, val, dim)
-bra(::Type{T}, val::Int, dim::Int) where T<:Number = ket(T, val, dim)'
-bra(val::Int, dim::Int) = bra(ComplexF64, val, dim)
+function ket(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractSparseVector{T} where T<:Number
+    dim > 0 ? () : error("Vector dimension has to be nonnegative")
+    val < dim ? () : error("Label have to be smaller than vector dimmension")
+    ϕ = spzeros(T, dim)
+    ϕ[val+1] = one(T)
+    ϕ
+end
 
-function ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:Number
+function ket(val::Int, dim::Int; sparse=false)
+    if sparse==true
+        return ket(SparseVector{ComplexF64}, val, dim)
+    else
+        return ket(Vector{ComplexF64}, val, dim)
+    end
+end
+
+bra(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractVector{T} where T<:Number = ket(Tv, val, dim)'
+
+function bra(val::Int, dim::Int; sparse=false)
+    if sparse==true
+        return bra(SparseVector{ComplexF64}, val, dim)
+    else
+        return bra(Vector{ComplexF64}, val, dim)
+    end
+end
+
+function ketbra(::Type{Tv}, valk::Int, valb::Int, dim::Int) where Tv<:AbstractMatrix{T} where T<:Number
     dim > 0 ? () : error("Vector dimension has to be nonnegative")
     valk < dim && valb < dim ? () : error("Ket and bra labels have to be smaller than operator dimmension")
-    ϕψ=zeros(T, dim, dim)
+    ϕψ = zeros(T, dim, dim)
     ϕψ[valk+1,valb+1] = one(T)
     ϕψ
 end
 
-ketbra(valk::Int, valb::Int, dim::Int) = ketbra(ComplexF64, valk, valb, dim)
+function ketbra(::Type{Tv}, valk::Int, valb::Int, dim::Int) where Tv<:AbstractSparseMatrix{T} where T<:Number
+    dim > 0 ? () : error("Vector dimension has to be nonnegative")
+    valk < dim && valb < dim ? () : error("Ket and bra labels have to be smaller than operator dimmension")
+    ϕψ = spzeros(T, dim, dim)
+    ϕψ[valk+1,valb+1] = one(T)
+    ϕψ
+end
 
-proj(ket::Vector{T}) where T<:Number = ket * ket'
+function ketbra(valk::Int, valb::Int, dim::Int; sparse=false)
+    if sparse==true
+        return ketbra(SparseMatrixCSC{ComplexF64}, valk, valb, dim)
+    else
+        return ketbra(Matrix{ComplexF64}, valk, valb, dim)
+    end
+end
+
+proj(ket::AbstractVector{T}) where T<:Number = ket * ket'
 
 # function base_matrices(dim)
 #     function _it()
