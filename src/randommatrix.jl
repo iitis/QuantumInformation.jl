@@ -48,7 +48,6 @@ function random_dynamical_matrix!(J::AbstractMatrix{T}) where T<:Union{Real, Com
     X = J*J' # A_mul_Bc(J, J) deprecated
     Y = ptrace(X, [n, n], [1])
     sY = funcmh!(x -> 1 / sqrt(x), Y)
-    # TODO: There is a bug here
     onesY = eye(n,n) ⊗ sY
     J[:] = onesY * X * onesY' # A_mul_B!(J, eye(n,n) ⊗ sY * X, eye(n,n) ⊗ sY) deprecated
 end

@@ -1,9 +1,9 @@
-function random_ket(ϕ::T) where {T<:AbstractVector{T1}} where {T1<:Real}
+function random_ket!(ϕ::T) where {T<:AbstractVector{T1}} where {T1<:Real}
     randn!(ϕ)
     renormalize!(ϕ)
 end
 
-function random_ket!(ϕ::Vector{T}) where {T<:AbstractVector{T1}} where {T1<:Complex}
+function random_ket!(ϕ::T) where {T<:AbstractVector{T1}} where {T1<:Complex}
     for i=1:length(ϕ)
         ϕ[i] = randn() + 1im * randn()
     end
@@ -20,13 +20,13 @@ random_ket(d::Int) = random_ket(ComplexF64, d)
 
 function random_mixed_state_hs!!(ρ::AbstractMatrix{T}, A::AbstractMatrix{T}) where T<:Real
     random_ginibre_matrix!(A)
-    A_mul_Bt!(ρ, A, A)
+    ρ[:] = A*A'    # A_mul_Bt!(ρ, A, A) deprecated
     renormalize!(ρ)
 end
 
 function random_mixed_state_hs!!(ρ::AbstractMatrix{T}, A::AbstractMatrix{T}) where T<:Complex
     random_ginibre_matrix!(A)
-    ρ = A*A'    # A_mul_Bc!(ρ, A, A) deprecated
+    ρ[:] = A*A'    # A_mul_Bc!(ρ, A, A) deprecated
     renormalize!(ρ)
 end
 

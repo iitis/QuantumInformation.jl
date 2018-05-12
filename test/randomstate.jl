@@ -7,8 +7,8 @@ function test_random_ket()
     @test length(ψ) == 20
     @test typeof(ϕ) == Vector{Float64}
     @test typeof(ψ) == Vector{ComplexF64}
-    @test sum(abs2(ϕ)) ≈ 1. atol=1e-15
-    @test sum(abs2(ψ)) ≈ 1. atol=1e-15
+    @test sum(abs2.(ϕ)) ≈ 1. atol=1e-15
+    @test sum(abs2.(ψ)) ≈ 1. atol=1e-15
 
     ϕ = random_ket(Float64, 100)
     ψ = random_ket(ComplexF64, 100)
@@ -16,13 +16,13 @@ function test_random_ket()
     @test length(ψ) == 100
     @test typeof(ϕ) == Vector{Float64}
     @test typeof(ψ) == Vector{ComplexF64}
-    @test sum(abs2(ϕ)) ≈ 1. atol=1e-15
-    @test sum(abs2(ψ)) ≈ 1. atol=1e-15
+    @test sum(abs2.(ϕ)) ≈ 1. atol=1e-15
+    @test sum(abs2.(ψ)) ≈ 1. atol=1e-15
 
     ϕ = random_ket(100)
     @test length(ϕ) == 100
     @test typeof(ϕ) == Vector{ComplexF64}
-    @test sum(abs2(ϕ)) ≈ 1. atol=1e-15
+    @test sum(abs2.(ϕ)) ≈ 1. atol=1e-15
 end
 
 function test_random_mixed_state_hs()
@@ -34,8 +34,8 @@ function test_random_mixed_state_hs()
     @test size(σ) == (20, 20)
     @test typeof(ρ) == Matrix{Float64}
     @test typeof(σ) == Matrix{ComplexF64}
-    @test ishermitian(ρ)
-    @test ishermitian(σ)
+    @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
+    @test norm(σ - σ') ≈ 0. atol=1e-13 # is close to hermitian
     @test trace(ρ) ≈ 1. atol=1e-15
     @test trace(σ) ≈ 1. atol=1e-15
 
@@ -45,15 +45,15 @@ function test_random_mixed_state_hs()
     @test size(σ) == (20, 20)
     @test typeof(ρ) == Matrix{Float64}
     @test typeof(σ) == Matrix{ComplexF64}
-    @test ishermitian(ρ)
-    @test ishermitian(σ)
+    @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
+    @test norm(σ - σ') ≈ 0. atol=1e-13 # is close to hermitian
     @test trace(ρ) ≈ 1. atol=1e-15
     @test trace(σ) ≈ 1. atol=1e-15
 
     ρ = random_mixed_state_hs(20)
     @test size(ρ) == (20, 20)
     @test typeof(ρ) == Matrix{Complex{Float64}}
-    @test ishermitian(ρ)
+    @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
     @test trace(ρ) ≈ 1. atol=1e-15
 end
 

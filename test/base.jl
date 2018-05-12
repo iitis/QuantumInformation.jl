@@ -2,7 +2,7 @@ function test_ket()
     ϕ = ket(0, 4)
     ψ = ComplexF64[1, 0, 0, 0]
     @test norm(ϕ - ψ) ≈ 0.
-    # TODO : Fix these tests
+    # TODO : Fix these tests: types depend on julia version
     # @test typeof(ket(Float64, 0, 4)) == Vector{Float64}
     # @test typeof(ket(ComplexF64, 0, 4)) == Vector{ComplexF64}
 end
@@ -11,7 +11,7 @@ function test_bra()
     ϕ = bra(0, 4)
     ψ = ComplexF64[1 0 0 0]
     @test norm(ϕ - ψ) ≈ 0.
-    #TODO : Fix these tests
+    #TODO : Fix these tests: types depend on julia version
     # @test typeof(bra(Float64, 0, 4)) == LinearAlgebra.Adjoint{Float64,Array{Float64,1}}
     # @test typeof(bra(ComplexF64, 0, 4)) == LinearAlgebra.Adjoint{Complex{Float64},Array{Complex{Float64},1}}
 end

@@ -10,4 +10,4 @@ function test_funcmh()
 end
 
 println("testing funcmh")
-# test_funcmh() TODO: rewrite this function
+test_funcmh() 
