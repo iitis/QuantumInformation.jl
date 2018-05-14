@@ -112,6 +112,12 @@ end
   trans2 = [1 5 3 7; 2 6 4 8; 9 13 11 15; 10 14 12 16]
   @test norm(ptranspose(ρ, [2, 2], [1]) - trans1) ≈ 0. atol=1e-15
   @test norm(ptranspose(ρ, [2, 2], [2]) - trans2) ≈ 0. atol=1e-15
+
+  ρ = sparse(ρ)
+  trans1 = sparse(trans1)
+  trans2 = sparse(trans2)
+  @test norm(ptranspose(ρ, [2, 2], 1) - trans1, 1) ≈ 0. atol=1e-15
+  @test norm(ptranspose(ρ, [2, 2], 2) - trans2, 1) ≈ 0. atol=1e-15
 end
 
 #@testset "number2mixedradix" begin
