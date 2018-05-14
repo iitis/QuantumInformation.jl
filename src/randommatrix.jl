@@ -58,3 +58,16 @@ function random_dynamical_matrix(::Type{T}, n::Int) where T<:Union{Real, Complex
 end
 
 random_dynamical_matrix(n::Int) = random_dynamical_matrix(ComplexF64, n)
+
+function random_isometry(n::Int, m::Int)
+    z = random_ginibre_matrix(n, m)/sqrt(2.0)
+    q,r = qr(z)
+    d = diag(r)
+    ph = d./abs.(d)
+    return q.*repmat(ph, 1, size(q, 1))'
+end
+
+function random_dynamical_matrix2(d1::Int, d2::Int, s::Int)
+    v = random_isometry(d2*s, d1)
+    (eye(d2) ⊗ v.')*(proj(res(eye(d2))) ⊗ eye(s))*(eye(d2) ⊗ conj(v))
+end
