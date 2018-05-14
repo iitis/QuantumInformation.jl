@@ -1,9 +1,8 @@
 random_ginibre_matrix!(A::AbstractMatrix{T}) where T<:Real = randn!(A)
 
 function random_ginibre_matrix!(A::AbstractMatrix{T}) where T<:Complex
-    for i=1:length(A)
-        A[i] = randn() + 1im * randn()
-    end
+    n = prod(size(A))
+    A[:] = randn(n) + 1im*randn(n)
 end
 
 function random_ginibre_matrix(::Type{T}, m::Int, n::Int) where T<:Union{Real, Complex}
@@ -21,24 +20,24 @@ function random_unitary(n::Int)
   q,r = qr(z)
   d = diag(r)
   ph = d./abs.(d)
-  return q.*repmat(ph,1,size(ph)[1])'
+  return q.*repmat(ph, 1, size(ph, 1))'
 end
 
 function random_orthogonal(n::Int)
-     z = randn(n,n)
+     z = randn(n, n)
      q,r = qr(z)
      d = diag(r)
      ph = d./abs.(d)
-     return q.*repmat(ph,1,size(ph)[1])'
+     return q.*repmat(ph, 1, size(ph, 1))'
 end
 
 function random_GOE(n::Int)
-    H = randn(n,n)
+    H = random_ginibre_matrix(Float64, n)
     return (H+H')/2
 end
 
 function random_GUE(n::Int)
-    H = randn(n,n)+1im*randn(n,n)
+    H = random_ginibre_matrix(n)
     return (H+H')/2
 end
 
