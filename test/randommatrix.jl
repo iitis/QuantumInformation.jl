@@ -1,3 +1,5 @@
+using StatsBase
+
 @testset "Random matrices" begin
 
 @testset "random_dynamical_matrix" begin
@@ -29,9 +31,52 @@
 end
 
 @testset "random_unitary" begin
-  n = 10
-  U = random_unitary(n)
-  @test norm(U*U' - eye(n)) ≈ 0 atol=1e-13
+    n = 10
+    U = random_unitary(n)
+    @test norm(U*U' - eye(n)) ≈ 0 atol=1e-13
+
+    srand(42)
+    n = 100
+    steps = 100
+    r = zeros(steps, n)
+
+    for i=1:steps
+        U = random_unitary(n)
+        r[i, :] = angle.(eigvals(U))
+    end
+    r = vec(r)
+    h = normalize(fit(Histogram, r, weights(ones(r)), -π:0.1π:π, closed=:left))
+    @test all(isapprox.(h.weights, 1/2π, atol=0.01))
+end
+
+@testset "random_orthogonal" begin
+    n = 10
+    O = random_orthogonal(n)
+    @test norm(O*O' - eye(n)) ≈ 0 atol=1e-13
+
+    srand(42)
+    n = 100
+    steps = 100
+    r = zeros(steps, n)
+    for i=1:steps
+        U = random_unitary(n)
+        r[i, :] = angle.(eigvals(U))
+    end
+    r = vec(r)
+    h = normalize(fit(Histogram, r, weights(ones(r)), -π:0.1π:π, closed=:left))
+    @test all(isapprox.(h.weights, 1/2π, atol=0.1))
+end
+
+@testset "random GUE/GOE" begin
+    n = 10
+    @test ishermitian(random_GUE(n))
+    @test ishermitian(random_GOE(n))
+end
+
+@testset "random_dynamical_matrix" begin
+    n = 10
+    J = random_dynamical_matrix(n)
+    @test norm(ptrace(J, [n, n], [1]) - eye(n)) ≈ 0 atol=1e-12
 end
 
 end
