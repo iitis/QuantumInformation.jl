@@ -1,40 +1,4 @@
-
-doc""
 function ket(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractVector{T} where T<:Number
-    """
-    A ket of length `dim` with the entry `val` equal to one.
-
-    Parameters
-    ----------
-    val : integer
-        Non-zero entry.
-    dim : integer
-        Length of the ket
-    Returns
-    -------
-    ket : matrix
-        A matrix of the shape (`dim`, 1), with the specified
-        entry equal to one.
-
-    See Also
-    --------
-    bra : Creates a bra.
-    Examples
-    --------
-    >>> ket(0,2)
-    matrix([[ 1.],
-        [ 0.]])
-    >>> ket(1,8)
-    matrix([[ 0.],
-        [ 1.],
-        [ 0.],
-        [ 0.],
-        [ 0.],
-        [ 0.],
-        [ 0.],
-        [ 0.]])
-    """
-
     dim > 0 ? () : error("Vector dimension has to be nonnegative")
     val < dim ? () : error("Label have to be smaller than vector dimmension")
     ϕ = zeros(T, dim)
@@ -50,6 +14,15 @@ function ket(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractSparseVector{T} w
     ϕ
 end
 
+"""
+    $(SIGNATURES)
+
+  - `val::Int`: non-zero entry - label.
+  - `dim::Int`: length of the vector.
+  - `sparse:Bool` : sparse\/dense option. Optional `sparse=false`.
+
+    Return column vector describing quantum state
+"""
 function ket(val::Int, dim::Int; sparse=false)
     if sparse==true
         return ket(SparseVector{ComplexF64}, val, dim)
@@ -58,8 +31,18 @@ function ket(val::Int, dim::Int; sparse=false)
     end
 end
 
+
 bra(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractVector{T} where T<:Number = ket(Tv, val, dim)'
 
+"""
+  $(SIGNATURES)
+
+  - `val::Int`: non-zero entry - label.
+  - `dim::Int`: length of the vector
+  - `sparse:Bool` : sparse\/dense option. Optional `sparse=false`.
+
+  Return Hermitian conjugate of the ket with the same label.
+"""
 function bra(val::Int, dim::Int; sparse=false)
     if sparse==true
         return bra(SparseVector{ComplexF64}, val, dim)
@@ -121,6 +104,9 @@ end
 
 unres(ϕ::AbstractVector{T}, m::Int, n::Int) where T<:Number = transpose(reshape(ϕ, n, m))
 
+"""
+Transforms list of Kraus operators into super-operator matrix.
+"""
 function kraus_to_superoperator(kraus_list::Vector{T}) where {T<:AbstractMatrix{T1}} where {T1<:Number}
     # TODO: chceck if all Kraus operators are the same shape
     sum((k) -> kron(k, k'), kraus_list)
@@ -237,9 +223,13 @@ function mixedradix2number(digits::Vector{Int}, bases::Vector{Int})
 end
 
 """
+  $(SIGNATURES)
+
+  - `ρ::AbstractMatrix`: reshuffled matrix.
+
   Performs reshuffling of indices of a matrix.
-  Given multiindexed matrix M_{(m,μ),(n,ν)} it returns
-  matrix M_{(m,n),(μ,ν)}.
+  Given multiindexed matrix \$M_{(m,μ),(n,ν)}\$ it returns
+  matrix \$M_{(m,n),(μ,ν)}\$.
 """
 function reshuffle(ρ::AbstractMatrix{T}) where T<:Number
   (r, c) = size(ρ)
@@ -252,8 +242,36 @@ function reshuffle(ρ::AbstractMatrix{T}) where T<:Number
   return reshape(tensor, r1*r2, c1*c2)
 end
 
+"""
+  $(SIGNATURES)
+
+  - `ρ::AbstractMatrix`: matrix.
+  - `σ::AbstractMatrix`: matrix.
+  Original equation:
+  \$\\delta(\\rho,\\sigma)=\\frac{1}{2}\\mathrm{tr}(|\\rho-\\sigma|)\$
+
+  Equivalent faster method:
+  \$\\delta(A,B)=\\frac{1}{2} \\sum_i \\sigma_i(A-B)\$
+  http://www.quantiki.org/wiki/Trace_distance
+"""
 trace_distance(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number = sum(abs.(eigvals(Hermitian(ρ - σ))))
 
+"""
+  $(SIGNATURES)
+
+  - `ρ::AbstractMatrix`: matrix.
+  - `σ::AbstractMatrix`: matrix.
+    Original equation:
+    \$\\sqrt{F}(\\rho,\\sigma)=\\textrm{tr}\\sqrt{\\sqrt{\\rho}\\sigma\\sqrt{\\rho}}\$
+
+    http://www.quantiki.org/wiki/Fidelity
+
+    Equivalent faster method:
+    \$\\sqrt{F}(\\rho,\\sigma)=\\sum_i \\sqrt{\\lambda_i(AB)}\$
+
+    ``Sub-- and super--fidelity as bounds for quantum fidelity''
+    Quantum Information & Computation, Vol.9 No.1&2 (2009)
+"""
 function fidelity_sqrt(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
   if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
     error("Non square matrix")
@@ -262,6 +280,15 @@ function fidelity_sqrt(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Nu
   r = sum(sqrt.(λ[λ.>0]))
 end
 
+"""
+  $(SIGNATURES)
+
+  - `ρ::AbstractMatrix`: matrix.
+  - `σ::AbstractMatrix`: matrix.
+  \$F(\\rho,\\sigma)=\\left(\\textrm{tr}\\sqrt{\\sqrt{\\rho}\\sigma\\sqrt{\\rho}}\\right)^2\$
+
+  http://www.quantiki.org/wiki/Fidelity
+"""
 function fidelity(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
   if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
     error("Non square matrix")
@@ -277,6 +304,18 @@ shannon_entropy(p::AbstractVector{T}) where T<:Real = -sum(p .* log.(p))
 
 shannon_entropy(x::T) where T<:Real = x > 0 ? -x * log(x) - (1 - x) * log(1 - x) : error("Negative number passed to shannon_entropy")
 
+"""
+  $(SIGNATURES)
+
+    - `ρ::AbstractMatrix`: matrix.
+    Calculates the von Neuman entropy of positive matrix \$\\rho\$
+    
+    \$S(\\rho)=-tr(\\rho\\log(\\rho))\$
+
+    Equivalent faster form:
+    \$S(\\rho)=-\\sum_i \\lambda_i(\\rho)*\\log(\\lambda_i(\\rho))\$
+    http://www.quantiki.org/wiki/Von_Neumann_entropy
+    """
 function entropy(ρ::Hermitian{T}) where T<:Number
     λ = eigvals(ρ)
     λ = λ[λ .> 0]
