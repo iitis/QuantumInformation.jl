@@ -105,6 +105,13 @@ end
     @test norm(ξ - eye(2)/2) ≈ 0. atol=1e-15
     ξ = ptrace(ϕ, [2, 2], 2)
     @test norm(ξ - eye(2)/2) ≈ 0. atol=1e-15
+
+    ϕ = sparse(1/sqrt(2) * (ket(0, 4) + ket(3, 4)))
+    ξ = ptrace(proj(ϕ), [2, 2], [2,])
+    @test typeof(ξ) == SparseMatrixCSC
+    @test norm(ξ - speye(2)/2) ≈ 0. atol=1e-15
+    ξ = ptrace(ϕ, [2, 2], 2)
+    @test norm(ξ - eye(2)/2) ≈ 0. atol=1e-15
 end
 
 @testset "ptranspose" begin

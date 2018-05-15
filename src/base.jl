@@ -175,6 +175,8 @@ function ptranspose(ρ::AbstractMatrix{T}, idims::Vector, isystems::Vector) wher
     reshape(tensor, size(ρ))
 end
 
+ptranspose(ρ::AbstractMatrix{T}, idims::Vector, sys::Int) where T<:Number = ptranspose(ρ, idims, [sys])
+
 function ptranspose(ρ::SparseMatrixCSC{T, Int64}, dims::Vector, sys::Int) where T<:Number
 
     if size(ρ,1)!=size(ρ,2)
@@ -196,7 +198,7 @@ function ptranspose(ρ::SparseMatrixCSC{T, Int64}, dims::Vector, sys::Int) where
         i[sys], j[sys] = j[sys], i[sys]
         newI[k], newJ[k] = mixedradix2number(i, dims), mixedradix2number(j, dims)
     end
-    transpose(sparse(newI+1, newJ+1, V, size(ρ)...))
+    sparse(newJ+1, newI+1, V, size(ρ)...)
 end
 
 function number2mixedradix(n::Int, bases::Vector{Int})
