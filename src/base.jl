@@ -1,40 +1,4 @@
-
-doc""
 function ket(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractVector{T} where T<:Number
-    """
-    A ket of length `dim` with the entry `val` equal to one.
-
-    Parameters
-    ----------
-    val : integer
-        Non-zero entry.
-    dim : integer
-        Length of the ket
-    Returns
-    -------
-    ket : matrix
-        A matrix of the shape (`dim`, 1), with the specified
-        entry equal to one.
-
-    See Also
-    --------
-    bra : Creates a bra.
-    Examples
-    --------
-    >>> ket(0,2)
-    matrix([[ 1.],
-        [ 0.]])
-    >>> ket(1,8)
-    matrix([[ 0.],
-        [ 1.],
-        [ 0.],
-        [ 0.],
-        [ 0.],
-        [ 0.],
-        [ 0.],
-        [ 0.]])
-    """
-
     dim > 0 ? () : error("Vector dimension has to be nonnegative")
     val < dim ? () : error("Label have to be smaller than vector dimmension")
     ϕ = zeros(T, dim)
@@ -50,6 +14,11 @@ function ket(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractSparseVector{T} w
     ϕ
 end
 
+"""
+    ket(val::Int, dim::Int; sparse=false)
+
+    A ket of length `dim` with the entry `val` equal to one.
+"""
 function ket(val::Int, dim::Int; sparse=false)
     if sparse==true
         return ket(SparseVector{ComplexF64}, val, dim)
