@@ -32,5 +32,8 @@ include("gates.jl")
 include("utils.jl")
 include("channels.jl")
 include("functionals.jl")
+include("reshuffle.jl")
+include("ptrace.jl")
+include("ptranspose.jl")
 
 end # module
