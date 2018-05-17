@@ -17,7 +17,7 @@ shannon_entropy, entropy,
 random_ket, random_ket!,
 random_GOE, random_GUE,
 random_ginibre_matrix!, random_ginibre_matrix,
-random_mixed_state_hs!, random_mixed_state_hs,
+random_mixed_state!, random_mixed_state_hs, random_mixed_state,
 random_dynamical_matrix!, random_dynamical_matrix,
 random_jamiolkowski_state!, random_jamiolkowski_state,
 random_unitary, random_orthogonal,
@@ -32,5 +32,8 @@ include("gates.jl")
 include("utils.jl")
 include("channels.jl")
 include("functionals.jl")
+include("reshuffle.jl")
+include("ptrace.jl")
+include("ptranspose.jl")
 
 end # module
