@@ -105,6 +105,12 @@ end
     @test norm(ξ - eye(2)/2) ≈ 0. atol=1e-15
     ξ = ptrace(ϕ, [2, 2], 2)
     @test norm(ξ - eye(2)/2) ≈ 0. atol=1e-15
+
+    ϕ = sparse(1/sqrt(2) * (ket(0, 4) + ket(3, 4)))
+    ξ = ptrace(proj(ϕ), [2, 2], 2)
+    @test norm(ξ - speye(2)/2, 1) ≈ 0. atol=1e-15
+    ξ = ptrace(ϕ, [2, 2], 2)
+    @test norm(ξ - eye(2)/2, 1) ≈ 0. atol=1e-15
 end
 
 @testset "ptranspose" begin
@@ -113,6 +119,12 @@ end
   trans2 = [1 5 3 7; 2 6 4 8; 9 13 11 15; 10 14 12 16]
   @test norm(ptranspose(ρ, [2, 2], [1]) - trans1) ≈ 0. atol=1e-15
   @test norm(ptranspose(ρ, [2, 2], [2]) - trans2) ≈ 0. atol=1e-15
+
+  ρ = sparse(ρ)
+  trans1 = sparse(trans1)
+  trans2 = sparse(trans2)
+  @test norm(ptranspose(ρ, [2, 2], 1) - trans1, 1) ≈ 0. atol=1e-15
+  @test norm(ptranspose(ρ, [2, 2], 2) - trans2, 1) ≈ 0. atol=1e-15
 end
 
 #@testset "number2mixedradix" begin
@@ -132,6 +144,33 @@ end
     X = reshape([1:16;], 4, 4)'
     T = [1 2 5 6; 3 4 7 8; 9 10 13 14; 11 12 15 16]
     @test reshuffle(X) == T
+
+    X = sparse(X)
+    T = sparse(T)
+    @test norm(reshuffle(X) - T, 1) ≈ 0 atol=1e-13
+
+    X = reshape(1:36, 6, 6)'
+    T=[1	2	7	8	13	14;
+    3	4	9	10	15	16;
+    5	6	11	12	17	18;
+    19	20	25	26	31	32;
+    21	22	27	28	33	34;
+    23	24	29	30	35	36]
+
+    T2 = [1	2	3	7	8	9	13	14	15;
+    4	5	6	10	11	12	16	17	18;
+    19	20	21	25	26	27	31	32	33;
+    22	23	24	28	29	30	34	35	36]
+
+    @test_broken reshuffle(X, [2 3; 3 2]) == T
+    @test_broken reshuffle(X, [2 3; 2 3]) == T2
+
+    X = sparse(X)
+    T = sparse(T)
+    T2 = sparse(T2)
+    @test norm(reshuffle(X, [2 3; 3 2]) - T, 1) ≈ 0 atol=1e-13
+    @test norm(reshuffle(X, [2 3; 2 3]) - T2, 1) ≈ 0 atol=1e-13
+
 end
 
 @testset "trace_distance" begin

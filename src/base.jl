@@ -124,6 +124,41 @@ function ptrace(ρ::AbstractMatrix{T}, idims::Vector, isystems::Vector) where T<
     return ret
 end
 
+ptrace(ρ::AbstractMatrix{T}, idims::Vector, sys::Int) where T<:Number = ptrace(ρ, idims, [sys])
+
+function ptrace(ρ::AbstractSparseMatrix{T}, idims::Vector, sys::Int) where T<:Number
+
+    if size(ρ,1)!=size(ρ,2)
+        error("Non square matrix passed to ptrace")
+    end
+    if prod(idims)!=size(ρ,1)
+        error("Product of dimensions do not match shape of matrix.")
+    end
+    if sys > 2 || sys < 1
+        error("sys mus be either 1 or 2, not $sys")
+    end
+    if length(idims) != 2
+        error("Only bipartite systems supported")
+    end
+
+    d1, d2 = idims
+    if sys == 1
+        return sum([ρ[i*d2+1:(i+1)*d2, i*d2+1:(i+1)*d2] for i=0:d1-1])
+    elseif sys == 2
+        I, J, V = Int[], Int[], T[]
+        for i=0:d1-1, j=0:d1-1
+            v = trace(ρ[i*d2+1:(i+1)*d2, j*d2+1:(j+1)*d2])
+            if isapprox(v, 0)
+                continue
+            end
+            push!(I, i+1)
+            push!(J, j+1)
+            push!(V, v)
+        end
+        return sparse(I, J, V, d1, d1)
+    end
+end
+
 # TODO: allow for more than bipartite systems???
 function ptrace(ϕ::AbstractVector{T}, idims::Vector, isystem::Int) where T<:Number
     A = unres(ϕ, idims...)
@@ -160,12 +195,38 @@ function ptranspose(ρ::AbstractMatrix{T}, idims::Vector, isystems::Vector) wher
     reshape(tensor, size(ρ))
 end
 
+ptranspose(ρ::AbstractMatrix{T}, idims::Vector, sys::Int) where T<:Number = ptranspose(ρ, idims, [sys])
+
+function ptranspose(ρ::AbstractSparseMatrix{T}, dims::Vector, sys::Int) where T<:Number
+
+    if size(ρ,1)!=size(ρ,2)
+        error("Non square matrix passed to ptrace")
+    end
+    if prod(dims)!=size(ρ,1)
+        error("Product of dimensions do not match shape of matrix.")
+    end
+
+    if sys != 1 && sys != 2
+        error("sys must be 1 or 2, not $sys")
+    end
+
+    I, J, V = findnz(ρ)
+    newI = zeros(I)
+    newJ = zeros(J)
+    for k=1:length(I)
+        i, j = number2mixedradix(I[k]-1, dims), number2mixedradix(J[k]-1, dims)
+        i[sys], j[sys] = j[sys], i[sys]
+        newI[k], newJ[k] = mixedradix2number(i, dims), mixedradix2number(j, dims)
+    end
+    sparse(newJ+1, newI+1, V, size(ρ)...)
+end
+
 function number2mixedradix(n::Int, bases::Vector{Int})
     if n >= prod(bases)
         error("number to big to transform")
     end
 
-    digits = Array(Int64, length(bases))
+    digits = Array{Int64}(length(bases))
     for (i, base) in enumerate(reverse(bases))
         n, digits[i] = divrem(n, base)
     end
@@ -190,15 +251,59 @@ end
   Given multiindexed matrix M_{(m,μ),(n,ν)} it returns
   matrix M_{(m,n),(μ,ν)}.
 """
-function reshuffle(ρ::AbstractMatrix{T}) where T<:Number
-  (r, c) = size(ρ)
-  sqrtr = isqrt(r)
-  sqrtc = isqrt(c)
-  tensor = reshape(ρ, sqrtr, sqrtr, sqrtc, sqrtc)
+function reshuffle(ρ::AbstractMatrix{T}, dims::Matrix{Int}) where T<:Number
+  tensor = reshape(ρ, dims...)
   perm = [4, 2, 3, 1]
   tensor = permutedims(tensor, perm)
   (r1, r2, c1, c2) = size(tensor)
   return reshape(tensor, r1*r2, c1*c2)
+end
+
+function reshuffle(ρ::AbstractMatrix{T}) where T<:Number
+    (r, c) = size(ρ)
+    sqrtr = isqrt(r)
+    sqrtc = isqrt(c)
+    reshuffle(ρ, [sqrtr sqrtr; sqrtc sqrtc])
+end
+
+function reshuffle(ρ::AbstractSparseMatrix{T}, dims::Matrix{Int}) where T<:Number
+    dimsI =dims[1,:]
+    dimsJ =dims[2,:]
+    newdimsI =[dims[1, 1], dims[2, 1]]
+    newdimsJ =[dims[1, 2], dims[2, 2]]
+    I, J, V = findnz(ρ)
+    newI = zeros(I)
+    newJ = zeros(J)
+    for k=1:length(I)
+        i, j = number2mixedradix(I[k]-1, dimsI), number2mixedradix(J[k]-1, dimsJ)
+        i[1], i[2], j[1], j[2] = j[2], i[2], j[1], i[1] #works?
+        newI[k], newJ[k] = mixedradix2number(i, newdimsI), mixedradix2number(j, newdimsJ)
+    end
+    sparse(newI+1, newJ+1, V, prod(newdimsI), prod(newdimsJ))
+end
+
+function reshuffle(ρ::AbstractSparseMatrix{T}) where T<:Number
+    (r, c) = size(ρ)
+    sqrtr = isqrt(r)
+    sqrtc = isqrt(c)
+    reshuffle(ρ, [sqrtr sqrtr; sqrtc sqrtc])
+end
+
+trace_distance(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number = sum(abs.(eigvals(Hermitian(ρ - σ))))
+
+function fidelity_sqrt(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
+  if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
+    error("Non square matrix")
+  end
+  λ = real(eigvals(ρ * σ))
+  r = sum(sqrt.(λ[λ.>0]))
+end
+
+function fidelity(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
+  if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
+    error("Non square matrix")
+  end
+  return fidelity_sqrt(ρ, σ)^2
 end
 
 function max_mix(dim)
