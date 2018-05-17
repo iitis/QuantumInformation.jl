@@ -23,9 +23,9 @@ function random_mixed_state!!(ρ::AbstractMatrix{T}, A::AbstractMatrix{T}) where
     renormalize!(ρ)
 end
 
-function random_mixed_state!(ρ::AbstractMatrix{T}, c::Real) where T<:Union{Real, Complex}
+function random_mixed_state!(ρ::AbstractMatrix{T}, k::Int) where T<:Union{Real, Complex}
     d = size(ρ, 1)
-    A = zeros(T, d, round(Int, c*d))
+    A = zeros(T, d, k)
     random_mixed_state!!(ρ, A)
     renormalize!(ρ)
 end
@@ -34,17 +34,17 @@ function random_mixed_state!(ρ::AbstractMatrix{T}) where T<:Union{Real, Complex
     random_mixed_state!(ρ, 1)
 end
 
-function random_mixed_state(::Type{T}, d::Int64, c::Real) where T<:Union{Real, Complex}
+function random_mixed_state(::Type{T}, d::Int64, k::Int) where T<:Union{Real, Complex}
     ρ = zeros(T, d, d)
-    random_mixed_state!(ρ, c)
+    random_mixed_state!(ρ, k)
     ρ
 end
 
 function random_mixed_state(::Type{T}, d::Int64) where T<:Union{Real, Complex}
-    random_mixed_state(T, d, 1)
+    random_mixed_state(T, d, d)
 end
 
-random_mixed_state(d::Int64, c::Real) = random_mixed_state(ComplexF64, d, c)
+random_mixed_state(d::Int64, k::Int) = random_mixed_state(ComplexF64, d, k)
 random_mixed_state(d::Int64) = random_mixed_state(ComplexF64, d)
 random_mixed_state_hs(d::Int64) = random_mixed_state(d) #backwards compat
 

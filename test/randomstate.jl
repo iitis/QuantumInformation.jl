@@ -58,19 +58,13 @@ end
     @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
     @test trace(ρ) ≈ 1. atol=1e-15
 
-    ρ = random_mixed_state(20, 0.5)
-    @test size(ρ) == (20, 20)
-    @test typeof(ρ) == Matrix{Complex{Float64}}
-    @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
-    @test trace(ρ) ≈ 1. atol=1e-15
-
     ρ = random_mixed_state(20, 10)
     @test size(ρ) == (20, 20)
     @test typeof(ρ) == Matrix{Complex{Float64}}
     @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
     @test trace(ρ) ≈ 1. atol=1e-15
 
-    ρ = random_mixed_state(20, 0.3333333)
+    ρ = random_mixed_state(20, 200)
     @test size(ρ) == (20, 20)
     @test typeof(ρ) == Matrix{Complex{Float64}}
     @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
