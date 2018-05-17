@@ -75,6 +75,12 @@ end
     @test typeof(ρ) == Matrix{Complex{Float64}}
     @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
     @test trace(ρ) ≈ 1. atol=1e-15
+
+    ρ = random_mixed_state_hs(20) #test backwards compat
+    @test size(ρ) == (20, 20)
+    @test typeof(ρ) == Matrix{Complex{Float64}}
+    @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
+    @test trace(ρ) ≈ 1. atol=1e-15
 end
 
 @testset "random_jamiolkowski_state" begin
