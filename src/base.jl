@@ -270,7 +270,7 @@ function reshuffle(ρ::AbstractMatrix{T}, dims::Matrix{Int}) where T<:Number
   tensor = reshape(ρ, dims...)
   perm = [4, 2, 3, 1]
   tensor = permutedims(tensor, perm)
-  (r1, r2, c1, r2) = size(tensor)
+  (r1, r2, c1, c2) = size(tensor)
   return reshape(tensor, r1*r2, c1*c2)
 end
 
