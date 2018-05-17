@@ -1,21 +1,15 @@
+
 """
   Performs reshuffling of indices of a matrix.
   Given multiindexed matrix M_{(m,μ),(n,ν)} it returns
   matrix M_{(m,n),(μ,ν)}.
 """
 function reshuffle(ρ::AbstractMatrix{T}, dims::Matrix{Int}) where T<:Number
-  tensor = reshape(ρ, dims...)
+  m, n, μ, ν  = dims
+  tensor = reshape(ρ, μ, m, ν, n)
   perm = [4, 2, 3, 1]
-  tensor = permutedims(tensor, perm)
-  (r1, r2, c1, c2) = size(tensor)
-  return reshape(tensor, r1*r2, c1*c2)
-end
-
-function reshuffle(ρ::AbstractMatrix{T}) where T<:Number
-    (r, c) = size(ρ)
-    sqrtr = isqrt(r)
-    sqrtc = isqrt(c)
-    reshuffle(ρ, [sqrtr sqrtr; sqrtc sqrtc])
+  tensor = permutedims(tensor,  perm)
+  reshape(tensor, m*n, μ*ν)
 end
 
 function reshuffle(ρ::AbstractSparseMatrix{T}, dims::Matrix{Int}) where T<:Number
@@ -34,7 +28,7 @@ function reshuffle(ρ::AbstractSparseMatrix{T}, dims::Matrix{Int}) where T<:Numb
     sparse(newI+1, newJ+1, V, prod(newdimsI), prod(newdimsJ))
 end
 
-function reshuffle(ρ::AbstractSparseMatrix{T}) where T<:Number
+function reshuffle(ρ::Union{AbstractMatrix{T},AbstractSparseMatrix{T}}) where T<:Number
     (r, c) = size(ρ)
     sqrtr = isqrt(r)
     sqrtc = isqrt(c)
