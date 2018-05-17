@@ -15,7 +15,7 @@ function ket(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractSparseVector{T} w
 end
 
 function ket(val::Int, dim::Int; sparse=false)
-    if sparse==true
+    if sparse
         return ket(SparseVector{ComplexF64}, val, dim)
     else
         return ket(Vector{ComplexF64}, val, dim)
@@ -25,7 +25,7 @@ end
 bra(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractVector{T} where T<:Number = ket(Tv, val, dim)'
 
 function bra(val::Int, dim::Int; sparse=false)
-    if sparse==true
+    if sparse
         return bra(SparseVector{ComplexF64}, val, dim)
     else
         return bra(Vector{ComplexF64}, val, dim)
@@ -49,7 +49,7 @@ function ketbra(::Type{Tv}, valk::Int, valb::Int, dim::Int) where Tv<:AbstractSp
 end
 
 function ketbra(valk::Int, valb::Int, dim::Int; sparse=false)
-    if sparse==true
+    if sparse
         return ketbra(SparseMatrixCSC{ComplexF64}, valk, valb, dim)
     else
         return ketbra(Matrix{ComplexF64}, valk, valb, dim)
