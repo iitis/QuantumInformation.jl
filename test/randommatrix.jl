@@ -28,6 +28,22 @@ using StatsBase
     @test trace(J) ≈ n atol=1e-13
     @test norm(tr - eye(n)) ≈ 0. atol=1e-13
     @test typeof(J) == Matrix{ComplexF64}
+
+    d1, d2 = 2, 4
+    J = random_dynamical_matrix(2, 4)
+    @test size(J) == (d1*d2, d1*d2)
+    @test trace(J) ≈ d1 atol=1e-13
+    tr = ptrace(J, [d2, d1], [1])
+    @test norm(tr - eye(d1)) ≈ 0. atol=1e-13
+    @test typeof(J) == Matrix{ComplexF64}
+
+    d1, d2 = 2, 4
+    J = random_dynamical_matrix(2, 4, 10)
+    @test size(J) == (d1*d2, d1*d2)
+    @test trace(J) ≈ d1 atol=1e-13
+    tr = ptrace(J, [d2, d1], [1])
+    @test norm(tr - eye(d1)) ≈ 0. atol=1e-13
+    @test typeof(J) == Matrix{ComplexF64}
 end
 
 @testset "random_unitary" begin
@@ -71,12 +87,6 @@ end
     n = 10
     @test ishermitian(random_GUE(n))
     @test ishermitian(random_GOE(n))
-end
-
-@testset "random_dynamical_matrix" begin
-    n = 10
-    J = random_dynamical_matrix(n)
-    @test norm(ptrace(J, [n, n], [1]) - eye(n)) ≈ 0 atol=1e-12
 end
 
 @testset "random_isometry" begin
