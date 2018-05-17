@@ -85,21 +85,6 @@ end
 
 unres(ϕ::AbstractVector{T}, m::Int, n::Int) where T<:Number = transpose(reshape(ϕ, n, m))
 
-function kraus_to_superoperator(kraus_list::Vector{T}) where {T<:AbstractMatrix{T1}} where {T1<:Number}
-    # TODO: chceck if all Kraus operators are the same shape
-    sum((k) -> kron(k, k'), kraus_list)
-end
-
-function channel_to_superoperator(channel::Function, dim::Int)
-    dim > 0 ? () : error("Channel dimension has to be nonnegative")
-
-    M = zeros(ComplexF64, dim*dim, dim*dim)
-    for (i, e) in enumerate(base_matrices(dim))
-        M[:, i] = res(channel(e))
-    end
-    M
-end
-
 # TODO: allow different type of Kraus operators and the quantum state
 function apply_kraus(kraus_list::Vector{T}, ρ::T) where {T<:AbstractMatrix{T1}} where {T1<:Number}
     # TODO: chceck if all Kraus operators are the same shape and fit the input state
@@ -216,36 +201,52 @@ function reshuffle(ρ::AbstractMatrix{T}) where T<:Number
   return reshape(tensor, r1*r2, c1*c2)
 end
 
-trace_distance(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number = sum(abs.(eigvals(Hermitian(ρ - σ))))
-
-function fidelity_sqrt(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
-  if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
-    error("Non square matrix")
-  end
-  λ = real(eigvals(ρ * σ))
-  r = sum(sqrt.(λ[λ.>0]))
+function max_mix(dim)
+    1.0 / dim * eye(dim)
 end
 
-function fidelity(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
-  if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
-    error("Non square matrix")
-  end
-  return fidelity_sqrt(ρ, σ)^2
+function max_entangled(dim)
+    sqrtdim = isqrt(dim)
+    1 / sqrt(sqrtdim) * sum(kron(ket(i, sqrtdim), ket(i, sqrtdim)) for i in 1:sqrtdim)
 end
 
-fidelity(ϕ::AbstractVector{T}, ψ::AbstractVector{T}) where T<:Number = abs2(dot(ϕ, ψ))
-fidelity(ϕ::AbstractVector{T}, ρ::AbstractMatrix{T}) where T<:Number = ϕ' * ρ * ϕ
-fidelity(ρ::AbstractMatrix{T}, ϕ::AbstractVector{T}) where T<:Number = fidelity(ϕ, ρ)
-
-shannon_entropy(p::AbstractVector{T}) where T<:Real = -sum(p .* log.(p))
-
-shannon_entropy(x::T) where T<:Real = x > 0 ? -x * log(x) - (1 - x) * log(1 - x) : error("Negative number passed to shannon_entropy")
-
-function entropy(ρ::Hermitian{T}) where T<:Number
-    λ = eigvals(ρ)
-    λ = λ[λ .> 0]
-    -sum(λ .* log(λ))
+"""
+http://en.wikipedia.org/wiki/Werner_state
+"""
+function werner_state(alpha, dim)
+    return alpha * proj(max_entangled(dim)) + (1 - alpha) * max_mix(dim)
 end
 
-entropy(H::AbstractMatrix{T}) where T<:Number = ishermitian(H) ? entropy(Hermitian(H)) : error("Non-hermitian matrix passed to entropy")
-entropy(ϕ::AbstractVector{T}) where T<:Number = zero(T)
+#=
+TODO: port to julia
+def base_hermitian_matrices(dim):
+    """
+    Generator. Returns elementary hermitian matrices of dimension dim x dim.
+    """
+    for (a, b) in product(xrange(dim), repeat=2):
+        if a > b:
+            yield 1 / np.sqrt(2) * np.matrix(1j * ketbra(a, b, dim) - 1j * ketbra(b, a, dim))
+        elif a < b:
+            yield 1 / np.sqrt(2) * np.matrix(ketbra(a, b, dim) + ketbra(b, a, dim))
+        else:
+            yield np.matrix(ketbra(a, b, dim))
+
+
+def permute_systems(rho, dims, systemperm):
+    rho = np.asarray(rho)
+    dims = list(dims)
+    systemperm = list(systemperm)
+    if rho.shape[0] != rho.shape[1]:
+        raise Exception("Non square matrix passed to ptrace")
+    if np.prod(dims) != rho.shape[0]:
+        raise Exception("Product of dimensions do not match shape of matrix.")
+    if not ((max(systemperm) <= len(dims) or (min(systemperm) > len(dims)))):
+        raise Exception("System index out of range")
+    offset = len(dims)
+    perm1 = systemperm
+    perm2 = map(lambda x: x + offset, perm1)
+    perm = perm1 + perm2
+    tensor = np.array(rho).reshape(2 * dims)
+    tensor = tensor.transpose(perm)
+    return np.asmatrix(tensor.reshape(rho.shape))
+=#

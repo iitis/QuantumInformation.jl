@@ -30,5 +30,7 @@ include("randommatrix.jl")
 include("randomstate.jl")
 include("gates.jl")
 include("utils.jl")
+include("channels.jl")
+include("functionals.jl")
 
 end # module
