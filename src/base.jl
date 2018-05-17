@@ -76,11 +76,17 @@ end
 
 res(ρ::AbstractMatrix{T}) where T<:Number = vec(transpose(ρ))
 
+function unres(ϕ::AbstractVector{T}, cols::Int) where T<:Number
+    dim = length(ϕ)
+    rows = div(dim, cols)
+    rows*cols == length(ϕ) ? () : error("Wrong number of columns")
+    transpose(reshape(ϕ, cols, rows))
+end
+
 function unres(ϕ::AbstractVector{T}) where T<:Number
     dim = size(ϕ, 1)
     s = isqrt(dim)
-    s*s == dim ? () : error("Vector has to have dimensions being a square of an integer number")
-    transpose(reshape(ϕ, s, s))
+    unres(ϕ, s)
 end
 
 unres(ϕ::AbstractVector{T}, m::Int, n::Int) where T<:Number = transpose(reshape(ϕ, n, m))
