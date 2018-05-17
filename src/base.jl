@@ -252,11 +252,11 @@ end
   matrix M_{(m,n),(μ,ν)}.
 """
 function reshuffle(ρ::AbstractMatrix{T}, dims::Matrix{Int}) where T<:Number
-  tensor = reshape(ρ, dims...)
+  m, n, μ, ν  = dims
+  tensor = reshape(ρ, μ, m, ν, n)
   perm = [4, 2, 3, 1]
-  tensor = permutedims(tensor, perm)
-  (r1, r2, c1, c2) = size(tensor)
-  return reshape(tensor, r1*r2, c1*c2)
+  tensor = permutedims(tensor,  perm)
+  reshape(tensor, m*n, μ*ν)
 end
 
 function reshuffle(ρ::AbstractMatrix{T}) where T<:Number
@@ -267,10 +267,10 @@ function reshuffle(ρ::AbstractMatrix{T}) where T<:Number
 end
 
 function reshuffle(ρ::AbstractSparseMatrix{T}, dims::Matrix{Int}) where T<:Number
-    dimsI =dims[1,:]
-    dimsJ =dims[2,:]
-    newdimsI =[dims[1, 1], dims[2, 1]]
-    newdimsJ =[dims[1, 2], dims[2, 2]]
+    dimsI = dims[1,:]
+    dimsJ = dims[2,:]
+    newdimsI = [dims[1, 1], dims[2, 1]]
+    newdimsJ = [dims[1, 2], dims[2, 2]]
     I, J, V = findnz(ρ)
     newI = zeros(I)
     newJ = zeros(J)

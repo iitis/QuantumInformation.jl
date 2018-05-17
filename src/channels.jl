@@ -12,8 +12,6 @@ end
 """
 Transforms list of Kraus operators into super-operator matrix.
 """
-
-
 function kraus_to_superoperator(kraus_list::Vector{T}) where {T<:AbstractMatrix{T1}} where {T1<:Number}
     # TODO: chceck if all Kraus operators are the same shape
     sum(k⊗k' for k in kraus_list)

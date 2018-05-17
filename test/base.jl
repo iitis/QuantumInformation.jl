@@ -162,8 +162,8 @@ end
     19	20	21	25	26	27	31	32	33;
     22	23	24	28	29	30	34	35	36]
 
-    @test_broken reshuffle(X, [2 3; 3 2]) == T
-    @test_broken reshuffle(X, [2 3; 2 3]) == T2
+    @test reshuffle(X, [2 3; 3 2]) == T
+    @test reshuffle(X, [2 3; 2 3]) == T2
 
     X = sparse(X)
     T = sparse(T)
