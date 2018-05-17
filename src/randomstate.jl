@@ -51,10 +51,8 @@ random_mixed_state_hs(d::Int64) = random_mixed_state(d) #backwards compat
 
 function random_jamiolkowski_state!(J::AbstractMatrix{T}) where T<:Union{Real, Complex}
     random_dynamical_matrix!(J)
-    n = round(Int, sqrt(size(J, 1)), RoundDown)
-    for i=1:length(J)
-        J[i] = J[i] / n
-    end
+    n = isqrt(size(J, 1))
+    J[:] = J[:] / n
 end
 
 function random_jamiolkowski_state(::Type{T}, n::Int) where T<:Union{Real, Complex}
