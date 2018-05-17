@@ -15,14 +15,6 @@ random_ginibre_matrix(m::Int, n::Int) = random_ginibre_matrix(ComplexF64, m, n)
 random_ginibre_matrix(m::Int) = random_ginibre_matrix(m, m)
 random_ginibre_matrix(::Type{T}, m::Int)  where T<:Union{Real, Complex} = random_ginibre_matrix(T, m, m)
 
-function random_unitary(n::Int)
-  z = random_ginibre_matrix(n,n)/sqrt(2.0)
-  q,r = qr(z)
-  d = diag(r)
-  ph = d./abs.(d)
-  return q.*repmat(ph, 1, size(ph, 1))'
-end
-
 function random_orthogonal(n::Int)
      z = randn(n, n)
      q,r = qr(z)
@@ -60,6 +52,9 @@ end
 random_dynamical_matrix(n::Int) = random_dynamical_matrix(ComplexF64, n)
 
 function random_isometry(n::Int, m::Int)
+    if m > n
+        throw(ArgumentError("Isometry must reduce dimensions"))
+    end
     z = random_ginibre_matrix(n, m)/sqrt(2.0)
     q,r = qr(z)
     d = diag(r)
@@ -67,7 +62,4 @@ function random_isometry(n::Int, m::Int)
     return q.*repmat(ph, 1, size(q, 1))'
 end
 
-function random_dynamical_matrix2(d1::Int, d2::Int, s::Int)
-    v = random_isometry(d2*s, d1)
-    (eye(d2) ⊗ v.')*(proj(res(eye(d2))) ⊗ eye(s))*(eye(d2) ⊗ conj(v))
-end
+random_unitary(n::Int) = random_isometry(n, n)

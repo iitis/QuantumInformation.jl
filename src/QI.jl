@@ -20,7 +20,7 @@ random_ginibre_matrix!, random_ginibre_matrix,
 random_mixed_state!, random_mixed_state_hs, random_mixed_state,
 random_dynamical_matrix!, random_dynamical_matrix,
 random_jamiolkowski_state!, random_jamiolkowski_state,
-random_unitary, random_orthogonal,
+random_unitary, random_orthogonal, random_isometry,
 funcmh, funcmh!, renormalize!,
 sx,sy,sz,
 ⊗

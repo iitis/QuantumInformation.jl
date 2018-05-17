@@ -79,4 +79,11 @@ end
     @test norm(ptrace(J, [n, n], [1]) - eye(n)) ≈ 0 atol=1e-12
 end
 
+@testset "random_isometry" begin
+    n, d = 20, 10
+    V = random_isometry(n, d)
+    @test norm(V'*V - eye(d)) ≈ 0 atol=1e-13
+    @test all([isapprox(v, 0, atol=1e-13) || isapprox(v, 1, atol=1e-13) for v=eigvals(V*V')])
+    @test_throws ArgumentError random_isometry(d, n)
+end
 end
