@@ -34,17 +34,13 @@ function random_mixed_state!(ρ::AbstractMatrix{T}) where T<:Union{Real, Complex
     random_mixed_state!(ρ, 1)
 end
 
-function random_mixed_state(::Type{T}, d::Int64, k::Int) where T<:Union{Real, Complex}
+function random_mixed_state(::Type{T}, d::Int64, k::Int=d) where T<:Union{Real, Complex}
     ρ = zeros(T, d, d)
     random_mixed_state!(ρ, k)
     ρ
 end
 
-function random_mixed_state(::Type{T}, d::Int64) where T<:Union{Real, Complex}
-    random_mixed_state(T, d, d)
-end
-
-random_mixed_state(d::Int64, k::Int) = random_mixed_state(ComplexF64, d, k)
+random_mixed_state(d::Int64, k::Int=d) = random_mixed_state(ComplexF64, d, k)
 random_mixed_state(d::Int64) = random_mixed_state(ComplexF64, d)
 random_mixed_state_hs(d::Int64) = random_mixed_state(d) #backwards compat
 
