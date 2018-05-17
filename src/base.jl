@@ -304,6 +304,7 @@ function fidelity(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
     error("Non square matrix")
   end
   return fidelity_sqrt(ρ, σ)^2
+end
 
 function max_mix(dim)
     1.0 / dim * eye(dim)
