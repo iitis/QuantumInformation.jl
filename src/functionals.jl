@@ -6,8 +6,9 @@ function traceAHB(A,B)
     conj(A)*transpose(B)
 end
 
-trace_distance(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
-    = one(T)/2*sum(abs.(eigvals(Hermitian(ρ - σ))))
+function trace_distance(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
+    (one(T)/2)*sum(abs.(eigvals(Hermitian(ρ - σ))))
+end
 
 """
 Calculates trace norm of of positive matrix \rho
@@ -36,6 +37,8 @@ end
 fidelity(ϕ::AbstractVector{T}, ψ::AbstractVector{T}) where T<:Number = abs2(dot(ϕ, ψ))
 fidelity(ϕ::AbstractVector{T}, ρ::AbstractMatrix{T}) where T<:Number = ϕ' * ρ * ϕ
 fidelity(ρ::AbstractMatrix{T}, ϕ::AbstractVector{T}) where T<:Number = fidelity(ϕ, ρ)
+
+#= TODO: cleanup
 """
 Original equation:
 \sqrt{F}(\rho,\sigma)=\textrm{tr}\sqrt{\sqrt{\rho}\sigma\sqrt{\rho}}
@@ -51,6 +54,7 @@ Quantum Information & Computation, Vol.9 No.1&2 (2009)
 function fidelity(ρ::AbstractMatrix{T}, ϕ::AbstractMatrix{T}) where T<:Number
     sum(sqrt(eigvals(rho * sigma)))^2
 end
+=#
 
 shannon_entropy(p::AbstractVector{T}) where T<:Real = -sum(p .* log.(p))
 
@@ -121,7 +125,7 @@ http://www.quantiki.org/wiki/Trace_distance
 """
 function trace_distance(rho, sigma)
     warning("untested")
-    return 0.5 * sum(svdvals(rho - sigma))
+    0.5 * sum(svdvals(rho - sigma))
 end
 
 function gate_fidelity(U, V)

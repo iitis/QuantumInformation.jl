@@ -201,11 +201,11 @@ function reshuffle(ρ::AbstractMatrix{T}) where T<:Number
   return reshape(tensor, r1*r2, c1*c2)
 end
 
-function max_mix(dim):
-    return (1.0 / dim * eye(dim))
+function max_mix(dim)
+    1.0 / dim * eye(dim)
 end
 
-function max_entangled(dim):
+function max_entangled(dim)
     sqrtdim = isqrt(dim)
     1 / sqrt(sqrtdim) * sum(kron(ket(i, sqrtdim), ket(i, sqrtdim)) for i in 1:sqrtdim)
 end
@@ -213,7 +213,7 @@ end
 """
 http://en.wikipedia.org/wiki/Werner_state
 """
-function werner_state(alpha, dim):
+function werner_state(alpha, dim)
     return alpha * proj(max_entangled(dim)) + (1 - alpha) * max_mix(dim)
 end
 

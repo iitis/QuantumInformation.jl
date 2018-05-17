@@ -50,11 +50,17 @@ function superoperator_to_stinespring(m::T) where {T<:AbstractMatrix{T1}} where 
     kraus_to_stinespring(superoperator_to_kraus(M))
 end
 
-function dynamical_matrix_to_kraus(R):
-    vals, vec = scipy.linalg.eigh(R)
-    vec_list = [vec[:, i] for i in range(vec.shape[1])]
-    filtered = zip(vals, vec_list)  #filter(lambda z: z[0] > 0, zip(vals, vec_list))
-    kraus = map(lambda x: np.matrix(np.sqrt(x[0]) * unres(x[1])) if x[0] > 0 else np.matrix(0 * unres(x[1])), filtered)
+function dynamical_matrix_to_kraus(R)
+    F = eigfact(Hermitian(R))
+
+    kraus = Any[] #TODO: make proper type
+    for (val, vec) in zip(F.values, F.vectors)
+        if val>=0.0
+            push!(kraus, sqrt(val) * unres(vec))
+        else
+            push!(kraus, zero(unres(vec)))
+        end
+    end
     return kraus
 end
 
@@ -66,9 +72,10 @@ function dynamical_matrix_to_superoperator(R)
     return reshuffle(R)
 end
 
+#= TODO
 function general_map_to_kraus(M)
     u, s, v = svd(M)
-    s = np.where(s > 1e-8, s, 0)
+    s = where(s > 1e-8, s, 0)
     left  = map(x -> sqrt(x[1]) * transpose(unres(x[2])), zip(s, transpose(u))
     right = map(x -> sqrt(x[1]) * unres(conj(x[2])), zip(s, v))
     return [left, right]
@@ -86,6 +93,8 @@ end
 function general_map_to_stinespring(R)
     return general_kraus_to_stinespring(general_map_to_kraus(R))
 end
+=#
+
 
 #### Application of channels
 
