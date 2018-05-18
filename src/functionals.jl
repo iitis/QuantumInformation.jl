@@ -12,17 +12,14 @@ end
 
 function fidelity_sqrt(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
   if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
-    error("Non square matrix")
+    throw(ArgumentError("Non square matrix"))
   end
   λ = real(eigvals(ρ * σ))
   r = sum(sqrt.(λ[λ.>0]))
 end
 
 function fidelity(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
-  if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
-    error("Non square matrix")
-  end
-  return fidelity_sqrt(ρ, σ)^2
+  fidelity_sqrt(ρ, σ)^2
 end
 
 fidelity(ϕ::AbstractVector{T}, ψ::AbstractVector{T}) where T<:Number = abs2(dot(ϕ, ψ))

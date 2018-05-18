@@ -32,6 +32,7 @@ end
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = [0.4 0.1im; -0.1im 0.6]
     @test fidelity_sqrt(ρ, σ) ≈ real(trace(sqrtm(sqrtm(ρ) * σ * sqrtm(ρ)))) atol=1e-15
+    @test_throws ArgumentError fidelity_sqrt(ones(2, 3), ones(2, 2))
 end
 
 @testset "fidelity" begin
