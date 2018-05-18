@@ -1,4 +1,4 @@
-@testset "Functiopnals" begin
+@testset "Functionals" begin
 
 @testset "trace_norm" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
@@ -12,6 +12,20 @@ end
 
     @test trace_distance(ρ, ρ) ≈ 0 atol=1e-14
     @test trace_distance(ρ, σ) ≈ 3/(10sqrt(2)) atol=1e-15
+end
+
+@testset "hs_norm" begin
+    ρ = [0.25 0.25im; -0.25im 0.75]
+    @test hs_norm(ρ) ≈ sqrt(3)/2
+    @test hs_norm(sx*ρ) ≈ sqrt(3)/2
+end
+
+@testset "hs_distance" begin
+    ρ = [0.25 0.25im; -0.25im 0.75]
+    σ = [0.4 0.1im; -0.1im 0.6]
+
+    @test hs_distance(ρ, ρ) ≈ 0 atol=1e-14
+    @test hs_distance(ρ, σ) ≈ 3/10 atol=1e-15
 end
 
 @testset "fidelity_sqrt" begin
@@ -54,7 +68,7 @@ end
     @test quantum_entropy(ρ) ≈ 0.25(log(64)-2sqrt(2)*acoth(sqrt(2)))
 end
 
-@testset "relative_entropy" begin
+@testset "relative_entropy, js_divergence" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = [0.4 0.1im; -0.1im 0.6]
     expected = -acoth(5/sqrt(2))/sqrt(2)+acoth(sqrt(2))/sqrt(2)+log(5)-log(46)/2
@@ -63,6 +77,7 @@ end
     @test kl_divergence(ρ, σ) ≈ expected
     @test relative_entropy(σ, ρ) ≈ expected2
     @test kl_divergence(σ, ρ) ≈ expected2
+    @test js_divergence(ρ, σ) ≈ 0.5expected+0.5expected2
 end
 
 @testset "bures_distance, bures_angle" begin

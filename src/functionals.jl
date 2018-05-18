@@ -4,6 +4,12 @@ function trace_distance(A::AbstractMatrix{T}, B::AbstractMatrix{T})  where T <: 
     one(T)/2 * trace_norm(A - B)
 end
 
+hs_norm(A::AbstractMatrix{T}) where T <: Number = sqrt(sum(svdvals(A).^2))
+
+function hs_distance(A::AbstractMatrix{T}, B::AbstractMatrix{T}) where T <: Number
+    hs_norm(A - B)
+end
+
 function fidelity_sqrt(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
   if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
     error("Non square matrix")
@@ -55,6 +61,9 @@ function kl_divergence(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Nu
     relative_entropy(ρ, σ)
 end
 
+function js_divergence(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
+    0.5kl_divergence(ρ, σ) + 0.5kl_divergence(σ, ρ)
+end
 
 """
 D_B(\rho,\sigma) = \sqrt{2-2\sqrt{F(\rho,\sigma)}}
