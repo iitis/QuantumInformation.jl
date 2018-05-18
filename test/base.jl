@@ -2,19 +2,29 @@
 
 @testset "ket" begin
     ϕ = ket(0, 4)
-    @test_throws ErrorException ket(4,3)
+    @test_throws ArgumentError ket(4,3)
     ψ = ComplexF64[1, 0, 0, 0]
     @test norm(ϕ - ψ) ≈ 0.
     # TODO : Fix these tests: types depend on julia version
     # @test typeof(ket(Float64, 0, 4)) == Vector{Float64}
     # @test typeof(ket(ComplexF64, 0, 4)) == Vector{ComplexF64}
+
+    ϕ = ket(0, 4, sparse=true)
+    @test ϕ[1] == 1
+    @test size(ϕ) == (4,)
+
+    @test_throws ArgumentError ket(4, 3, sparse=true)
 end
 
 @testset "bra" begin
     ϕ = bra(0, 4)
     ψ = ComplexF64[1 0 0 0]
-    @test_throws ErrorException bra(4,3)
+    @test_throws ArgumentError bra(4,3)
     @test norm(ϕ - ψ) ≈ 0.
+
+    ϕ = bra(0, 4, sparse=true)
+    @test ϕ[1] == 1
+    @test size(ϕ) == (1, 4)
     # TODO : Fix these tests: types depend on julia version
     # @test typeof(bra(Float64, 0, 4)) == LinearAlgebra.Adjoint{Float64,Array{Float64,1}}
     # @test typeof(bra(ComplexF64, 0, 4)) == LinearAlgebra.Adjoint{Complex{Float64},Array{Complex{Float64},1}}
@@ -25,7 +35,7 @@ end
     αβ = zeros(ComplexF64, 4, 4)
     αβ[1, 1] = 1
     @test norm(ϕψ - αβ) ≈ 0.
-    @test_throws ErrorException ketbra(4,4,3)
+    @test_throws ArgumentError ketbra(4,4,3)
     # TODO : Fix these tests: types depend on julia version
     # @test typeof(ketbra(Float64, 0, 0, 4)) == Matrix{Float64}
     # @test typeof(ketbra(ComplexF64, 0, 0, 4)) == Matrix{ComplexF64}
@@ -101,18 +111,17 @@ end
     @test norm(σ - ξ) ≈ 0. atol=1e-15
 end
 
-#@testset "number2mixedradix" begin
-#    number = 486
-#    bases = Int64[8, 42, 2]
-#    println(number2mixedradix(number, bases))
-#    @test number2mixedradix(number, bases) == Int64[3, 7, 0]
-#end
+@testset "number2mixedradix" begin
+   number = 486
+   bases = Int64[8, 42, 2]
+   @test_broken number2mixedradix(number, bases) == Int64[3, 7, 0]
+end
 
-#@testset "mixedradix2number" begin
-#    number = Int64[3, 7, 0]
-#    bases = Int64[8, 42, 2]
-#    @test mixedradix2number(number, bases) == 486
-#end
+@testset "mixedradix2number" begin
+   number = Int64[3, 7, 0]
+   bases = Int64[8, 42, 2]
+   @test_broken mixedradix2number(number, bases) == 486
+end
 
 @testset "trace_distance" begin
     ρ = [0.25 0.25im; -0.25im 0.75]

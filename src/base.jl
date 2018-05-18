@@ -1,14 +1,14 @@
 function ket(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractVector{T} where T<:Number
-    dim > 0 ? () : error("Vector dimension has to be nonnegative")
-    val < dim ? () : error("Label have to be smaller than vector dimmension")
+    dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
+    val < dim ? () : throw(ArgumentError("Label have to be smaller than vector dimmension"))
     ϕ = zeros(T, dim)
     ϕ[val+1] = one(T)
     ϕ
 end
 
 function ket(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractSparseVector{T} where T<:Number
-    dim > 0 ? () : error("Vector dimension has to be nonnegative")
-    val < dim ? () : error("Label have to be smaller than vector dimmension")
+    dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
+    val < dim ? () : throw(ArgumentError("Label have to be smaller than vector dimmension"))
     ϕ = spzeros(T, dim)
     ϕ[val+1] = one(T)
     ϕ
@@ -33,16 +33,16 @@ function bra(val::Int, dim::Int; sparse=false)
 end
 
 function ketbra(::Type{Tv}, valk::Int, valb::Int, dim::Int) where Tv<:AbstractMatrix{T} where T<:Number
-    dim > 0 ? () : error("Vector dimension has to be nonnegative")
-    valk < dim && valb < dim ? () : error("Ket and bra labels have to be smaller than operator dimmension")
+    dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
+    valk < dim && valb < dim ? () : throw(ArgumentError("Ket and bra labels have to be smaller than operator dimmension"))
     ϕψ = zeros(T, dim, dim)
     ϕψ[valk+1,valb+1] = one(T)
     ϕψ
 end
 
 function ketbra(::Type{Tv}, valk::Int, valb::Int, dim::Int) where Tv<:AbstractSparseMatrix{T} where T<:Number
-    dim > 0 ? () : error("Vector dimension has to be nonnegative")
-    valk < dim && valb < dim ? () : error("Ket and bra labels have to be smaller than operator dimmension")
+    dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
+    valk < dim && valb < dim ? () : throw(ArgumentError("Ket and bra labels have to be smaller than operator dimmension"))
     ϕψ = spzeros(T, dim, dim)
     ϕψ[valk+1,valb+1] = one(T)
     ϕψ
