@@ -97,23 +97,6 @@ function apply_kraus(kraus_list::Vector{T}, ρ::T) where {T<:AbstractMatrix{T1}}
     sum(k-> k*ρ*k', kraus_list)
 end
 
-trace_distance(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number = sum(abs.(eigvals(Hermitian(ρ - σ))))
-
-function fidelity_sqrt(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
-  if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
-    error("Non square matrix")
-  end
-  λ = real(eigvals(ρ * σ))
-  r = sum(sqrt.(λ[λ.>0]))
-end
-
-function fidelity(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
-  if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
-    error("Non square matrix")
-  end
-  return fidelity_sqrt(ρ, σ)^2
-end
-
 function max_mix(dim)
     1.0 / dim * eye(dim)
 end
