@@ -97,31 +97,6 @@ function apply_kraus(kraus_list::Vector{T}, ρ::T) where {T<:AbstractMatrix{T1}}
     sum(k-> k*ρ*k', kraus_list)
 end
 
-function number2mixedradix(n::Int, bases::Vector{Int})
-    if n >= prod(bases)
-        error("number to big to transform")
-    end
-
-    digits = Array{Int64}(length(bases))
-    for (i, base) in enumerate(reverse(bases))
-        n, digits[i] = divrem(n, base)
-    end
-    digits
-end
-# FIX THESE
-function mixedradix2number(digits::Vector{Int}, bases::Vector{Int})
-    if length(digits)>length(bases)
-        error("more digits than radices")
-    end
-
-    res = 0
-    digitsreversed = reverse(digits)
-    for i=1:length(digits)
-        res = res * bases[i] + digitsreversed[i]
-    end
-    res
-end
-
 trace_distance(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number = sum(abs.(eigvals(Hermitian(ρ - σ))))
 
 function fidelity_sqrt(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number

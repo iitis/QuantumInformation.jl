@@ -1,5 +1,17 @@
 @testset "Utility functions" begin
 
+@testset "number2mixedradix" begin
+   number = 486
+   bases = Int64[8, 42, 2]
+   @test_broken number2mixedradix(number, bases) == Int64[3, 7, 0]
+end
+
+@testset "mixedradix2number" begin
+   number = Int64[3, 7, 0]
+   bases = Int64[8, 42, 2]
+   @test_broken mixedradix2number(number, bases) == 486
+end
+
 @testset "renormalize" begin
     v = randn(10)
     renormalize!(v)

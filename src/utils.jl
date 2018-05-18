@@ -1,3 +1,28 @@
+function number2mixedradix(n::Int, bases::Vector{Int})
+    if n >= prod(bases)
+        error("number to big to transform")
+    end
+
+    digits = Array{Int64}(length(bases))
+    for (i, base) in enumerate(reverse(bases))
+        n, digits[i] = divrem(n, base)
+    end
+    digits
+end
+# FIX THESE
+function mixedradix2number(digits::Vector{Int}, bases::Vector{Int})
+    if length(digits)>length(bases)
+        error("more digits than radices")
+    end
+
+    res = 0
+    digitsreversed = reverse(digits)
+    for i=1:length(digits)
+        res = res * bases[i] + digitsreversed[i]
+    end
+    res
+end
+
 function renormalize!(ϕ::AbstractVector{T}) where T<:Union{Real, Complex}
     n = norm(ϕ)
     for i=1:length(ϕ)
