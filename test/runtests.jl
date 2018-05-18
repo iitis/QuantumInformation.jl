@@ -7,7 +7,7 @@ else
     using Test
 end
 
-my_tests = ["utils.jl", "base.jl", "ptrace.jl",
+my_tests = ["utils.jl", "base.jl", "ptrace.jl", "ptranspose.jl",
 "randommatrix.jl", "randomstate.jl",
 "gates.jl"]
 

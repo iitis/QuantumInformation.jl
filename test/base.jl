@@ -101,20 +101,6 @@ end
     @test norm(σ - ξ) ≈ 0. atol=1e-15
 end
 
-@testset "ptranspose" begin
-  ρ =  ComplexF64[1 2 3 4; 5 6 7 8; 9 10 11 12; 13 14 15 16]
-  trans1 = [1 2 9 10; 5 6 13 14; 3 4 11 12; 7 8 15 16]
-  trans2 = [1 5 3 7; 2 6 4 8; 9 13 11 15; 10 14 12 16]
-  @test norm(ptranspose(ρ, [2, 2], [1]) - trans1) ≈ 0. atol=1e-15
-  @test norm(ptranspose(ρ, [2, 2], [2]) - trans2) ≈ 0. atol=1e-15
-
-  ρ = sparse(ρ)
-  trans1 = sparse(trans1)
-  trans2 = sparse(trans2)
-  @test norm(ptranspose(ρ, [2, 2], 1) - trans1, 1) ≈ 0. atol=1e-15
-  @test norm(ptranspose(ρ, [2, 2], 2) - trans2, 1) ≈ 0. atol=1e-15
-end
-
 #@testset "number2mixedradix" begin
 #    number = 486
 #    bases = Int64[8, 42, 2]

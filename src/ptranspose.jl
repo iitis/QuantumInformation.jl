@@ -3,13 +3,13 @@ function ptranspose(ρ::AbstractMatrix{T}, idims::Vector, isystems::Vector) wher
     systems=length(idims)-isystems+1
 
     if size(ρ,1)!=size(ρ,2)
-        error("Non square matrix passed to ptrace")
+        throw(ArgumentError("Non square matrix passed to ptrace"))
     end
     if prod(dims)!=size(ρ,1)
-        error("Product of dimensions do not match shape of matrix.")
+        throw(ArgumentError("Product of dimensions do not match shape of matrix."))
     end
-    if ! ((maximum(systems) <= length(dims) |  (minimum(systems) > length(dims))))
-        error("System index out of range")
+    if maximum(systems) > length(dims) ||  minimum(systems) < 1
+        throw(ArgumentError("System index out of range"))
     end
 
     offset = length(dims)
@@ -29,14 +29,14 @@ ptranspose(ρ::AbstractMatrix{T}, idims::Vector, sys::Int) where T<:Number = ptr
 function ptranspose(ρ::AbstractSparseMatrix{T}, dims::Vector, sys::Int) where T<:Number
 
     if size(ρ,1)!=size(ρ,2)
-        error("Non square matrix passed to ptrace")
+        throw(ArgumentError("Non square matrix passed to ptrace"))
     end
     if prod(dims)!=size(ρ,1)
-        error("Product of dimensions do not match shape of matrix.")
+        throw(ArgumentError("Product of dimensions do not match shape of matrix."))
     end
 
     if sys != 1 && sys != 2
-        error("sys must be 1 or 2, not $sys")
+        throw(ArgumentError("sys must be 1 or 2, not $sys"))
     end
 
     I, J, V = findnz(ρ)
