@@ -53,6 +53,6 @@ end
     @test_throws ArgumentError ptrace(sparse(ones(2, 3)), [1, 2], [1])
     @test_throws ArgumentError ptrace(sparse(ones(2, 2)), [3, 4], [2])
     @test_throws ArgumentError ptrace(sparse(ones(4, 4)), [2, 2], [3])
-    @test_throws ArgumentError ptrace(sparse(ones(8, 8)), [2, 2, 2], [3])
+    @test_throws ArgumentError ptrace(sparse(ones(8, 8)), [2, 2, 2], [2])
 end
 end
