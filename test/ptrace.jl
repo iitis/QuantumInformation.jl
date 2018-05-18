@@ -25,6 +25,8 @@ end
     @test norm(ξ - eye(2)/2) ≈ 0. atol=1e-15
     ξ = ptrace(ϕ, [2, 2], 2)
     @test norm(ξ - eye(2)/2) ≈ 0. atol=1e-15
+    ξ = ptrace(ϕ, [2, 2], 1)
+    @test norm(ξ - eye(2)/2) ≈ 0. atol=1e-15
     @test_throws ArgumentError ptrace(ϕ, [2, 2], 3)
 end
 
