@@ -21,7 +21,7 @@ random_mixed_state!, random_mixed_state_hs, random_mixed_state,
 random_dynamical_matrix!, random_dynamical_matrix,
 random_jamiolkowski_state!, random_jamiolkowski_state,
 random_unitary, random_orthogonal, random_isometry,
-funcmh, funcmh!, renormalize!,
+funcmh, funcmh!, renormalize!, random_ball,
 sx,sy,sz, qft, hadamard, grover,
 ⊗
 
