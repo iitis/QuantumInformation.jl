@@ -1,5 +1,5 @@
 site_name:        QI.jl
-repo_url:         https://github.com/ZKSI/QI.jl.git
+repo_url:         https://github.com/ZKSI/QI.jl.git:documentation
 site_description: TODO...
 site_author:      IITIS
 
