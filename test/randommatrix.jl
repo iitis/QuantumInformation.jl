@@ -1,5 +1,6 @@
 using StatsBase
 
+srand(42)
 @testset "Random matrices" begin
 
 @testset "random_dynamical_matrix" begin
@@ -51,7 +52,6 @@ end
     U = random_unitary(n)
     @test norm(U*U' - eye(n)) ≈ 0 atol=1e-13
 
-    srand(42)
     n = 100
     steps = 100
     r = zeros(steps, n)
@@ -70,7 +70,6 @@ end
     O = random_orthogonal(n)
     @test norm(O*O' - eye(n)) ≈ 0 atol=1e-13
 
-    srand(42)
     n = 100
     steps = 100
     r = zeros(steps, n)

@@ -1,5 +1,5 @@
 @testset "Random states" begin
-
+srand(42)
 @testset "random_ket" begin
     ϕ = zeros(Float64, 20)
     ψ = zeros(ComplexF64, 20)
