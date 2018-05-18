@@ -12,6 +12,7 @@
     ϕ = ket(0, 4, sparse=true)
     @test ϕ[1] == 1
     @test size(ϕ) == (4,)
+    @test nnz(ϕ) == 1
 
     @test_throws ArgumentError ket(4, 3, sparse=true)
 end
@@ -25,6 +26,8 @@ end
     ϕ = bra(0, 4, sparse=true)
     @test ϕ[1] == 1
     @test size(ϕ) == (1, 4)
+    @test nnz(ϕ') == 1
+    @test_throws ArgumentError ket(4, 3, sparse=true)
     # TODO : Fix these tests: types depend on julia version
     # @test typeof(bra(Float64, 0, 4)) == LinearAlgebra.Adjoint{Float64,Array{Float64,1}}
     # @test typeof(bra(ComplexF64, 0, 4)) == LinearAlgebra.Adjoint{Complex{Float64},Array{Complex{Float64},1}}
@@ -36,6 +39,14 @@ end
     αβ[1, 1] = 1
     @test norm(ϕψ - αβ) ≈ 0.
     @test_throws ArgumentError ketbra(4,4,3)
+
+    ϕψ = ketbra(0, 0, 4, sparse=true)
+    αβ = spzeros(ComplexF64, 4, 4)
+    αβ[1, 1] = 1
+    @test norm(ϕψ - αβ, 1) ≈ 0.
+    @test size(ϕψ) == (4, 4)
+    @test nnz(ϕψ) == 1
+    @test_throws ArgumentError ketbra(4, 4, 3, sparse=true)
     # TODO : Fix these tests: types depend on julia version
     # @test typeof(ketbra(Float64, 0, 0, 4)) == Matrix{Float64}
     # @test typeof(ketbra(ComplexF64, 0, 0, 4)) == Matrix{ComplexF64}
