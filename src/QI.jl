@@ -22,7 +22,7 @@ random_dynamical_matrix!, random_dynamical_matrix,
 random_jamiolkowski_state!, random_jamiolkowski_state,
 random_unitary, random_orthogonal, random_isometry,
 funcmh, funcmh!, renormalize!,
-sx,sy,sz, qft, hadamard,
+sx,sy,sz, qft, hadamard, grover,
 ⊗
 
 include("base.jl")

@@ -8,6 +8,13 @@
     @test norm(abs.(F) - fill(1/sqrt(d), d, d)) ≈ 0 atol=1e-13
 end
 
+@testset "Grover" begin
+    d = 10
+    G = grover(d)
+    @test norm(G'*G - eye(d)) ≈ 0 atol=1e-13
+    @test size(G) == (d, d)
+end
+
 @testset "hadamard" begin
     d = 16
     H = hadamard(d)
