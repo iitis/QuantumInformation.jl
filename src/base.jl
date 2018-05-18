@@ -97,20 +97,21 @@ function apply_kraus(kraus_list::Vector{T}, ρ::T) where {T<:AbstractMatrix{T1}}
     sum(k-> k*ρ*k', kraus_list)
 end
 
-function max_mix(dim)
-    1.0 / dim * eye(dim)
-end
+max_mixed(d::Int; sparse=false) = sparse ? speye(ComplexF64, d, d)/d : eye(ComplexF64, d, d)/d
 
-function max_entangled(dim)
-    sqrtdim = isqrt(dim)
-    1 / sqrt(sqrtdim) * sum(kron(ket(i, sqrtdim), ket(i, sqrtdim)) for i in 1:sqrtdim)
+function max_entangled(d::Int; sparse=false)
+    sd = isqrt(d)
+    ϕ = sparse ? res(speye(ComplexF64, sd, sd)) : res(eye(ComplexF64, sd, sd))
+    renormalize!(ϕ)
+    ϕ
 end
 
 """
 http://en.wikipedia.org/wiki/Werner_state
 """
-function werner_state(alpha, dim)
-    return alpha * proj(max_entangled(dim)) + (1 - alpha) * max_mix(dim)
+function werner_state(d::Int, α::Float64,)
+    α > 1 || α < 0 ? throw(ArgumentError("α must be in [0, 1]")) : ()
+    α * proj(max_entangled(d)) + (1 - α) * max_mixed(d)
 end
 
 #=

@@ -111,4 +111,30 @@ end
     @test norm(σ - ξ) ≈ 0. atol=1e-15
 end
 
+@testset "max_mixed" begin
+    d = 10
+    ρ = max_mixed(d)
+    @test all(diag(ρ) .≈ 1/d)
+
+    ρ = max_mixed(d, sparse=true)
+    @test typeof(ρ) <: AbstractSparseMatrix
+    @test nnz(ρ) == d
+end
+
+@testset "max_entangled" begin
+    ϕ = max_entangled(4)
+    @test norm(ϕ) ≈ 1
+    @test ϕ[1] ≈ 1/sqrt(2) atol=1e-15
+    @test ϕ[4] ≈ 1/sqrt(2) atol=1e-15
+    @test ϕ[2] ≈ 0 atol=1e-15
+    @test ϕ[3] ≈ 0 atol=1e-15
+end
+
+@testset "werner_state" begin
+    ρ = werner_state(4, 0.2222)
+    @test trace(ρ) ≈ 1
+    @test ishermitian(ρ)
+
+    @test_throws ArgumentError werner_state(4, 1.2)
+end
 end
