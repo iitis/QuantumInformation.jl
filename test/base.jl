@@ -101,25 +101,6 @@ end
     @test norm(σ - ξ) ≈ 0. atol=1e-15
 end
 
-@testset "ptrace" begin
-    ρ = [0.25 0.25im; -0.25im 0.75]
-    σ = [0.4 0.1im; -0.1im 0.6]
-    ξ = ptrace(ρ ⊗ σ, [2, 2], [2,])
-    @test norm(ρ - ξ) ≈ 0. atol=1e-15
-
-    ϕ = 1/sqrt(2) * (ket(0, 4) + ket(3, 4))
-    ξ = ptrace(proj(ϕ), [2, 2], [2,])
-    @test norm(ξ - eye(2)/2) ≈ 0. atol=1e-15
-    ξ = ptrace(ϕ, [2, 2], 2)
-    @test norm(ξ - eye(2)/2) ≈ 0. atol=1e-15
-
-    ϕ = sparse(1/sqrt(2) * (ket(0, 4) + ket(3, 4)))
-    ξ = ptrace(proj(ϕ), [2, 2], 2)
-    @test norm(ξ - speye(2)/2, 1) ≈ 0. atol=1e-15
-    ξ = ptrace(ϕ, [2, 2], 2)
-    @test norm(ξ - eye(2)/2, 1) ≈ 0. atol=1e-15
-end
-
 @testset "ptranspose" begin
   ρ =  ComplexF64[1 2 3 4; 5 6 7 8; 9 10 11 12; 13 14 15 16]
   trans1 = [1 2 9 10; 5 6 13 14; 3 4 11 12; 7 8 15 16]

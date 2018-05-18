@@ -4,13 +4,13 @@ function ptrace(ρ::AbstractMatrix{T}, idims::Vector, isystems::Vector) where T<
     systems=length(idims)-isystems+1
 
     if size(ρ,1)!=size(ρ,2)
-        error("Non square matrix passed to ptrace")
+        throw(ArgumentError("Non square matrix passed to ptrace"))
     end
     if prod(dims)!=size(ρ,1)
-        error("Product of dimensions do not match shape of matrix.")
+        throw(ArgumentError("Product of dimensions do not match shape of matrix."))
     end
-    if ! ((maximum(systems) <= length(dims) |  (minimum(systems) > length(dims))))
-        error("System index out of range")
+    if maximum(systems) > length(dims) || minimum(systems) < 1
+        throw(ArgumentError("System index out of range"))
     end
     offset = length(dims)
     keep = setdiff(1:offset, systems)
@@ -36,16 +36,16 @@ ptrace(ρ::AbstractMatrix{T}, idims::Vector, sys::Int) where T<:Number = ptrace(
 function ptrace(ρ::AbstractSparseMatrix{T}, idims::Vector, sys::Int) where T<:Number
 
     if size(ρ,1)!=size(ρ,2)
-        error("Non square matrix passed to ptrace")
+        throw(ArgumentError("Non square matrix passed to ptrace"))
     end
     if prod(idims)!=size(ρ,1)
-        error("Product of dimensions do not match shape of matrix.")
+        throw(ArgumentError("Product of dimensions do not match shape of matrix."))
     end
     if sys > 2 || sys < 1
-        error("sys mus be either 1 or 2, not $sys")
+        throw(ArgumentError("sys mus be either 1 or 2, not $sys"))
     end
     if length(idims) != 2
-        error("Only bipartite systems supported")
+        throw(ArgumentError("Only bipartite systems supported"))
     end
 
     d1, d2 = idims
@@ -66,12 +66,17 @@ function ptrace(ρ::AbstractSparseMatrix{T}, idims::Vector, sys::Int) where T<:N
     end
 end
 
+ptrace(ρ::AbstractSparseMatrix{T}, idims::Vector, sys::Vector) where T<:Number = ptrace(ρ, idims, sys[1])
+
 # TODO: allow for more than bipartite systems???
-function ptrace(ϕ::AbstractVector{T}, idims::Vector, isystem::Int) where T<:Number
+function ptrace(ϕ::AbstractVector{T}, idims::Vector, sys::Int) where T<:Number
     A = unres(ϕ, idims...)
-    if isystem == 1
+    if sys == 1
         return A'*A
-    elseif isystem == 2
+    elseif sys == 2
         return A*A'
+    else
+        throw(ArgumentError("sys must 1 or 2"))
     end
+
 end
