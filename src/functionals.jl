@@ -1,3 +1,5 @@
+using QI, Convex, SCS
+
 trace_norm(A::AbstractMatrix{T}) where T <: Number = sum(svdvals(A))
 
 function trace_distance(A::AbstractMatrix{T}, B::AbstractMatrix{T})  where T <: Number
@@ -81,4 +83,25 @@ end
 function ppt(ρ::AbstractMatrix, dims::Vector, sys::Int)
     ρ_s = ptranspose(ρ, dims, sys)
     minimum(eigvals(ρ_s))
+end
+
+function diamond_norm(J::AbstractMatrix{T}, d1::Int, d2::Int=d1) where T <: Number
+  X = ComplexVariable(d1*d2, d1*d2)
+  t = 0.5inner_product(X, J)+0.5inner_product(X', J')
+
+  ρ₀ = ComplexVariable(d1, d1)
+  ρ₁ = ComplexVariable(d1, d1)
+
+  constraints = [ρ₀ in :SDP, ρ₁ in :SDP]
+  constraints += trace(ρ₀) == 1
+  constraints += trace(ρ₁) == 1
+  constraints += [eye(d2) ⊗ ρ₀ X; X' eye(d2) ⊗ ρ₁] in :SDP
+
+  problem = maximize(t, constraints)
+  solve!(problem, SCSSolver(verbose=0))
+  problem.optval
+end
+
+function diamond_distance(J1::AbstractMatrix{T}, J2::AbstractMatrix{T}, d1::Int, d2::Int=d1) where T <: Number
+    diamond_norm(J1-J2, d1, d2)
 end

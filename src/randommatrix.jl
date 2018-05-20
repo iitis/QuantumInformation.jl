@@ -40,7 +40,12 @@ function random_dynamical_matrix!!(J::AbstractMatrix{T}, A::AbstractMatrix{T}, d
     Y = ptrace(J, [d2, d1], [1])
     sY = funcmh!(x -> 1 / sqrt(x), Y)
     onesY = eye(d2, d2) ⊗ sY
-    J[:] = onesY * J * onesY' # A_mul_B!(J, eye(n,n) ⊗ sY * X, eye(n,n) ⊗ sY) deprecated
+    J[:] = onesY * J * onesY'
+    #can we do this better?
+    for i=1:size(J, 1)
+        J[i, i] = real(J[i, i])
+    end
+    J[:] = Hermitian(J)
 end
 
 function random_dynamical_matrix!(J::AbstractMatrix{T}, d1::Int=isqrt(size(J,1)), z::Int=prod(size(J))) where T<:Union{Real, Complex}

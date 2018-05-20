@@ -21,6 +21,7 @@ function random_mixed_state!!(ρ::AbstractMatrix{T}, A::AbstractMatrix{T}) where
     random_ginibre_matrix!(A)
     ρ[:] = A*A'
     renormalize!(ρ)
+    ρ[:] = Hermitian(ρ)
 end
 
 function random_mixed_state!(ρ::AbstractMatrix{T}, k::Int) where T<:Union{Real, Complex}
