@@ -4,7 +4,7 @@ function trace_distance(A::AbstractMatrix{T}, B::AbstractMatrix{T})  where T <: 
     one(T)/2 * trace_norm(A - B)
 end
 
-hs_norm(A::AbstractMatrix{T}) where T <: Number = sqrt(sum(svdvals(A).^2))
+hs_norm(A::AbstractMatrix{T}) where T <: Number = sqrt(sum(abs2.(A)))
 
 function hs_distance(A::AbstractMatrix{T}, B::AbstractMatrix{T}) where T <: Number
     hs_norm(A - B)
