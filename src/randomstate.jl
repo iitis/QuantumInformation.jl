@@ -41,7 +41,6 @@ function random_mixed_state(::Type{T}, d::Int64, k::Int=d) where T<:Union{Real, 
 end
 
 random_mixed_state(d::Int64, k::Int=d) = random_mixed_state(ComplexF64, d, k)
-random_mixed_state(d::Int64) = random_mixed_state(ComplexF64, d)
 random_mixed_state_hs(d::Int64) = random_mixed_state(d) #backwards compat
 
 
