@@ -17,8 +17,8 @@ end
 """
     $(SIGNATURES)
 
-  - `val::Int`: label.
-  - `dim::Int`: length of the vector
+  - `val::Int`: non-zero entry - label.
+  - `dim::Int`: length of the vector.
   - `sparse:Bool` : sparse\/dense option. Optional `sparse=false`.
 
     Return column vector describing quantum state
@@ -37,7 +37,7 @@ bra(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractVector{T} where T<:Number 
 """
   $(SIGNATURES)
 
-  - `val::Int`: label.
+  - `val::Int`: non-zero entry - label.
   - `dim::Int`: length of the vector
   - `sparse:Bool` : sparse\/dense option. Optional `sparse=false`.
 
@@ -264,6 +264,17 @@ shannon_entropy(p::AbstractVector{T}) where T<:Real = -sum(p .* log.(p))
 
 shannon_entropy(x::T) where T<:Real = x > 0 ? -x * log(x) - (1 - x) * log(1 - x) : error("Negative number passed to shannon_entropy")
 
+"""
+  $(SIGNATURES)
+
+    - `ρ::AbstractMatrix`: reshuffled matrix.
+    Calculates the von Neuman entropy of positive matrix \$\\rho\$
+    \$S(\\rho)=-tr(\\rho\\log(\\rho))\$
+
+    Equivalent faster form:
+    \$S(\\rho)=-\\sum_i \\lambda_i(\\rho)*\\log(\lambda_i(\\rho))\$
+    http://www.quantiki.org/wiki/Von_Neumann_entropy
+    """
 function entropy(ρ::Hermitian{T}) where T<:Number
     λ = eigvals(ρ)
     λ = λ[λ .> 0]
