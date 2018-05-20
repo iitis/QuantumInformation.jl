@@ -1,3 +1,7 @@
+"""
+Main module for `QI.jl` -- a Julia package for numerical computation in quantum information theory.
+"""
+
 module QI
 if VERSION<=v"0.7"
     const ComplexF64 = Complex128
@@ -5,6 +9,9 @@ else
     using LinearAlgebra
     using SparseArrays
 end
+
+using Compat, DocStringExtensions
+import Compat.Markdown
 
 const ⊗ = kron
 export ket, bra, ketbra, proj, base_matrices,
