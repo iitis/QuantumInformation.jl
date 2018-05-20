@@ -15,9 +15,13 @@ function ket(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractSparseVector{T} w
 end
 
 """
-    ket(val::Int, dim::Int; sparse=false)
+    $(SIGNATURES)
 
-    A ket of length `dim` with the entry `val` equal to one.
+  - `val::Int`: label.
+  - `dim::Int`: length of the vector
+  - `sparse:Bool` : sparse\/dense option. Optional `sparse=false`.
+
+    Return column vector describing quantum state
 """
 function ket(val::Int, dim::Int; sparse=false)
     if sparse==true
@@ -27,8 +31,18 @@ function ket(val::Int, dim::Int; sparse=false)
     end
 end
 
+
 bra(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractVector{T} where T<:Number = ket(Tv, val, dim)'
 
+"""
+  $(SIGNATURES)
+
+  - `val::Int`: label.
+  - `dim::Int`: length of the vector
+  - `sparse:Bool` : sparse\/dense option. Optional `sparse=false`.
+
+  Return Hermitian conjugate of the ket with the same label.
+"""
 function bra(val::Int, dim::Int; sparse=false)
     if sparse==true
         return bra(SparseVector{ComplexF64}, val, dim)
@@ -206,9 +220,13 @@ function mixedradix2number(digits::Vector{Int}, bases::Vector{Int})
 end
 
 """
+  $(SIGNATURES)
+
+  - `ρ::AbstractMatrix`: reshuffled matrix.
+
   Performs reshuffling of indices of a matrix.
-  Given multiindexed matrix M_{(m,μ),(n,ν)} it returns
-  matrix M_{(m,n),(μ,ν)}.
+  Given multiindexed matrix \$M_{(m,μ),(n,ν)}\$ it returns
+  matrix \$M_{(m,n),(μ,ν)}\$.
 """
 function reshuffle(ρ::AbstractMatrix{T}) where T<:Number
   (r, c) = size(ρ)
