@@ -104,6 +104,9 @@ end
 
 unres(ϕ::AbstractVector{T}, m::Int, n::Int) where T<:Number = transpose(reshape(ϕ, n, m))
 
+"""
+Transforms list of Kraus operators into super-operator matrix.
+"""
 function kraus_to_superoperator(kraus_list::Vector{T}) where {T<:AbstractMatrix{T1}} where {T1<:Number}
     # TODO: chceck if all Kraus operators are the same shape
     sum((k) -> kron(k, k'), kraus_list)
@@ -239,8 +242,36 @@ function reshuffle(ρ::AbstractMatrix{T}) where T<:Number
   return reshape(tensor, r1*r2, c1*c2)
 end
 
+"""
+  $(SIGNATURES)
+
+  - `ρ::AbstractMatrix`: matrix.
+  - `σ::AbstractMatrix`: matrix.
+  Original equation:
+  \$\\delta(\\rho,\\sigma)=\\frac{1}{2}\\mathrm{tr}(|\\rho-\\sigma|)\$
+
+  Equivalent faster method:
+  \$\\delta(A,B)=\\frac{1}{2} \\sum_i \\sigma_i(A-B)\$
+  http://www.quantiki.org/wiki/Trace_distance
+"""
 trace_distance(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number = sum(abs.(eigvals(Hermitian(ρ - σ))))
 
+"""
+  $(SIGNATURES)
+
+  - `ρ::AbstractMatrix`: matrix.
+  - `σ::AbstractMatrix`: matrix.
+    Original equation:
+    \$\\sqrt{F}(\\rho,\\sigma)=\\textrm{tr}\\sqrt{\\sqrt{\\rho}\\sigma\\sqrt{\\rho}}\$
+
+    http://www.quantiki.org/wiki/Fidelity
+
+    Equivalent faster method:
+    \$\\sqrt{F}(\\rho,\\sigma)=\\sum_i \\sqrt{\\lambda_i(AB)}\$
+
+    ``Sub-- and super--fidelity as bounds for quantum fidelity''
+    Quantum Information & Computation, Vol.9 No.1&2 (2009)
+"""
 function fidelity_sqrt(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
   if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
     error("Non square matrix")
@@ -249,6 +280,15 @@ function fidelity_sqrt(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Nu
   r = sum(sqrt.(λ[λ.>0]))
 end
 
+"""
+  $(SIGNATURES)
+
+  - `ρ::AbstractMatrix`: matrix.
+  - `σ::AbstractMatrix`: matrix.
+  \$F(\\rho,\\sigma)=\\left(\\textrm{tr}\\sqrt{\\sqrt{\\rho}\\sigma\\sqrt{\\rho}}\\right)^2\$
+
+  http://www.quantiki.org/wiki/Fidelity
+"""
 function fidelity(ρ::AbstractMatrix{T}, σ::AbstractMatrix{T}) where T<:Number
   if size(ρ, 1) != size(ρ, 2) || size(σ, 1) != size(σ, 2)
     error("Non square matrix")
@@ -267,7 +307,7 @@ shannon_entropy(x::T) where T<:Real = x > 0 ? -x * log(x) - (1 - x) * log(1 - x)
 """
   $(SIGNATURES)
 
-    - `ρ::AbstractMatrix`: reshuffled matrix.
+    - `ρ::AbstractMatrix`: matrix.
     Calculates the von Neuman entropy of positive matrix \$\\rho\$
     \$S(\\rho)=-tr(\\rho\\log(\\rho))\$
 
