@@ -1,4 +1,4 @@
-using QI, Convex, SCS
+using Convex, SCS
 
 trace_norm(A::AbstractMatrix{T}) where T <: Number = sum(svdvals(A))
 
