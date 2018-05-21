@@ -28,7 +28,7 @@ function reshuffle(ρ::AbstractSparseMatrix{T}, dims::Matrix{Int}) where T<:Numb
     sparse(newI+1, newJ+1, V, prod(newdimsI), prod(newdimsJ))
 end
 
-function reshuffle(ρ::Union{AbstractMatrix{T},AbstractSparseMatrix{T}}) where T<:Number
+function reshuffle(ρ::AbstractMatrix{T}) where T<:Number
     (r, c) = size(ρ)
     sqrtr = isqrt(r)
     sqrtc = isqrt(c)

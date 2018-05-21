@@ -1,24 +1,21 @@
-function number2mixedradix(n::Int, bases::Vector{Int})
-    if n >= prod(bases)
-        error("number to big to transform")
-    end
+function number2mixedradix(n::Int, radices::Vector{Int})
+    n >= prod(radices) ? throw(ArgumentError("number to big to transform")) : ()
 
-    digits = Array{Int64}(length(bases))
-    for (i, base) in enumerate(reverse(bases))
-        n, digits[i] = divrem(n, base)
+    digits = Array{Int}(length(radices))
+    for (i, radix) in enumerate(reverse(radices))
+        n, digits[end-i+1] = divrem(n, radix)
     end
     digits
 end
 # FIX THESE
-function mixedradix2number(digits::Vector{Int}, bases::Vector{Int})
-    if length(digits)>length(bases)
-        error("more digits than radices")
-    end
+function mixedradix2number(digits::Vector{Int}, radices::Vector{Int})
+    length(digits)>length(radices) ? throw(ArgumentError("more digits than radices")) : ()
 
     res = 0
     digitsreversed = reverse(digits)
-    for i=1:length(digits)
-        res = res * bases[i] + digitsreversed[i]
+    for (digit, radix) = zip(digits, radices)
+        digit >= radix ? throw(ArgumentError("digit larger or equal to base")) : ()
+        res = res * radix + digit
     end
     res
 end
