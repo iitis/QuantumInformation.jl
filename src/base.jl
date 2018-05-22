@@ -309,7 +309,7 @@ shannon_entropy(x::T) where T<:Real = x > 0 ? -x * log(x) - (1 - x) * log(1 - x)
 
     - `ρ::AbstractMatrix`: matrix.
     Calculates the von Neuman entropy of positive matrix \$\\rho\$
-    
+
     \$S(\\rho)=-tr(\\rho\\log(\\rho))\$
 
     Equivalent faster form:
