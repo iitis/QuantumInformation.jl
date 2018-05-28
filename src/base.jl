@@ -56,7 +56,7 @@ function ketbra(valk::Int, valb::Int, dim::Int; sparse=false)
     end
 end
 
-proj(ket::AbstractVector{T}) where T<:Number = ket * ket'
+proj(ket::AbstractVector{<:Number}) = ket * ket'
 
 # function base_matrices(dim)
 #     function _it()
