@@ -23,14 +23,14 @@ function mixedradix2number(digits::Vector{Int}, bases::Vector{Int})
     res
 end
 
-function renormalize!(ϕ::AbstractVector{T}) where T<:Union{Real, Complex}
+function renormalize!(ϕ::AbstractVector{<:Number})
     n = norm(ϕ)
     for i=1:length(ϕ)
         ϕ[i] = ϕ[i]/n
     end
 end
 
-function renormalize!(ρ::AbstractMatrix{T}) where T<:Union{Real, Complex}
+function renormalize!(ρ::AbstractMatrix{<:Number})
     t = trace(ρ)
     for i=1:length(ρ)
         ρ[i] = ρ[i]/t

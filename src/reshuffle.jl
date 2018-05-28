@@ -4,7 +4,7 @@
   Given multiindexed matrix M_{(m,μ),(n,ν)} it returns
   matrix M_{(m,n),(μ,ν)}.
 """
-function reshuffle(ρ::AbstractMatrix{T}, dims::Matrix{Int}) where T<:Number
+function reshuffle(ρ::AbstractMatrix{<:Number}, dims::Matrix{Int})
   m, n, μ, ν  = dims
   tensor = reshape(ρ, μ, m, ν, n)
   perm = [4, 2, 3, 1]
@@ -12,7 +12,7 @@ function reshuffle(ρ::AbstractMatrix{T}, dims::Matrix{Int}) where T<:Number
   reshape(tensor, m*n, μ*ν)
 end
 
-function reshuffle(ρ::AbstractSparseMatrix{T}, dims::Matrix{Int}) where T<:Number
+function reshuffle(ρ::AbstractSparseMatrix{<:Number}, dims::Matrix{Int})
     dimsI =dims[1,:]
     dimsJ =dims[2,:]
     newdimsI =[dims[1, 1], dims[2, 1]]
@@ -28,7 +28,7 @@ function reshuffle(ρ::AbstractSparseMatrix{T}, dims::Matrix{Int}) where T<:Numb
     sparse(newI+1, newJ+1, V, prod(newdimsI), prod(newdimsJ))
 end
 
-function reshuffle(ρ::AbstractMatrix{T}) where T<:Number
+function reshuffle(ρ::AbstractMatrix{<:Number})
     (r, c) = size(ρ)
     sqrtr = isqrt(r)
     sqrtc = isqrt(c)

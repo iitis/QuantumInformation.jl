@@ -1,6 +1,6 @@
-random_ginibre_matrix!(A::AbstractMatrix{T}) where T<:Real = randn!(A)
+random_ginibre_matrix!(A::AbstractMatrix{<:Real}) = randn!(A)
 
-function random_ginibre_matrix!(A::AbstractMatrix{T}) where T<:Complex
+function random_ginibre_matrix!(A::AbstractMatrix{<:Complex})
     n = prod(size(A))
     A[:] = randn(n) + 1im*randn(n)
 end

@@ -74,28 +74,22 @@ base_matrices(dim) = Channel() do c
     end
 end
 
-res(ρ::AbstractMatrix{T}) where T<:Number = vec(transpose(ρ))
+res(ρ::AbstractMatrix{<:Number}) = vec(transpose(ρ))
 
-function unres(ϕ::AbstractVector{T}, cols::Int) where T<:Number
+function unres(ϕ::AbstractVector{<:Number}, cols::Int)
     dim = length(ϕ)
     rows = div(dim, cols)
     rows*cols == length(ϕ) ? () : error("Wrong number of columns")
     transpose(reshape(ϕ, cols, rows))
 end
 
-function unres(ϕ::AbstractVector{T}) where T<:Number
+function unres(ϕ::AbstractVector{<:Number})
     dim = size(ϕ, 1)
     s = isqrt(dim)
     unres(ϕ, s)
 end
 
-unres(ϕ::AbstractVector{T}, m::Int, n::Int) where T<:Number = transpose(reshape(ϕ, n, m))
-
-# TODO: allow different type of Kraus operators and the quantum state
-function apply_kraus(kraus_list::Vector{T}, ρ::T) where {T<:AbstractMatrix{T1}} where {T1<:Number}
-    # TODO: chceck if all Kraus operators are the same shape and fit the input state
-    sum(k-> k*ρ*k', kraus_list)
-end
+unres(ϕ::AbstractVector{<:Number}, m::Int, n::Int) = transpose(reshape(ϕ, n, m))
 
 max_mixed(d::Int; sparse=false) = sparse ? speye(ComplexF64, d, d)/d : eye(ComplexF64, d, d)/d
 
