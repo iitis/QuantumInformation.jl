@@ -1,9 +1,9 @@
 module QI
-if VERSION<=v"0.7"
-    const ComplexF64 = Complex128
-else
+if VERSION>v"0.7.0-DEV"
     using LinearAlgebra
     using SparseArrays
+else
+    const ComplexF64 = Complex128
 end
 
 const ⊗ = kron
@@ -40,5 +40,11 @@ include("functionals.jl")
 include("reshuffle.jl")
 include("ptrace.jl")
 include("ptranspose.jl")
+
+if VERSION>v"0.7.0-DEV"
+    # Convex.jl does not support julia 0.7 yet
+else
+    include("convex.jl")
+end
 
 end # module
