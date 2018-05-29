@@ -4,9 +4,9 @@
 """
 Checks if set of Kraus operators fulfill completness relation.
 """
-function kraus_is_complete(kraus_list::Vector{<:AbstractMatrix{<:Number}}, atol=1e-08)
-    complentess_relation = sum(k'*k for k in kraus)
-    isapprox(complentess_relation, eye(size(complentess_relation,0)), atol=atol)
+function kraus_is_CPTP(kraus_list::Vector{<:AbstractMatrix{<:Number}}, atol=1e-08)
+    complentess_relation = sum(k'*k for k in kraus_list)
+    isapprox(complentess_relation, eye(complentess_relation), atol=atol)
 end
 
 """
