@@ -47,5 +47,5 @@ function ptranspose(ρ::AbstractSparseMatrix{<:Number}, dims::Vector{Int}, sys::
         i[sys], j[sys] = j[sys], i[sys]
         newI[k], newJ[k] = mixedradix2number(i, dims), mixedradix2number(j, dims)
     end
-    sparse(newJ+1, newI+1, V, size(ρ)...)
+    sparse(newI+1, newJ+1, V, size(ρ)...)
 end
