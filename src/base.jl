@@ -32,7 +32,7 @@ function bra(val::Int, dim::Int; sparse=false)
     end
 end
 
-function ketbra(::Type{Tv}, valk::Int, valb::Int, dim::Int) where Tv<:AbstractMatrix{T} where T<:Number
+function ketbra(::Type{Tm}, valk::Int, valb::Int, dim::Int) where Tm<:AbstractMatrix{T} where T<:Number
     dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
     valk < dim && valb < dim ? () : throw(ArgumentError("Ket and bra labels have to be smaller than operator dimmension"))
     ϕψ = zeros(T, dim, dim)
@@ -40,7 +40,7 @@ function ketbra(::Type{Tv}, valk::Int, valb::Int, dim::Int) where Tv<:AbstractMa
     ϕψ
 end
 
-function ketbra(::Type{Tv}, valk::Int, valb::Int, dim::Int) where Tv<:AbstractSparseMatrix{T} where T<:Number
+function ketbra(::Type{Tm}, valk::Int, valb::Int, dim::Int) where Tm<:AbstractSparseMatrix{T} where T<:Number
     dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
     valk < dim && valb < dim ? () : throw(ArgumentError("Ket and bra labels have to be smaller than operator dimmension"))
     ϕψ = spzeros(T, dim, dim)
@@ -67,19 +67,21 @@ proj(ket::AbstractVector{<:Number}) = ket * ket'
 #     Task(_it)
 # end
 
-base_matrices(dim) = Channel() do c
+base_matrices(::Type{Tm}, dim::Int) where Tm<:AbstractMatrix{T} where T<:Number = Channel() do c
     dim > 0 ? () : error("Operator dimension has to be nonnegative")
     for i=0:dim-1, j=0:dim-1
-        push!(c, ketbra(j, i, dim))
+        push!(c, ketbra(Tm, j, i, dim))
     end
 end
+
+base_matrices(dim::Int) = base_matrices(Matrix{ComplexF64}, dim)
 
 res(ρ::AbstractMatrix{<:Number}) = vec(transpose(ρ))
 
 function unres(ϕ::AbstractVector{<:Number}, cols::Int)
     dim = length(ϕ)
     rows = div(dim, cols)
-    rows*cols == length(ϕ) ? () : error("Wrong number of columns")
+    rows*cols == dim ? () : error("Wrong number of columns")
     transpose(reshape(ϕ, cols, rows))
 end
 
