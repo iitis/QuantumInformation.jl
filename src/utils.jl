@@ -1,4 +1,29 @@
-function renormalize!(ϕ::Vector{T}) where T<:Union{Real, Complex}
+function number2mixedradix(n::Int, bases::Vector{Int})
+    if n >= prod(bases)
+        error("number to big to transform")
+    end
+
+    digits = Array{Int64}(length(bases))
+    for (i, base) in enumerate(reverse(bases))
+        n, digits[i] = divrem(n, base)
+    end
+    digits
+end
+# FIX THESE
+function mixedradix2number(digits::Vector{Int}, bases::Vector{Int})
+    if length(digits)>length(bases)
+        error("more digits than radices")
+    end
+
+    res = 0
+    digitsreversed = reverse(digits)
+    for i=1:length(digits)
+        res = res * bases[i] + digitsreversed[i]
+    end
+    res
+end
+
+function renormalize!(ϕ::AbstractVector{T}) where T<:Union{Real, Complex}
     n = norm(ϕ)
     for i=1:length(ϕ)
         ϕ[i] = ϕ[i]/n
@@ -48,12 +73,7 @@ function funcmh(f::Function, H::Matrix{T}) where T<:Union{Real, Complex}
     ishermitian(H) ? funcmh(f, Hermitian(H)) : error("Non-hermitian matrix passed to funcmh")
 end
 
-function random_sphere(dim::Int)
-  v = randn(dim)
-  return v / norm(v)
-end
-
-random_ball(dim::Int) = rand()^(1/dim) * random_sphere(dim)
+random_ball(dim::Int) = rand()^(1/dim) * random_ket(Float64, dim)
 
 #function random_vector_fixed_l1_l2(l1::Real, l2::Real, d::Int)
 #  #from here http://stats.stackexchange.com/questions/61692/generating-vectors-under-constraints-on-1-and-2-norm

@@ -2,19 +2,32 @@
 
 @testset "ket" begin
     ϕ = ket(0, 4)
-    @test_throws ErrorException ket(4,3)
+    @test_throws ArgumentError ket(4,3)
     ψ = ComplexF64[1, 0, 0, 0]
     @test norm(ϕ - ψ) ≈ 0.
     # TODO : Fix these tests: types depend on julia version
     # @test typeof(ket(Float64, 0, 4)) == Vector{Float64}
     # @test typeof(ket(ComplexF64, 0, 4)) == Vector{ComplexF64}
+
+    ϕ = ket(0, 4, sparse=true)
+    @test ϕ[1] == 1
+    @test size(ϕ) == (4,)
+    @test nnz(ϕ) == 1
+
+    @test_throws ArgumentError ket(4, 3, sparse=true)
 end
 
 @testset "bra" begin
     ϕ = bra(0, 4)
     ψ = ComplexF64[1 0 0 0]
-    @test_throws ErrorException bra(4,3)
+    @test_throws ArgumentError bra(4,3)
     @test norm(ϕ - ψ) ≈ 0.
+
+    ϕ = bra(0, 4, sparse=true)
+    @test ϕ[1] == 1
+    @test size(ϕ) == (1, 4)
+    @test nnz(ϕ') == 1
+    @test_throws ArgumentError ket(4, 3, sparse=true)
     # TODO : Fix these tests: types depend on julia version
     # @test typeof(bra(Float64, 0, 4)) == LinearAlgebra.Adjoint{Float64,Array{Float64,1}}
     # @test typeof(bra(ComplexF64, 0, 4)) == LinearAlgebra.Adjoint{Complex{Float64},Array{Complex{Float64},1}}
@@ -25,7 +38,15 @@ end
     αβ = zeros(ComplexF64, 4, 4)
     αβ[1, 1] = 1
     @test norm(ϕψ - αβ) ≈ 0.
-    @test_throws ErrorException ketbra(4,4,3)
+    @test_throws ArgumentError ketbra(4,4,3)
+
+    ϕψ = ketbra(0, 0, 4, sparse=true)
+    αβ = spzeros(ComplexF64, 4, 4)
+    αβ[1, 1] = 1
+    @test norm(ϕψ - αβ, 1) ≈ 0.
+    @test size(ϕψ) == (4, 4)
+    @test nnz(ϕψ) == 1
+    @test_throws ArgumentError ketbra(4, 4, 3, sparse=true)
     # TODO : Fix these tests: types depend on julia version
     # @test typeof(ketbra(Float64, 0, 0, 4)) == Matrix{Float64}
     # @test typeof(ketbra(ComplexF64, 0, 0, 4)) == Matrix{ComplexF64}
@@ -61,6 +82,13 @@ end
     @test norm(ρ - σ) ≈ 0.
     a = [1 2.1 3; 4 5 6]
     @test norm(unres([1, 2.1, 3, 4 ,5, 6], 2, 3) - a) ≈ 0.
+
+    expected = [
+    1	2;
+    3	4;
+    5	6
+    ]
+    @test unres(1:6, 2) == expected
 end
 
 @testset "kraus_to_superoperator" begin
@@ -94,83 +122,30 @@ end
     @test norm(σ - ξ) ≈ 0. atol=1e-15
 end
 
-@testset "ptrace" begin
-    ρ = [0.25 0.25im; -0.25im 0.75]
-    σ = [0.4 0.1im; -0.1im 0.6]
-    ξ = ptrace(ρ ⊗ σ, [2, 2], [2,])
-    @test norm(ρ - ξ) ≈ 0. atol=1e-15
+@testset "max_mixed" begin
+    d = 10
+    ρ = max_mixed(d)
+    @test all(diag(ρ) .≈ 1/d)
 
-    ϕ = 1/sqrt(2) * (ket(0, 4) + ket(3, 4))
-    ξ = ptrace(proj(ϕ), [2, 2], [2,])
-    @test norm(ξ - eye(2)/2) ≈ 0. atol=1e-15
-    ξ = ptrace(ϕ, [2, 2], 2)
-    @test norm(ξ - eye(2)/2) ≈ 0. atol=1e-15
+    ρ = max_mixed(d, sparse=true)
+    @test typeof(ρ) <: AbstractSparseMatrix
+    @test nnz(ρ) == d
 end
 
-@testset "ptranspose" begin
-  ρ =  ComplexF64[1 2 3 4; 5 6 7 8; 9 10 11 12; 13 14 15 16]
-  trans1 = [1 2 9 10; 5 6 13 14; 3 4 11 12; 7 8 15 16]
-  trans2 = [1 5 3 7; 2 6 4 8; 9 13 11 15; 10 14 12 16]
-  @test norm(ptranspose(ρ, [2, 2], [1]) - trans1) ≈ 0. atol=1e-15
-  @test norm(ptranspose(ρ, [2, 2], [2]) - trans2) ≈ 0. atol=1e-15
+@testset "max_entangled" begin
+    ϕ = max_entangled(4)
+    @test norm(ϕ) ≈ 1
+    @test ϕ[1] ≈ 1/sqrt(2) atol=1e-15
+    @test ϕ[4] ≈ 1/sqrt(2) atol=1e-15
+    @test ϕ[2] ≈ 0 atol=1e-15
+    @test ϕ[3] ≈ 0 atol=1e-15
 end
 
-#@testset "number2mixedradix" begin
-#    number = 486
-#    bases = Int64[8, 42, 2]
-#    println(number2mixedradix(number, bases))
-#    @test number2mixedradix(number, bases) == Int64[3, 7, 0]
-#end
+@testset "werner_state" begin
+    ρ = werner_state(4, 0.2222)
+    @test trace(ρ) ≈ 1
+    @test ishermitian(ρ)
 
-#@testset "mixedradix2number" begin
-#    number = Int64[3, 7, 0]
-#    bases = Int64[8, 42, 2]
-#    @test mixedradix2number(number, bases) == 486
-#end
-
-@testset "reshuffle" begin
-    X = reshape([1:16;], 4, 4)'
-    T = [1 2 5 6; 3 4 7 8; 9 10 13 14; 11 12 15 16]
-    @test reshuffle(X) == T
+    @test_throws ArgumentError werner_state(4, 1.2)
 end
-
-@testset "trace_distance" begin
-    ρ = [0.25 0.25im; -0.25im 0.75]
-    σ = [0.4 0.1im; -0.1im 0.6]
-
-    @test trace_distance(ρ, ρ) ≈ 0 atol=1e-15
-    @test trace_distance(ρ, σ) ≈ 0.42426406871192857 atol=1e-15
-end
-
-@testset "fidelity_sqrt" begin
-    ρ = [0.25 0.25im; -0.25im 0.75]
-    σ = [0.4 0.1im; -0.1im 0.6]
-    @test fidelity_sqrt(ρ, σ) ≈ real(trace(sqrtm(sqrtm(ρ) * σ * sqrtm(ρ)))) atol=1e-15
-end
-
-@testset "fidelity" begin
-    ϕ = ket(0, 2)
-    ψ = ket(1, 2)
-    ρ = [0.25 0.25im; -0.25im 0.75]
-    σ = [0.4 0.1im; -0.1im 0.6]
-    @test fidelity(ϕ, ϕ) ≈ 1. atol=1e-15
-    @test fidelity(ϕ, ψ) ≈ 0. atol=1e-15
-    @test fidelity(ρ, ψ) ≈ 0.75 atol=1e-15
-    @test fidelity(ϕ, σ) ≈ 0.4 atol=1e-15
-    @test fidelity(ρ, σ) ≈ real(trace(sqrtm(sqrtm(ρ) * σ * sqrtm(ρ))))^2 atol=1e-15
-end
-
-@testset "shannon_entropy" begin
-    @test shannon_entropy(1/2) ≈ log(2) atol=1e-15
-    @test shannon_entropy(1/4) ≈ 0.5623351446188083 atol=1e-15
-    @test shannon_entropy(0.5*ones(20)) ≈ 10log(2) atol=1e-15
-end
-
-@testset "entropy" begin
-    ϕ = ket(0, 2)
-    ρ = [0.25 0.25im; -0.25im 0.75]
-    @test entropy(ϕ) == 0
-    #TODO: add tests for mixed states
-end
-
 end

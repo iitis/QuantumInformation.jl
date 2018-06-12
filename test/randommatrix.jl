@@ -1,5 +1,6 @@
 using StatsBase
 
+srand(42)
 @testset "Random matrices" begin
 
 @testset "random_dynamical_matrix" begin
@@ -28,6 +29,22 @@ using StatsBase
     @test trace(J) ≈ n atol=1e-13
     @test norm(tr - eye(n)) ≈ 0. atol=1e-13
     @test typeof(J) == Matrix{ComplexF64}
+
+    d1, d2 = 2, 4
+    J = random_dynamical_matrix(2, 4)
+    @test size(J) == (d1*d2, d1*d2)
+    @test trace(J) ≈ d1 atol=1e-13
+    tr = ptrace(J, [d2, d1], [1])
+    @test norm(tr - eye(d1)) ≈ 0. atol=1e-13
+    @test typeof(J) == Matrix{ComplexF64}
+
+    d1, d2 = 2, 4
+    J = random_dynamical_matrix(2, 4, 10)
+    @test size(J) == (d1*d2, d1*d2)
+    @test trace(J) ≈ d1 atol=1e-13
+    tr = ptrace(J, [d2, d1], [1])
+    @test norm(tr - eye(d1)) ≈ 0. atol=1e-13
+    @test typeof(J) == Matrix{ComplexF64}
 end
 
 @testset "random_unitary" begin
@@ -35,7 +52,6 @@ end
     U = random_unitary(n)
     @test norm(U*U' - eye(n)) ≈ 0 atol=1e-13
 
-    srand(42)
     n = 100
     steps = 100
     r = zeros(steps, n)
@@ -54,7 +70,6 @@ end
     O = random_orthogonal(n)
     @test norm(O*O' - eye(n)) ≈ 0 atol=1e-13
 
-    srand(42)
     n = 100
     steps = 100
     r = zeros(steps, n)
@@ -73,10 +88,11 @@ end
     @test ishermitian(random_GOE(n))
 end
 
-@testset "random_dynamical_matrix" begin
-    n = 10
-    J = random_dynamical_matrix(n)
-    @test norm(ptrace(J, [n, n], [1]) - eye(n)) ≈ 0 atol=1e-12
+@testset "random_isometry" begin
+    n, d = 20, 10
+    V = random_isometry(n, d)
+    @test norm(V'*V - eye(d)) ≈ 0 atol=1e-13
+    @test all([isapprox(v, 0, atol=1e-13) || isapprox(v, 1, atol=1e-13) for v=eigvals(V*V')])
+    @test_throws ArgumentError random_isometry(d, n)
 end
-
 end

@@ -1,5 +1,5 @@
 @testset "Random states" begin
-
+srand(42)
 @testset "random_ket" begin
     ϕ = zeros(Float64, 20)
     ψ = zeros(ComplexF64, 20)
@@ -30,8 +30,8 @@ end
 @testset "random_mixed_state_hs" begin
     ρ = zeros(Float64, 20, 20)
     σ = zeros(ComplexF64, 20, 20)
-    random_mixed_state_hs!(ρ)
-    random_mixed_state_hs!(σ)
+    random_mixed_state!(ρ)
+    random_mixed_state!(σ)
     @test size(ρ) == (20, 20)
     @test size(σ) == (20, 20)
     @test typeof(ρ) == Matrix{Float64}
@@ -41,8 +41,8 @@ end
     @test trace(ρ) ≈ 1. atol=1e-15
     @test trace(σ) ≈ 1. atol=1e-15
 
-    ρ = random_mixed_state_hs(Float64, 20)
-    σ = random_mixed_state_hs(ComplexF64, 20)
+    ρ = random_mixed_state(Float64, 20)
+    σ = random_mixed_state(ComplexF64, 20)
     @test size(ρ) == (20, 20)
     @test size(σ) == (20, 20)
     @test typeof(ρ) == Matrix{Float64}
@@ -52,7 +52,25 @@ end
     @test trace(ρ) ≈ 1. atol=1e-15
     @test trace(σ) ≈ 1. atol=1e-15
 
-    ρ = random_mixed_state_hs(20)
+    ρ = random_mixed_state(20)
+    @test size(ρ) == (20, 20)
+    @test typeof(ρ) == Matrix{Complex{Float64}}
+    @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
+    @test trace(ρ) ≈ 1. atol=1e-15
+
+    ρ = random_mixed_state(20, 10)
+    @test size(ρ) == (20, 20)
+    @test typeof(ρ) == Matrix{Complex{Float64}}
+    @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
+    @test trace(ρ) ≈ 1. atol=1e-15
+
+    ρ = random_mixed_state(20, 200)
+    @test size(ρ) == (20, 20)
+    @test typeof(ρ) == Matrix{Complex{Float64}}
+    @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
+    @test trace(ρ) ≈ 1. atol=1e-15
+
+    ρ = random_mixed_state_hs(20) #test backwards compat
     @test size(ρ) == (20, 20)
     @test typeof(ρ) == Matrix{Complex{Float64}}
     @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
