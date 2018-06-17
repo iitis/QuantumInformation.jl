@@ -10,7 +10,7 @@ const ⊗ = kron
 export ket, bra, ketbra, proj, base_matrices,
 res, unres,
 kraus_to_superoperator, channel_to_superoperator, apply_kraus,
-ptrace, ptranspose, reshuffle,
+ptrace, ptranspose, reshuffle, permute_systems,
 max_mixed, max_entangled, werner_state,
 number2mixedradix, mixedradix2number,
 trace_norm, trace_distance, hs_norm, hs_distance,
