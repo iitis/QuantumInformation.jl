@@ -3,8 +3,7 @@ os:
   - linux
   - osx
 julia:
-  - 0.6.2
-  - nightly
+  - 0.6.3
 
 notifications:
   email: false
