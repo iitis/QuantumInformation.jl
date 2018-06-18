@@ -1,3 +1,11 @@
+"""
+$(SIGNATURES)
+- `ρ`: quantum state.
+- `idims`: dimensins of subsystems.
+- `isystems`: transposed subsystems.
+
+Return [partial transposition](http://en.wikipedia.org/wiki/Peres-Horodecki_criterion) of matrix `ρ` over the subsystems determined by `isystems`.
+"""
 function ptranspose(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, isystems::Vector{Int})
     dims=reverse(idims)
     systems=length(idims)-isystems+1
