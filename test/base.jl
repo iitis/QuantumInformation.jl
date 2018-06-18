@@ -81,7 +81,7 @@ end
     σ = unres(res(ρ))
     @test norm(ρ - σ) ≈ 0.
     a = [1 2.1 3; 4 5 6]
-    @test norm(unres([1, 2.1, 3, 4 ,5, 6], 2, 3) - a) ≈ 0.
+    @test norm(unres([1, 2.1, 3, 4 ,5, 6], 2) - a) ≈ 0.
 
     expected = [
     1	2;
