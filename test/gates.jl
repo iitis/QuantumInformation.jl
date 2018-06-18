@@ -1,4 +1,4 @@
-@testset "Random matrices" begin
+@testset "Gates" begin
 
 @testset "QFT" begin
     d = 10

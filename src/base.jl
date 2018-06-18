@@ -32,7 +32,7 @@ function bra(val::Int, dim::Int; sparse=false)
     end
 end
 
-function ketbra(::Type{Tv}, valk::Int, valb::Int, dim::Int) where Tv<:AbstractMatrix{T} where T<:Number
+function ketbra(::Type{Tm}, valk::Int, valb::Int, dim::Int) where Tm<:AbstractMatrix{T} where T<:Number
     dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
     valk < dim && valb < dim ? () : throw(ArgumentError("Ket and bra labels have to be smaller than operator dimmension"))
     ϕψ = zeros(T, dim, dim)
@@ -40,7 +40,7 @@ function ketbra(::Type{Tv}, valk::Int, valb::Int, dim::Int) where Tv<:AbstractMa
     ϕψ
 end
 
-function ketbra(::Type{Tv}, valk::Int, valb::Int, dim::Int) where Tv<:AbstractSparseMatrix{T} where T<:Number
+function ketbra(::Type{Tm}, valk::Int, valb::Int, dim::Int) where Tm<:AbstractSparseMatrix{T} where T<:Number
     dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
     valk < dim && valb < dim ? () : throw(ArgumentError("Ket and bra labels have to be smaller than operator dimmension"))
     ϕψ = spzeros(T, dim, dim)
@@ -56,7 +56,7 @@ function ketbra(valk::Int, valb::Int, dim::Int; sparse=false)
     end
 end
 
-proj(ket::AbstractVector{T}) where T<:Number = ket * ket'
+proj(ket::AbstractVector{<:Number}) = ket * ket'
 
 # function base_matrices(dim)
 #     function _it()
@@ -67,35 +67,31 @@ proj(ket::AbstractVector{T}) where T<:Number = ket * ket'
 #     Task(_it)
 # end
 
-base_matrices(dim) = Channel() do c
+base_matrices(::Type{Tm}, dim::Int) where Tm<:AbstractMatrix{T} where T<:Number = Channel() do c
     dim > 0 ? () : error("Operator dimension has to be nonnegative")
     for i=0:dim-1, j=0:dim-1
-        push!(c, ketbra(j, i, dim))
+        push!(c, ketbra(Tm, j, i, dim))
     end
 end
 
-res(ρ::AbstractMatrix{T}) where T<:Number = vec(transpose(ρ))
+base_matrices(dim::Int) = base_matrices(Matrix{ComplexF64}, dim)
 
-function unres(ϕ::AbstractVector{T}, cols::Int) where T<:Number
+res(ρ::AbstractMatrix{<:Number}) = vec(transpose(ρ))
+
+function unres(ϕ::AbstractVector{<:Number}, cols::Int)
     dim = length(ϕ)
     rows = div(dim, cols)
-    rows*cols == length(ϕ) ? () : error("Wrong number of columns")
+    rows*cols == dim ? () : error("Wrong number of columns")
     transpose(reshape(ϕ, cols, rows))
 end
 
-function unres(ϕ::AbstractVector{T}) where T<:Number
+function unres(ϕ::AbstractVector{<:Number})
     dim = size(ϕ, 1)
     s = isqrt(dim)
     unres(ϕ, s)
 end
 
-unres(ϕ::AbstractVector{T}, m::Int, n::Int) where T<:Number = transpose(reshape(ϕ, n, m))
-
-# TODO: allow different type of Kraus operators and the quantum state
-function apply_kraus(kraus_list::Vector{T}, ρ::T) where {T<:AbstractMatrix{T1}} where {T1<:Number}
-    # TODO: chceck if all Kraus operators are the same shape and fit the input state
-    sum(k-> k*ρ*k', kraus_list)
-end
+unres(ϕ::AbstractVector{<:Number}, m::Int, n::Int) = transpose(reshape(ϕ, n, m))
 
 max_mixed(d::Int; sparse=false) = sparse ? speye(ComplexF64, d, d)/d : eye(ComplexF64, d, d)/d
 
