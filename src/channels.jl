@@ -8,9 +8,9 @@ $(SIGNATURES)
 
 Checks if set of Kraus operators fulfill completness relation.
 """
-function kraus_is_complete(kraus, atol=1e-08)
-    complentess_relation = sum(k'*k for k in kraus)
-    isapprox(complentess_relation, eye(size(complentess_relation,0)), atol=atol)
+function kraus_is_CPTP(kraus_list::Vector{<:AbstractMatrix{<:Number}}, atol=1e-08)
+    complentess_relation = sum(k'*k for k in kraus_list)
+    isapprox(complentess_relation, eye(complentess_relation), atol=atol)
 end
 
 """
@@ -19,7 +19,7 @@ $(SIGNATURES)
 
 Transforms list of Kraus operators into super-operator matrix.
 """
-function kraus_to_superoperator(kraus_list::Vector{T}) where {T<:AbstractMatrix{T1}} where {T1<:Number}
+function kraus_to_superoperator(kraus_list::Vector{<:AbstractMatrix{<:Number}})
     # TODO: chceck if all Kraus operators are the same shape
     sum(k⊗k' for k in kraus_list)
 end
@@ -47,9 +47,9 @@ $(SIGNATURES)
 
 Transforms list of Kraus operators into Stinespring representation of quantum channel.
 """
-function kraus_to_stinespring(kraus::Vector{T}) where {T<:AbstractMatrix{T1}} where {T1<:Number}
-    dim = size(kraus,1)
-    sum(k⊗ket(i, dim) for (k, i) in enumerate(kraus))
+function kraus_to_stinespring(kraus_list::Vector{<:AbstractMatrix{<:Number}})
+    dim = size(kraus_list,1)
+    sum(k⊗ket(i, dim) for (k, i) in enumerate(kraus_list))
 end
 
 """
@@ -58,8 +58,8 @@ $(SIGNATURES)
 
 Transforms list of Kraus operators into dynamical matrix.
 """
-function kraus_to_dynamical_matrix(kraus::Vector{T}) where {T<:AbstractMatrix{T1}} where {T1<:Number}
-    sum(res(k) * res(k)' for k in kraus)
+function kraus_to_dynamical_matrix(kraus_list::Vector{<:AbstractMatrix{<:Number}})
+    sum(res(k) * res(k)' for k in kraus_list)
 end
 
 """
@@ -68,7 +68,8 @@ $(SIGNATURES)
 
 Transforms super-operator matrix into list of Kraus operators.
 """
-function superoperator_to_kraus(m::T, cols=0) where {T<:AbstractMatrix{T1}} where {T1<:Number}
+function superoperator_to_kraus(m::AbstractMatrix{<:Number}, cols=0)
+
     F = eigfact(Hermitian(reshuffle(m)))
     # TODO: vcat ?
     [sqrt(val)*unres(F.vectors[:,i], cols) for (i,val) in enumerate(F.values)]
@@ -80,7 +81,7 @@ $(SIGNATURES)
 
 Transforms super-operator matrix into dynamical matrix.
 """
-superoperator_to_dynamical_matrix(m::T) where {T<:AbstractMatrix{T1}} where {T1<:Number} = reshuffle(m)
+superoperator_to_dynamical_matrix(m::AbstractMatrix{<:Number}) = reshuffle(m)
 
 """
 $(SIGNATURES)
@@ -88,7 +89,7 @@ $(SIGNATURES)
 
 Transforms super-operator matrix into Stinespring representation of quantum channel.
 """
-function superoperator_to_stinespring(m::T) where {T<:AbstractMatrix{T1}} where {T1<:Number}
+function superoperator_to_stinespring(m::AbstractMatrix{<:Number})
     kraus_to_stinespring(superoperator_to_kraus(M))
 end
 
@@ -98,7 +99,8 @@ $(SIGNATURES)
 
 Transforms dynamical matrix into list of Kraus operators.
 """
-function dynamical_matrix_to_kraus(R)
+function dynamical_matrix_to_kraus(R::AbstractMatrix{<:Number})
+    
     F = eigfact(Hermitian(R))
 
     kraus = Any[] #TODO: make proper type
@@ -118,7 +120,7 @@ $(SIGNATURES)
 
 Transforms dynamical matrix into Stinespring representation of quantum channel.
 """
-function dynamical_matrix_to_stinespring(R)
+function dynamical_matrix_to_stinespring(R::AbstractMatrix{<:Number})
     return kraus_to_stinespring(dynamical_matrix_to_kraus(R))
 end
 
@@ -128,7 +130,7 @@ $(SIGNATURES)
 
 Transforms dynamical matrix into super-operator matrix.
 """
-function dynamical_matrix_to_superoperator(R)
+function dynamical_matrix_to_superoperator(R::AbstractMatrix{<:Number})
     return reshuffle(R)
 end
 
@@ -164,7 +166,7 @@ $(SIGNATURES)
 
 Application of dynamical matrix into state `rho`.
 """
-function apply_channel_dynamical_matrix(R, rho)
+function apply_channel_dynamical_matrix(R::AbstractMatrix{<:Number}, rho::AbstractMatrix{<:Number})
     unres(reshuffle(R) * res(rho))
 end
 
@@ -175,8 +177,8 @@ $(SIGNATURES)
 
 Application of list of Kraus operators into state `rho`.
 """
-function apply_channel_kraus(kraus, rho)
-    return sum(k * rho * k' for k in kraus)
+function apply_channel_kraus(kraus_list::Vector{<:AbstractMatrix{<:Number}}, rho::AbstractMatrix{<:Number})
+    return sum(k * rho * k' for k in kraus_list)
 end
 
 """
@@ -186,7 +188,7 @@ $(SIGNATURES)
 
 Application of super-operator matrix into state `rho`.
 """
-function apply_channel_superoperator(M, rho)
+function apply_channel_superoperator(M::AbstractMatrix{<:Number}, rho::AbstractMatrix{<:Number})
     return unres(M * res(rho))
 end
 
@@ -198,7 +200,7 @@ $(SIGNATURES)
 
 Application of Stinespring representation of quantum channel into state `rho`.
 """
-function apply_channel_stinespring(A, rho, dims)
+function apply_channel_stinespring(A::AbstractMatrix{<:Number}, rho::AbstractMatrix{<:Number}, dims)
     return ptrace(A * rho * A', dims, [1,])
 end
 

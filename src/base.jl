@@ -49,7 +49,7 @@ function bra(val::Int, dim::Int; sparse=false)
     end
 end
 
-function ketbra(::Type{Tv}, valk::Int, valb::Int, dim::Int) where Tv<:AbstractMatrix{T} where T<:Number
+function ketbra(::Type{Tm}, valk::Int, valb::Int, dim::Int) where Tm<:AbstractMatrix{T} where T<:Number
     dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
     valk < dim && valb < dim ? () : throw(ArgumentError("Ket and bra labels have to be smaller than operator dimmension"))
     ϕψ = zeros(T, dim, dim)
@@ -57,7 +57,7 @@ function ketbra(::Type{Tv}, valk::Int, valb::Int, dim::Int) where Tv<:AbstractMa
     ϕψ
 end
 
-function ketbra(::Type{Tv}, valk::Int, valb::Int, dim::Int) where Tv<:AbstractSparseMatrix{T} where T<:Number
+function ketbra(::Type{Tm}, valk::Int, valb::Int, dim::Int) where Tm<:AbstractSparseMatrix{T} where T<:Number
     dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
     valk < dim && valb < dim ? () : throw(ArgumentError("Ket and bra labels have to be smaller than operator dimmension"))
     ϕψ = spzeros(T, dim, dim)
@@ -88,7 +88,7 @@ $(SIGNATURES)
 
 Return outer product of `ket`.
 """
-proj(ket::AbstractVector{T}) where T<:Number = ket * ket'
+proj(ket::AbstractVector{<:Number}) = ket * ket'
 
 # function base_matrices(dim)
 #     function _it()
@@ -105,12 +105,14 @@ $(SIGNATURES)
 
 Returns elementary matrices of dimension `dim` x `dim`.
 """
-base_matrices(dim) = Channel() do c
+base_matrices(::Type{Tm}, dim::Int) where Tm<:AbstractMatrix{T} where T<:Number = Channel() do c
     dim > 0 ? () : error("Operator dimension has to be nonnegative")
     for i=0:dim-1, j=0:dim-1
-        push!(c, ketbra(j, i, dim))
+        push!(c, ketbra(Tm, j, i, dim))
     end
 end
+
+base_matrices(dim::Int) = base_matrices(Matrix{ComplexF64}, dim)
 
 """
 $(SIGNATURES)
@@ -119,14 +121,8 @@ $(SIGNATURES)
 Returns `vec(ρ.T)`. Reshaping maps
     matrix `ρ` into a vector row by row.
 """
-res(ρ::AbstractMatrix{T}) where T<:Number = vec(transpose(ρ))
+res(ρ::AbstractMatrix{<:Number}) = vec(transpose(ρ))
 
-function unres(ϕ::AbstractVector{T}, cols::Int) where T<:Number
-    dim = length(ϕ)
-    rows = div(dim, cols)
-    rows*cols == length(ϕ) ? () : error("Wrong number of columns")
-    transpose(reshape(ϕ, cols, rows))
-end
 
 """
 $(SIGNATURES)
@@ -134,13 +130,18 @@ $(SIGNATURES)
 
 Return de-reshaping of the vector into a matrix.
 """
-function unres(ϕ::AbstractVector{T}) where T<:Number
+function unres(ϕ::AbstractVector{<:Number}, cols::Int)
+    dim = length(ϕ)
+    rows = div(dim, cols)
+    rows*cols == dim ? () : error("Wrong number of columns")
+    transpose(reshape(ϕ, cols, rows))
+end
+
+function unres(ϕ::AbstractVector{<:Number})
     dim = size(ϕ, 1)
     s = isqrt(dim)
     unres(ϕ, s)
 end
-
-unres(ϕ::AbstractVector{T}, m::Int, n::Int) where T<:Number = transpose(reshape(ϕ, n, m))
 
 """
 $(SIGNATURES)

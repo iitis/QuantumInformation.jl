@@ -1,9 +1,9 @@
-function random_ket!(ϕ::T) where {T<:AbstractVector{T1}} where {T1<:Real}
+function random_ket!(ϕ::AbstractVector{<:Real})
     randn!(ϕ)
     renormalize!(ϕ)
 end
 
-function random_ket!(ϕ::T) where {T<:AbstractVector{T1}} where {T1<:Complex}
+function random_ket!(ϕ::AbstractVector{<:Complex})
     n = length(ϕ)
     ϕ[:] = randn(n) + 1im * randn(n)
     renormalize!(ϕ)
