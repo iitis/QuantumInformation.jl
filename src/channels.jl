@@ -2,6 +2,10 @@
 #### Relationship among representations of channels
 
 """
+$(SIGNATURES)
+- `kraus`: list of Kraus operators.
+- `atol`: tolerance of approximation.
+
 Checks if set of Kraus operators fulfill completness relation.
 """
 function kraus_is_complete(kraus, atol=1e-08)
@@ -10,6 +14,9 @@ function kraus_is_complete(kraus, atol=1e-08)
 end
 
 """
+$(SIGNATURES)
+- `kraus_list`: list of Kraus operators.
+
 Transforms list of Kraus operators into super-operator matrix.
 """
 function kraus_to_superoperator(kraus_list::Vector{T}) where {T<:AbstractMatrix{T1}} where {T1<:Number}
@@ -17,6 +24,13 @@ function kraus_to_superoperator(kraus_list::Vector{T}) where {T<:AbstractMatrix{
     sum(k⊗k' for k in kraus_list)
 end
 
+"""
+$(SIGNATURES)
+- `channel`: quantum channel map.
+- `dim`: square root of the super-operator matrix dimension.
+
+Transforms quntum channel into super-operator matrix.
+"""
 function channel_to_superoperator(channel::Function, dim::Int)
     dim > 0 ? () : error("Channel dimension has to be nonnegative")
 
@@ -27,27 +41,63 @@ function channel_to_superoperator(channel::Function, dim::Int)
     M
 end
 
+"""
+$(SIGNATURES)
+- `kraus_list`: list of Kraus operators.
+
+Transforms list of Kraus operators into Stinespring representation of quantum channel.
+"""
 function kraus_to_stinespring(kraus::Vector{T}) where {T<:AbstractMatrix{T1}} where {T1<:Number}
     dim = size(kraus,1)
     sum(k⊗ket(i, dim) for (k, i) in enumerate(kraus))
 end
 
+"""
+$(SIGNATURES)
+- `kraus_list`: list of Kraus operators.
+
+Transforms list of Kraus operators into dynamical matrix.
+"""
 function kraus_to_dynamical_matrix(kraus::Vector{T}) where {T<:AbstractMatrix{T1}} where {T1<:Number}
     sum(res(k) * res(k)' for k in kraus)
 end
 
+"""
+$(SIGNATURES)
+- `m`: super-operator matrix.
+
+Transforms super-operator matrix into list of Kraus operators.
+"""
 function superoperator_to_kraus(m::T, cols=0) where {T<:AbstractMatrix{T1}} where {T1<:Number}
     F = eigfact(Hermitian(reshuffle(m)))
     # TODO: vcat ?
     [sqrt(val)*unres(F.vectors[:,i], cols) for (i,val) in enumerate(F.values)]
 end
 
+"""
+$(SIGNATURES)
+- `m`: super-operator matrix.
+
+Transforms super-operator matrix into dynamical matrix.
+"""
 superoperator_to_dynamical_matrix(m::T) where {T<:AbstractMatrix{T1}} where {T1<:Number} = reshuffle(m)
 
+"""
+$(SIGNATURES)
+- `m`: super-operator matrix.
+
+Transforms super-operator matrix into Stinespring representation of quantum channel.
+"""
 function superoperator_to_stinespring(m::T) where {T<:AbstractMatrix{T1}} where {T1<:Number}
     kraus_to_stinespring(superoperator_to_kraus(M))
 end
 
+"""
+$(SIGNATURES)
+- `R`: dynamical matrix.
+
+Transforms dynamical matrix into list of Kraus operators.
+"""
 function dynamical_matrix_to_kraus(R)
     F = eigfact(Hermitian(R))
 
@@ -62,10 +112,22 @@ function dynamical_matrix_to_kraus(R)
     return kraus
 end
 
+"""
+$(SIGNATURES)
+- `R`: dynamical matrix.
+
+Transforms dynamical matrix into Stinespring representation of quantum channel.
+"""
 function dynamical_matrix_to_stinespring(R)
     return kraus_to_stinespring(dynamical_matrix_to_kraus(R))
 end
 
+"""
+$(SIGNATURES)
+- `R`: dynamical matrix.
+
+Transforms dynamical matrix into super-operator matrix.
+"""
 function dynamical_matrix_to_superoperator(R)
     return reshuffle(R)
 end
@@ -95,19 +157,47 @@ end
 
 
 #### Application of channels
+"""
+$(SIGNATURES)
+- `R`: dynamical matrix.
+- `rho`: quantum state.
 
+Application of dynamical matrix into state `rho`.
+"""
 function apply_channel_dynamical_matrix(R, rho)
     unres(reshuffle(R) * res(rho))
 end
 
+"""
+$(SIGNATURES)
+- `R`: list of Kraus operators.
+- `rho`: quantum state.
+
+Application of list of Kraus operators into state `rho`.
+"""
 function apply_channel_kraus(kraus, rho)
     return sum(k * rho * k' for k in kraus)
 end
 
+"""
+$(SIGNATURES)
+- `M`: super-operator matrix.
+- `rho`: quantum state.
+
+Application of super-operator matrix into state `rho`.
+"""
 function apply_channel_superoperator(M, rho)
     return unres(M * res(rho))
 end
 
+"""
+$(SIGNATURES)
+- `A`: Stinespring representation of quantum channel.
+- `rho`: quantum state.
+- `dims`: dimensions of registers of `rho`.
+
+Application of Stinespring representation of quantum channel into state `rho`.
+"""
 function apply_channel_stinespring(A, rho, dims)
     return ptrace(A * rho * A', dims, [1,])
 end

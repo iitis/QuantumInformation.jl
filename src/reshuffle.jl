@@ -26,7 +26,7 @@ end
 
 """
   $(SIGNATURES)
-  - `ρ::Union{AbstractMatrix,AbstractSparseMatrix}`: reshuffled matrix.
+  - `ρ`: reshuffled matrix.
   Performs reshuffling of indices of a matrix.
   Given multiindexed matrix \$M_{(m,μ),(n,ν)}\$ it returns
   matrix \$M_{(m,n),(μ,ν)}\$.
