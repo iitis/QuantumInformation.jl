@@ -13,7 +13,8 @@ $(SIGNATURES)
 
 Return [trace distance](https://www.quantiki.org/wiki/trace-distance) between matrices `A` and `B`.
 """
-function trace_distance(A::AbstractMatrix{<:Number}, B::AbstractMatrix{<:Number})
+function trace_distance(A::AbstractMatrix{T1}, B::AbstractMatrix{T2}) where {T1<:Number, T2<:Number}
+    T = promote_type(T1, T2)
     one(T)/2 * trace_norm(A - B)
 end
 
@@ -167,7 +168,7 @@ end
 $(SIGNATURES)
 - `ρ`: quantum state.
 - `σ`: quantum state.
-  
+
 Return [superfidelity](https://www.quantiki.org/wiki/superfidelity) between quantum states `ρ` and `σ`.
 """
 function superfidelity(ρ::AbstractMatrix{<:Number}, σ::AbstractMatrix{<:Number})
@@ -213,4 +214,3 @@ function ppt(ρ::AbstractMatrix{<:Number}, dims::Vector{Int}, sys::Int)
     ρ_s = ptranspose(ρ, dims, sys)
     minimum(eigvals(ρ_s))
 end
-    

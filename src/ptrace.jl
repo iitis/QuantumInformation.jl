@@ -78,7 +78,8 @@ ptrace(ρ::AbstractSparseMatrix{<:Number}, idims::Vector{Int}, sys::Vector{Int})
 
 # TODO: allow for more than bipartite systems???
 function ptrace(ϕ::AbstractVector{<:Number}, idims::Vector{Int}, sys::Int)
-    A = unres(ϕ, idims...)
+    _, cols = idims
+    A = unres(ϕ, cols)
     if sys == 1
         return A'*A
     elseif sys == 2
