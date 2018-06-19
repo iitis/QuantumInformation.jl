@@ -20,7 +20,7 @@ $(SIGNATURES)
 - `dim`: length of the vector.
 - `sparse` : sparse\/dense option. Optional `sparse=false`.
 
-Return column vector \$|val\\rangle\$ describing quantum state.
+Return complex column vector \$|val\\rangle\$ of unit norm describing quantum state.
 """
 function ket(val::Int, dim::Int; sparse=false)
     if sparse
@@ -86,7 +86,7 @@ end
 $(SIGNATURES)
 - `ket`: input column vector.
 
-Return outer product of `ket`.
+Return outer product \$|ket\\rangle\\langle ket|\$ of `ket`.
 """
 proj(ket::AbstractVector{<:Number}) = ket * ket'
 
@@ -148,7 +148,10 @@ $(SIGNATURES)
 - `kraus_list`: list of vectors.
 - `ρ`: input matrix.
 
-Return mapping of `kraus_list` on `ρ`.
+Return mapping of `kraus_list` on `ρ`. Krauss representation of quantum channel
+\$\\Phi\$ is a set \$\\{K_i\\}_{i\\in I}\$ of bounded operators on \$\\mathcal{H}\$
+such that \$\\sum_{i\\in I} K_i^\\dagger K_i = \\mathcal{1}\$.
+Then \$\\Phi(\\rho)=\\sum_{i\\in I} K_i \\rho K_i^\\dagger\$.
 """
 # TODO: allow different type of Kraus operators and the quantum state
 function apply_kraus(kraus_list::Vector{T}, ρ::T) where {T<:AbstractMatrix{T1}} where {T1<:Number}
@@ -170,7 +173,7 @@ $(SIGNATURES)
 - `d`: length of the vector.
 - `sparse` : sparse\/dense option. Optional `sparse=false`.
 
-Return maximally mixed state \$\\frac{1}{\\sqrt{d}}\\sum_{i=0}^{\\sqrt{d}-1}|ii\\rangle\\langle ii |\$ of length \$\\sqrt{d}\$.
+Return maximally entangled state \$\\frac{1}{\\sqrt{d}}\\sum_{i=0}^{\\sqrt{d}-1}|ii\\rangle\$ of length \$\\sqrt{d}\$.
 """
 function max_entangled(d::Int; sparse=false)
     sd = isqrt(d)
@@ -180,7 +183,11 @@ function max_entangled(d::Int; sparse=false)
 end
 
 """
-See [wikipedia](http://en.wikipedia.org/wiki/Werner_state).
+- `d`: length of the vector.
+- `α`: real number from [0, 1].
+
+Returns [Werner state](http://en.wikipedia.org/wiki/Werner_state) given by
+\$ \\frac{\\alpha}{d}\\Big(\\sum_{i=0}^{\\sqrt{d}-1}|ii\\rangle\\Big) \\Big(\\sum_{i=0}^{\\sqrt{d}-1}\\langle ii|\\Big)+ \\frac{1-\\alpha}{d}\\sum_{i=0}^{d-1}|i\\rangle\\langle i |\$.
 """
 function werner_state(d::Int, α::Float64,)
     α > 1 || α < 0 ? throw(ArgumentError("α must be in [0, 1]")) : ()
