@@ -91,36 +91,6 @@ end
     @test unres(1:6, 2) == expected
 end
 
-@testset "kraus_to_superoperator" begin
-    α = 0.25
-    K₁ = ComplexF64[0 sqrt(α); 0 0]
-    K₂ = ComplexF64[1 0; 0 sqrt(1 - α)]
-    kl = Matrix{ComplexF64}[K₁, K₂]
-    M = kraus_to_superoperator(kl)
-    T = diagm(ComplexF64[1, sqrt(1 - α), sqrt(1 - α), 1 - α])
-    T[2, 3] = α
-    @test norm(T-M) ≈ 0 atol=1e-15
-end
-
-@testset "channel_to_superoperator" begin
-    ρ = [0.25 0.25im; -0.25im 0.75]
-    T = hcat([ComplexF64[0.25, 0.25im, -0.25im, 0.75] for i=1:4]...) #stack res ρ
-    M = channel_to_superoperator(x -> ρ, 2)
-    @test norm(T-M) ≈ 0. atol=1e-15
-end
-
-@testset "apply_kraus" begin
-    α = 0.25
-    K₁ = ComplexF64[0 sqrt(α); 0 0]
-    K₂ = ComplexF64[1 0; 0 sqrt(1 - α)]
-    kl = Matrix{ComplexF64}[K₁, K₂]
-    ρ = [0.25 0.25im; -0.25im 0.75]
-    σ = apply_kraus(kl, ρ)
-    ξ = ComplexF64[1/4 + 3/16 sqrt(3/4)*1im/4; -sqrt(3/4)*1im/4 9/16]
-    @test trace(σ) ≈ 1. atol=1e-15
-    @test ishermitian(σ)
-    @test norm(σ - ξ) ≈ 0. atol=1e-15
-end
 
 @testset "max_mixed" begin
     d = 10

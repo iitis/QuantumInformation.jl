@@ -10,7 +10,6 @@ end
 const ⊗ = kron
 export ket, bra, ketbra, proj, base_matrices,
 res, unres,
-kraus_to_superoperator, channel_to_superoperator, apply_kraus,
 ptrace, ptranspose, reshuffle,
 max_mixed, max_entangled, werner_state,
 number2mixedradix, mixedradix2number,
@@ -31,7 +30,6 @@ funcmh, funcmh!, renormalize!, random_ball,
 sx,sy,sz, qft, hadamard, grover,⊗,
 kraus_is_CPTP,
 kraus_to_superoperator,
-channel_to_superoperator,
 kraus_to_stinespring,
 kraus_to_dynamical_matrix,
 superoperator_to_kraus,
@@ -42,7 +40,9 @@ dynamical_matrix_to_superoperator,
 apply_channel_dynamical_matrix,
 apply_channel_kraus,
 apply_channel_superoperator,
-apply_channel_stinespring
+apply_channel_stinespring,
+channel_to_superoperator,
+isidentity
 
 include("base.jl")
 include("randommatrix.jl")

@@ -17,19 +17,9 @@ function kraus_to_superoperator(kraus_list::Vector{<:AbstractMatrix{<:Number}})
     sum(k⊗k' for k in kraus_list)
 end
 
-function channel_to_superoperator(channel::Function, dim::Int)
-    dim > 0 ? () : error("Channel dimension has to be nonnegative")
-
-    M = zeros(ComplexF64, dim*dim, dim*dim)
-    for (i, e) in enumerate(base_matrices(dim))
-        M[:, i] = res(channel(e))
-    end
-    M
-end
-
 function kraus_to_stinespring(kraus_list::Vector{<:AbstractMatrix{<:Number}})
-    dim = size(kraus_list,1)
-    sum(k⊗ket(i, dim) for (k, i) in enumerate(kraus_list))
+    dim = size(kraus_list, 1)
+    sum(k⊗ket(i-1, dim) for (i, k) in enumerate(kraus_list))
 end
 
 function kraus_to_dynamical_matrix(kraus_list::Vector{<:AbstractMatrix{<:Number}})
@@ -70,30 +60,6 @@ function dynamical_matrix_to_superoperator(R::AbstractMatrix{<:Number})
     return reshuffle(R)
 end
 
-#= TODO
-function general_map_to_kraus(M)
-    u, s, v = svd(M)
-    s = where(s > 1e-8, s, 0)
-    left  = map(x -> sqrt(x[1]) * transpose(unres(x[2])), zip(s, transpose(u))
-    right = map(x -> sqrt(x[1]) * unres(conj(x[2])), zip(s, v))
-    return [left, right]
-end
-
-function general_kraus_to_stinespring(l)
-    left, right = l
-    num_kraus = len(left)
-    basis = [ket(i, num_kraus) for i in range(num_kraus)]
-    a0 = sum([kron(left[i], b) for i, b in enumerate(basis)])
-    a1 = sum([kron(right[i], b) for i, b in enumerate(basis)])
-    return a0, a1
-end
-
-function general_map_to_stinespring(R)
-    return general_kraus_to_stinespring(general_map_to_kraus(R))
-end
-=#
-
-
 #### Application of channels
 
 function apply_channel_dynamical_matrix(R::AbstractMatrix{<:Number}, rho::AbstractMatrix{<:Number})
@@ -115,7 +81,11 @@ function apply_channel_stinespring(A::AbstractMatrix{<:Number}, rho::AbstractMat
     return ptrace(A * rho * A', dims, [1,])
 end
 
-function product_superoperator(M1, M2)
-    # TODO:
-    error("not imeplented")
+function channel_to_superoperator(channel::Function, dim::Int)
+    dim > 0 ? () : error("Channel dimension has to be nonnegative")
+    M = zeros(ComplexF64, dim*dim, dim*dim)
+    for (i, e) in enumerate(base_matrices(dim))
+        M[:, i] = res(channel(e))
+    end
+    M
 end
