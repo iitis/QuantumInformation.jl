@@ -31,7 +31,7 @@ proj(ket(3,4,sparse=true))
 ```
 
 ```@repl QI
-res(ketbra(0,1,2))
+ketbra(0,1,2)
 ```
 
 ```@repl QI
