@@ -11,12 +11,13 @@ end
 my_tests = ["utils.jl", "base.jl", "ptrace.jl", "ptranspose.jl", "reshuffle.jl",
 "functionals.jl", "randommatrix.jl", "randomstate.jl", "gates.jl", "channels.jl"]
 
-
 if VERSION>v"0.7.0-DEV"
     # Convex.jl does not support julia 0.7 yet
 else
     push!(my_tests, "convex.jl")
 end
+
+my_tests = ["channels.jl"]
 
 for my_test in my_tests
     include(my_test)
