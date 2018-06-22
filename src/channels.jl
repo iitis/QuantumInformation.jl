@@ -1,21 +1,11 @@
-struct DynamicalMat{T}
-    matrix::T
-end
-
-struct Superoperator{T}
-    matrix::T
-end
-
-struct KrausOps{T}
-    matrices::Vector{T}
-end
-
-function KrausOps(kraus_list::Vector{T}) where T<:AbstractMatrix{<:Number}
+function kraus_check_size(kraus_list::Vector{T}) where T<:AbstractMatrix{<:Number}
     sizes = [size(k) for k in kraus_list]
-
-    KrausOps
+    for s in sizes[2:end]
+        if s!=sizes[1]
+            throw(ArgumentError("Kraus operators list contains matrices of different dimmension"))
+        end
+    end
 end
-
 #### Relationship among representations of channels
 
 """
@@ -30,7 +20,7 @@ end
 Transforms list of Kraus operators into super-operator matrix.
 """
 function kraus_to_superoperator(kraus_list::Vector{<:AbstractMatrix{<:Number}})
-    # TODO: chceck if all Kraus operators are the same shape
+    kraus_check_size(kraus_list)
     sum(k⊗(conj.(k)) for k in kraus_list)
 end
 
@@ -50,6 +40,7 @@ function superoperator_to_kraus(M::AbstractMatrix{<:Number})
 
     [sqrt(val)*unres(F.vectors[:,i], sc) for (i,val) in enumerate(F.values)]
 end
+
 function superoperator_to_kraus(M::AbstractSparseMatrix{<:Number})
     warn("converting to full matrix")
     superoperator_to_kraus(full(M))
@@ -62,38 +53,33 @@ function superoperator_to_dynamical_matrix(M::AbstractMatrix{<:Number})
 end
 
 function superoperator_to_stinespring(M::AbstractMatrix{<:Number})
-    # TODO: This is no the right way for transoformations
     kraus_to_stinespring(superoperator_to_kraus(M))
 end
 
-function dynamical_matrix_to_kraus(R::AbstractMatrix{<:Number})
+function dynamical_matrix_to_kraus(R::Tm, rows, cols) where Tm <:AbstractMatrix{<:Number}
     F = eigfact(Hermitian(R))
-
-    kraus = Any[] #TODO: make proper type
-    for (val, vec) in zip(F.values, F.vectors)
-        if val>=0.0
-            push!(kraus, sqrt(val) * unres(vec))
+    kraus = Tm[]
+    for i in 1:length(F.values)
+        if F.values[i] >= 0.0
+            push!(kraus, sqrt(F.values[i]) * unres(F.vectors[:,i], rows, cols))
         else
-            push!(kraus, zero(unres(vec)))
+            push!(kraus, zero(unres(F.vectors[:,i], rows, cols)))
         end
     end
     return kraus
 end
 
-function dynamical_matrix_to_kraus(R::AbstractSparseMatrix{<:Number})
+function dynamical_matrix_to_kraus(R::AbstractSparseMatrix{<:Number}, rows, cols)
     warn("converting to full matrix")
-    dynamical_matrix_to_kraus(full(M))
+    dynamical_matrix_to_kraus(full(R), rows, cols)
 end
 
-function dynamical_matrix_to_stinespring(R::AbstractMatrix{<:Number})
-    # TODO: This is no the right way for transoformations
-    return kraus_to_stinespring(dynamical_matrix_to_kraus(R))
+function dynamical_matrix_to_stinespring(R::AbstractMatrix{<:Number}, rows, cols)
+    return kraus_to_stinespring(dynamical_matrix_to_kraus(R, rows, cols))
 end
 
-function dynamical_matrix_to_superoperator(R::AbstractMatrix{<:Number})
-    r, c = size(R)
-    sr, sc = isqrt(r), isqrt(c)
-    reshuffle(R, [sr sc; sr sc]) # ???
+function dynamical_matrix_to_superoperator(R::AbstractMatrix{<:Number}, rows, cols)
+    reshuffle(R, [rows rows; cols cols])
 end
 
 #### Application of channels
@@ -107,7 +93,7 @@ function apply_channel_superoperator(M::AbstractMatrix{<:Number}, rho::AbstractM
 end
 
 function apply_channel_stinespring(A::AbstractMatrix{<:Number}, rho::AbstractMatrix{<:Number}, dims)
-    return ptrace(A * rho * A', dims, 1)
+    return ptrace(A * rho * A', dims, 2)
 end
 
 function apply_channel_dynamical_matrix(R::AbstractMatrix{<:Number}, rho::AbstractMatrix{<:Number})

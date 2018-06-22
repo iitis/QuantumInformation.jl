@@ -12,6 +12,16 @@ include("test_channels.jl")
     @test norm(T-M) ≈ 0. atol=1e-15
 end
 
+@testset "kraus_check_size" begin
+    for kraus_list in kraus_set
+        @test kraus_check_size(kraus_list) == nothing
+    end
+    for kraus_list in kraus_set
+        @test kraus_check_size(sparsify_kraus(kraus_list)) == nothing
+    end
+    kl = [[1 0; 0 1], [1 0 0; 1 0 0; 0 0 1],[1 0; 0 1]]
+    @test_throws ArgumentError kraus_check_size(kl)
+end
 
 @testset "kraus" begin
     @testset "kraus_is_CPTP" begin
@@ -92,7 +102,7 @@ end
         r2 = superoperator_to_dynamical_matrix(s)
         @test r1 ≈ r2
         @test ispositive(r2)
-        @test isidentity(ptrace(r2, [r, c], 1))==true
+        @test isidentity(ptrace(r2, [r, c], 1)) == true
     end
 
     for kraus_list in kraus_set
@@ -103,42 +113,111 @@ end
         @test r1 ≈ r2
         @test issparse(r2)
         @test ispositive(r2)
-        @test isidentity(ptrace(r2, [r, c], 1))==true
+        @test isidentity(ptrace(r2, [r, c], 1)) == true
     end
 
 
     end
     @testset "superoperator_to_stinespring" begin
+        for kraus_list in kraus_set
+            s = kraus_to_superoperator(kraus_list)
+            u = superoperator_to_stinespring(s)
+            @test isidentity(u'*u) == true
+        end
+        for kraus_list in kraus_set
+            s = kraus_to_superoperator(kraus_list)
+            u = superoperator_to_stinespring(sparse(s))
+            @test isidentity(u'*u) == true
+        end
     end
 end
 
-@testset "superoperator" begin
+@testset "dynamical matrix" begin
     @testset "dynamical_matrix_to_kraus" begin
+        for kraus_list in kraus_set
+            r = kraus_to_dynamical_matrix(kraus_list)
+            rows, cols = size(kraus_list[1])
+            kl = dynamical_matrix_to_kraus(r, rows, cols)
+            @test kraus_is_CPTP(kl) == true
+        end
+        for kraus_list in kraus_set
+            r = kraus_to_dynamical_matrix(kraus_list)
+            rows, cols = size(kraus_list[1])
+            kl = dynamical_matrix_to_kraus(sparse(r), rows, cols)
+            @test kraus_is_CPTP(kl) == true
+        end
     end
     @testset "dynamical_matrix_to_stinespring" begin
+        for kraus_list in kraus_set
+            rows, cols = size(kraus_list[1])
+            r = kraus_to_dynamical_matrix(kraus_list)
+            u = dynamical_matrix_to_stinespring(r, rows, cols)
+            @test isidentity(u'*u) == true
+        end
+        for kraus_list in kraus_set
+            r, c = size(kraus_list[1])
+            rows, cols = size(kraus_list[1])
+            r = kraus_to_dynamical_matrix(kraus_list)
+            u = dynamical_matrix_to_stinespring(sparse(r), rows, cols)
+            @test isidentity(u'*u) == true
+        end
+    end
+    @testset "dynamical_matrix_to_superoperator" begin
+        for kraus_list in kraus_set
+            r1 = kraus_to_dynamical_matrix(kraus_list)
+            s = kraus_to_superoperator(kraus_list)
+            rows, cols = size(kraus_list[1])
+            r2 = dynamical_matrix_to_superoperator(s, rows, cols)
+            @test r1 ≈ r2
+        end
+        for kraus_list in kraus_set
+            r1 = kraus_to_dynamical_matrix(kraus_list)
+            s = kraus_to_superoperator(kraus_list)
+            rows, cols = size(kraus_list[1])
+            r2 = dynamical_matrix_to_superoperator(sparse(s), rows, cols)
+            @test r1 ≈ r2
+        end
     end
 end
 
 @testset "apply_channel" begin
-    @testset "apply_channel_dynamical_matrix" begin
-    end
+    α = 0.25
+    K₁ = ComplexF64[0 sqrt(α); 0 0]
+    K₂ = ComplexF64[1 0; 0 sqrt(1 - α)]
+    kl = Matrix{ComplexF64}[K₁, K₂]
+    ρ = [0.25 0.25im; -0.25im 0.75]
+    ξ = ComplexF64[1/4 + 3/16 sqrt(3/4)*1im/4; -sqrt(3/4)*1im/4 9/16]
 
     @testset "apply_channel_kraus" begin
-        α = 0.25
-        K₁ = ComplexF64[0 sqrt(α); 0 0]
-        K₂ = ComplexF64[1 0; 0 sqrt(1 - α)]
-        kl = Matrix{ComplexF64}[K₁, K₂]
-        ρ = [0.25 0.25im; -0.25im 0.75]
         σ = apply_channel_kraus(kl, ρ)
-        ξ = ComplexF64[1/4 + 3/16 sqrt(3/4)*1im/4; -sqrt(3/4)*1im/4 9/16]
         @test trace(σ) ≈ 1. atol=1e-15
         @test ishermitian(σ)
-        @test norm(σ - ξ) ≈ 0. atol=1e-15
+        @test σ ≈ ξ atol=1e-15
+    end
+
+    @testset "apply_channel_dynamical_matrix" begin
+        r = kraus_to_dynamical_matrix(kl)
+        σ = apply_channel_dynamical_matrix(r, ρ)
+        @test trace(σ) ≈ 1. atol=1e-15
+        @test ishermitian(σ)
+        @test σ ≈ ξ atol=1e-15
     end
 
     @testset "apply_channel_superoperator" begin
+        s = kraus_to_superoperator(kl)
+        σ = apply_channel_superoperator(s, ρ)
+        @test trace(σ) ≈ 1. atol=1e-15
+        @test ishermitian(σ)
+        @test σ ≈ ξ atol=1e-15
     end
+
     @testset "apply_channel_stinespring" begin
+        u = kraus_to_stinespring(kl)
+        dims = [size(kl[1])...]
+        σ = apply_channel_stinespring(u, ρ, dims)
+        @test trace(σ) ≈ 1. atol=1e-15
+        @test ishermitian(σ)
+        @test σ ≈ ξ atol=1e-15
     end
 end
 
