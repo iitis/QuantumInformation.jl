@@ -72,6 +72,31 @@ end
 
 random_ball(dim::Int) = rand()^(1/dim) * random_ket(Float64, dim)
 
+function isidentity(M::AbstractMatrix{<:Number}, atol=1e-08)
+    rows, cols = size(M)
+    if rows!=cols
+        return false
+    end
+
+    isapprox(M, eye(M), atol=atol)
+end
+
+function ispositive(M::AbstractMatrix{<:Number}, atol=1e-08)
+    rows, cols = size(M)
+    if rows!=cols
+        return false
+    end
+    if !ishermitian(M)
+        return false
+    end
+    F = eigfact(Hermitian(M))
+    all(F.values .> -atol)
+end
+
+function ispositive(M::AbstractSparseMatrix{<:Number}, atol=1e-08)
+    warn("converting to full matrix")
+    ispositive(full(M))
+end
 #function random_vector_fixed_l1_l2(l1::Real, l2::Real, d::Int)
 #  #from here http://stats.stackexchange.com/questions/61692/generating-vectors-under-constraints-on-1-and-2-norm
 #  u, _ = qr(ones(d, d))

@@ -11,7 +11,6 @@ end
 my_tests = ["utils.jl", "base.jl", "ptrace.jl", "ptranspose.jl", "reshuffle.jl",
 "functionals.jl", "randommatrix.jl", "randomstate.jl", "gates.jl", "channels.jl"]
 
-
 if VERSION>v"0.7.0-DEV"
     # Convex.jl does not support julia 0.7 yet
 else
