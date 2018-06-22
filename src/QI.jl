@@ -36,23 +36,10 @@ random_jamiolkowski_state!, random_jamiolkowski_state,
 random_unitary, random_orthogonal, random_isometry,
 funcmh, funcmh!, renormalize!, random_ball,
 sx,sy,sz, qft, hadamard, grover,⊗,
-kraus_check_size,
-kraus_is_CPTP,
-kraus_to_superoperator,
-kraus_to_stinespring,
-kraus_to_dynamical_matrix,
-superoperator_to_kraus,
-superoperator_to_stinespring,
-superoperator_to_dynamical_matrix,
-dynamical_matrix_to_kraus,
-dynamical_matrix_to_stinespring,
-dynamical_matrix_to_superoperator,
-apply_channel_dynamical_matrix,
-apply_channel_kraus,
-apply_channel_superoperator,
-apply_channel_stinespring,
-channel_to_superoperator,
-isidentity, ispositive
+iscptp,
+applychannel,
+isidentity, ispositive,
+KrausOperators, SuperOperator, DynamicalMatrix, Stinespring
 
 include("base.jl")
 include("randommatrix.jl")
