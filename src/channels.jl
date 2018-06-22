@@ -121,9 +121,9 @@ function dynamical_matrix_to_kraus(R::Tm, rows, cols) where Tm <:AbstractMatrix{
     kraus = Tm[]
     for i in 1:length(F.values)
         if F.values[i] >= 0.0
-            push!(kraus, sqrt(F.values[i]) * unres(F.vectors[:,i], rows, cols))
+            push!(kraus, sqrt(F.values[i]) * unres(F.vectors[:,i], cols))
         else
-            push!(kraus, zero(unres(F.vectors[:,i], rows, cols)))
+            push!(kraus, zero(unres(F.vectors[:,i], cols)))
         end
     end
     return kraus
