@@ -1,1 +1,3 @@
 *.ipynb
+docs/build/
+docs/site/

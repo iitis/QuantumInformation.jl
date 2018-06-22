@@ -1,4 +1,9 @@
 __precompile__()
+
+"""
+Main module for `QI.jl` -- a Julia package for numerical computation in quantum information theory.
+"""
+
 module QI
 if VERSION>v"0.7.0-DEV"
     using LinearAlgebra
@@ -6,6 +11,9 @@ if VERSION>v"0.7.0-DEV"
 else
     const ComplexF64 = Complex128
 end
+
+using Compat, DocStringExtensions
+import Compat.Markdown
 
 const ⊗ = kron
 export ket, bra, ketbra, proj, base_matrices,

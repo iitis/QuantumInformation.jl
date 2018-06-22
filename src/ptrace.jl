@@ -1,3 +1,11 @@
+"""
+$(SIGNATURES)
+- `ρ`: quantum state.
+- `idims`: dimensins of subsystems.
+- `isystems`: traced subsystems.
+
+Return [partial trace](https://en.wikipedia.org/wiki/Partial_trace) of matrix `ρ` over the subsystems determined by `isystems`.
+"""
 function ptrace(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, isystems::Vector{Int})
     # TODO: convert notation to column-major form
     dims=reverse(idims)
@@ -70,7 +78,8 @@ ptrace(ρ::AbstractSparseMatrix{<:Number}, idims::Vector{Int}, sys::Vector{Int})
 
 # TODO: allow for more than bipartite systems???
 function ptrace(ϕ::AbstractVector{<:Number}, idims::Vector{Int}, sys::Int)
-    A = unres(ϕ, idims...)
+    _, cols = idims
+    A = unres(ϕ, cols)
     if sys == 1
         return A'*A
     elseif sys == 2
