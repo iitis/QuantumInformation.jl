@@ -105,7 +105,8 @@ $(SIGNATURES)
 
 Returns elementary matrices of dimension `dim` x `dim`.
 """
-base_matrices(::Type{Tm}, dim::Int) where Tm<:AbstractMatrix{T} where T<:Number = Channel() do c
+# TODO: allow rectangular matrices
+base_matrices(::Type{Tm}, dim::Int) where Tm<:AbstractMatrix{<:Number} = Channel() do c
     dim > 0 ? () : error("Operator dimension has to be nonnegative")
     for i=0:dim-1, j=0:dim-1
         push!(c, ketbra(Tm, j, i, dim))

@@ -8,7 +8,7 @@ include("test_channels.jl")
 @testset "channel_to_superoperator" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     T = hcat([ComplexF64[0.25, 0.25im, -0.25im, 0.75] for i=1:4]...) #stack res ρ
-    M = SuperOperator{Matrix{ComplexF64}}(x -> ρ, 2)
+    M = channel_to_superoperator(x -> ρ, 2)
     @test norm(T-M) ≈ 0. atol=1e-15
 end
 

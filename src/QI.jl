@@ -1,4 +1,4 @@
-__precompile__()
+# __precompile__()
 
 """
 Main module for `QI.jl` -- a Julia package for numerical computation in quantum information theory.
@@ -39,7 +39,9 @@ sx,sy,sz, qft, hadamard, grover,⊗,
 iscptp,
 applychannel,
 isidentity, ispositive,
-KrausOperators, SuperOperator, DynamicalMatrix, Stinespring
+AbstractQuantumOperation,
+KrausOperators, SuperOperator, DynamicalMatrix, Stinespring,
+kron
 
 include("base.jl")
 include("randommatrix.jl")
