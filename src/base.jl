@@ -123,13 +123,6 @@ Returns `vec(ρ.T)`. Reshaping maps
 """
 res(ρ::AbstractMatrix{<:Number}) = vec(transpose(ρ))
 
-
-"""
-$(SIGNATURES)
-- `ϕ`: input matrix.
-
-Return de-reshaping of the vector into a matrix.
-"""
 function unres(ϕ::AbstractVector{<:Number}, cols::Int)
     dim = length(ϕ)
     rows = div(dim, cols)
@@ -137,6 +130,12 @@ function unres(ϕ::AbstractVector{<:Number}, cols::Int)
     transpose(reshape(ϕ, cols, rows))
 end
 
+"""
+$(SIGNATURES)
+- `ϕ`: input matrix.
+
+Return de-reshaping of the vector into a matrix.
+"""
 function unres(ϕ::AbstractVector{<:Number})
     dim = size(ϕ, 1)
     s = isqrt(dim)
