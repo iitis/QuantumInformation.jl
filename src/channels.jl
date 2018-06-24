@@ -26,6 +26,9 @@ function KrausOperators{T}(v::Vector{T}, idim::Int, odim::Int) where T<:Abstract
 end
 
 length(Φ::KrausOperators) = length(Φ.matrices)
+function orthogonalize(Φ::KrausOperators{T}) where {T<:AbstractMatrix{<:Number}}
+    KrausOperators{T}(DynamicalMatrix{T}(Φ))
+end
 
 # TODO: create iterator over KrausOperators see: https://docs.julialang.org/en/v0.6.3/manual/interfaces/
 
@@ -153,9 +156,8 @@ $(SIGNATURES)
 Transforms list of Kraus operators into Stinespring representation of quantum channel.
 """
 function Base.convert(::Type{Stinespring{T1}}, Φ::KrausOperators{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-    # TODO : Check if idim or odim
-    # FIXME : This function is broken !!
-    Stinespring{T1}(sum(k⊗ket(i-1, Φ.idim^2) for (i, k) in enumerate(Φ.matrices)), Φ.idim, Φ.odim)
+    ko = orthogonalize(Φ)
+    Stinespring{T1}(sum(k ⊗ ket(i-1, 2*ko.odim) for (i, k) in enumerate(ko.matrices)), ko.idim, ko.odim)
 end
 
 """
@@ -234,7 +236,7 @@ $(SIGNATURES)
 Transforms dynamical matrix into super-operator matrix.
 """
 function Base.convert(::Type{SuperOperator{T1}}, Φ::DynamicalMatrix{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-    SuperOperator{T1}(reshuffle(Φ.matrix, [Φ.idim Φ.idim; Φ.odim Φ.odim]), Φ.idim, Φ.odim)
+    SuperOperator{T1}(reshuffle(Φ.matrix, [Φ.idim Φ.odim; Φ.idim Φ.odim]), Φ.idim, Φ.odim)
 end
 
 function Base.convert(::Type{KrausOperators{T1}}, Φ::UnitaryChannel{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
@@ -260,7 +262,7 @@ $(SIGNATURES)
 Application of dynamical matrix into state `ρ`.
 """
 function applychannel(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}, ρ::AbstractMatrix{<:Number})
-    unres(reshuffle(Φ.matrix) * res(ρ))
+    ptrace(Φ.matrix * (eye(Φ.idim)⊗transpose(ρ)), [Φ.idim, Φ.odim], [2])
 end
 
 """
@@ -298,8 +300,7 @@ Application of Stinespring representation of quantum channel into state `ρ`.
 """
 function applychannel(Φ::Stinespring{<:AbstractMatrix{<:Number}}, ρ::AbstractMatrix{<:Number})
     # TODO: Check this function carefully
-    dims = s.idim^2, s.odim^2
-    ptrace(Φ.matrix * ρ * Φ.matrix', dims, 2)
+    ptrace(Φ.matrix * ρ * Φ.matrix', [Φ.idim, Φ.odim^2], [2])
 end
 
 function applychannel(Φ::IdentityChannel{<:AbstractMatrix{<:Number}}, ρ::AbstractMatrix{<:Number})
@@ -363,13 +364,13 @@ end
 ################################################################################
 # Channels permutations
 ################################################################################
-function permutesystems(Φ::T, idims::Vector{Int}, odims::Vector{Int}, perm::Vector{Int}) where {T<:AbstractQuantumOperation{TM}, TM<:AbstractMatrix{<:Number}}
-    error("Not implemented")
-    ko = KrausOperators(Φ)
-    for k in ko
-        #permutesystems(k, sdims, )
-    end
-end
+# function permutesystems(Φ::T, idims::Vector{Int}, odims::Vector{Int}, perm::Vector{Int}) where {T<:AbstractQuantumOperation{TM}, TM<:AbstractMatrix{<:Number}}
+#     error("Not implemented")
+#     ko = KrausOperators(Φ)
+#     for k in ko
+#         #permutesystems(k, sdims, )
+#     end
+# end
 
 ################################################################################
 # CPTP, CPTNI
