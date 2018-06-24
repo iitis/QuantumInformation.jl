@@ -1,4 +1,4 @@
-# __precompile__()
+__precompile__()
 
 """
 Main module for `QI.jl` -- a Julia package for numerical computation in quantum information theory.
@@ -15,7 +15,10 @@ end
 using Compat, DocStringExtensions
 import Compat.Markdown
 
+import Base: convert, size, length, kron, *
+
 const ⊗ = kron
+
 export ket, bra, ketbra, proj, base_matrices,
 res, unres,
 ptrace, ptranspose, reshuffle,
@@ -35,13 +38,14 @@ random_dynamical_matrix!, random_dynamical_matrix,
 random_jamiolkowski_state!, random_jamiolkowski_state,
 random_unitary, random_orthogonal, random_isometry,
 funcmh, funcmh!, renormalize!, random_ball,
-sx,sy,sz, qft, hadamard, grover,⊗,
-iscptp,
+sx,sy,sz, qft, hadamard, grover, ⊗, *,
+iscptp, iscp, istp, istni, iscptp, iscptni,
 applychannel,
 isidentity, ispositive,
 AbstractQuantumOperation,
 KrausOperators, SuperOperator, DynamicalMatrix, Stinespring,
-kron
+UnitaryChannel, IdentityChannel,
+kron, compose
 
 include("base.jl")
 include("randommatrix.jl")

@@ -7,7 +7,7 @@ function number2mixedradix(n::Int, radices::Vector{Int})
     end
     digits
 end
-# FIX THESE
+
 function mixedradix2number(digits::Vector{Int}, radices::Vector{Int})
     length(digits)>length(radices) ? throw(ArgumentError("more digits than radices")) : ()
 
@@ -70,8 +70,6 @@ function funcmh(f::Function, H::Matrix{T}) where T<:Union{Real, Complex}
     ishermitian(H) ? funcmh(f, Hermitian(H)) : error("Non-hermitian matrix passed to funcmh")
 end
 
-random_ball(dim::Int) = rand()^(1/dim) * random_ket(Float64, dim)
-
 function isidentity(M::AbstractMatrix{<:Number}, atol=1e-08)
     rows, cols = size(M)
     if rows!=cols
@@ -93,10 +91,8 @@ function ispositive(M::AbstractMatrix{<:Number}, atol=1e-08)
     all(F.values .> -atol)
 end
 
-function ispositive(M::AbstractSparseMatrix{<:Number}, atol=1e-08)
-    warn("converting to full matrix")
-    ispositive(full(M))
-end
+random_ball(dim::Int) = rand()^(1/dim) * random_ket(Float64, dim)
+
 #function random_vector_fixed_l1_l2(l1::Real, l2::Real, d::Int)
 #  #from here http://stats.stackexchange.com/questions/61692/generating-vectors-under-constraints-on-1-and-2-norm
 #  u, _ = qr(ones(d, d))
