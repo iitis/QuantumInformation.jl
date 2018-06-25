@@ -8,7 +8,7 @@ else
     using Base.Test
 end
 
-my_tests = ["utils.jl", "base.jl", "ptrace.jl", "ptranspose.jl", "reshuffle.jl",
+my_tests = ["utils.jl", "base.jl", "ptrace.jl", "ptranspose.jl", "reshuffle.jl", "channels.jl",
 "functionals.jl", "randommatrix.jl", "randomstate.jl", "gates.jl", "permute_systems.jl"]
 
 if VERSION>v"0.7.0-DEV"
