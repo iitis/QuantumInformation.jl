@@ -4,7 +4,7 @@ $(SIGNATURES)
 
 Return [trace norm](https://www.quantiki.org/wiki/trace-norm) of matrix `A`.
 """
-trace_norm(A::AbstractMatrix{<:Number}) = sum(svdvals(A))
+norm_trace(A::AbstractMatrix{<:Number}) = sum(svdvals(A))
 
 """
 $(SIGNATURES)
@@ -15,7 +15,7 @@ Return [trace distance](https://www.quantiki.org/wiki/trace-distance) between ma
 """
 function trace_distance(A::AbstractMatrix{T1}, B::AbstractMatrix{T2}) where {T1<:Number, T2<:Number}
     T = promote_type(T1, T2)
-    one(T)/2 * trace_norm(A - B)
+    one(T)/2 * norm_trace(A - B)
 end
 
 """
@@ -24,7 +24,7 @@ $(SIGNATURES)
 
 Return [Hilbert–Schmidt norm](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Schmidt_operator) of matrix `A`.
 """
-hs_norm(A::AbstractMatrix{<:Number}) = sqrt(sum(abs2.(A)))
+norm_hs(A::AbstractMatrix{<:Number}) = sqrt(sum(abs2.(A)))
 
 """
 $(SIGNATURES)
@@ -34,7 +34,7 @@ $(SIGNATURES)
 Return [Hilbert–Schmidt distance](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Schmidt_operator) between matrices `A` and `B`.
 """
 function hs_distance(A::AbstractMatrix{<:Number}, B::AbstractMatrix{<:Number})
-    hs_norm(A - B)
+    norm_hs(A - B)
 end
 
 """
@@ -199,7 +199,7 @@ Return [log negativity](https://www.quantiki.org/wiki/negativity) of quantum sta
 """
 function log_negativity(ρ::AbstractMatrix{<:Number}, dims::Vector{Int}, sys::Int)
     ρ_s = ptranspose(ρ, dims, sys)
-    log(trace_norm(ρ_s))
+    log(norm_trace(ρ_s))
 end
 
 """

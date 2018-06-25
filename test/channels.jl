@@ -127,11 +127,12 @@ end
 @testset "Channels applications" begin
     # TODO : add test for no square channels !
     α = 0.25
-    K₁ = ComplexF64[0 sqrt(α); 0 0]
-    K₂ = ComplexF64[1 0; 0 sqrt(1 - α)]
+    K₁ = ComplexF64[0 sqrt(α); 0 0; 0 0]
+    K₂ = ComplexF64[1 0; 0 0; 0 sqrt(1 - α)]
     kl = Matrix{ComplexF64}[K₁, K₂]
     ρ = [0.25 0.25im; -0.25im 0.75]
-    ξ = ComplexF64[1/4 + 3/16 sqrt(3/4)*1im/4; -sqrt(3/4)*1im/4 9/16]
+
+    ξ = ComplexF64[0.4375 0 0.21650635im; 0 0 0; -0.21650635im 0 0.5625]
 
     @testset "KrausOperators" begin
         σ = KrausOperators(kl)(ρ)

@@ -20,10 +20,10 @@ function mixedradix2number(digits::Vector{Int}, radices::Vector{Int})
     res
 end
 
-function renormalize!(ϕ::AbstractVector{<:Number})
-    n = norm(ϕ)
-    for i=1:length(ϕ)
-        ϕ[i] = ϕ[i]/n
+function renormalize!(ψ::AbstractVector{<:Number})
+    n = norm(ψ)
+    for i=1:length(ψ)
+        ψ[i] = ψ[i]/n
     end
 end
 
@@ -70,25 +70,25 @@ function funcmh(f::Function, H::Matrix{T}) where T<:Union{Real, Complex}
     ishermitian(H) ? funcmh(f, Hermitian(H)) : error("Non-hermitian matrix passed to funcmh")
 end
 
-function isidentity(M::AbstractMatrix{<:Number}, atol=1e-08)
-    rows, cols = size(M)
+function isidentity(ρ::AbstractMatrix{<:Number}, atol=1e-08)
+    rows, cols = size(ρ)
     if rows!=cols
         return false
     end
 
-    isapprox(M, eye(M), atol=atol)
+    isapprox(ρ, eye(ρ), atol=atol)
 end
 
-function ispositive(M::AbstractMatrix{<:Number}, atol=1e-08)
-    rows, cols = size(M)
+function ispositive(ρ::AbstractMatrix{<:Number}, atol=1e-08)
+    rows, cols = size(ρ)
     if rows!=cols
         return false
     end
-    if !ishermitian(M)
+    if !ishermitian(ρ)
         return false
     end
-    F = eigfact(Hermitian(M))
-    all(F.values .> -atol)
+    fact = eigfact(Hermitian(ρ))
+    all(fact.values .> -atol)
 end
 
 #function random_vector_fixed_l1_l2(l1::Real, l2::Real, d::Int)

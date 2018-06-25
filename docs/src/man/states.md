@@ -55,7 +55,7 @@ res(ketbra(0,1,2))
 ```
 
 Inverse operation to \$\\mathrm{res}\$ is a \$\\mathrm{unres}\$ map, which transforms
-the vector into a matrix.
+the vector into a matrix. It means that \$\\rho=\\mathrm{unres}(\\mathrm{res}(\\rho))\$.
 ```@repl QI
 unres(res(ketbra(0,1,2)))
 ```
@@ -65,18 +65,34 @@ In the most general case evolution of the quantum system can be described
 using the notion of a [*quantum channel*](https://en.wikipedia.org/wiki/Quantum_channel).
 First, introduce a *superoperator* as a linear mapping acting on linear operators \$\\mathcal{L}(\\mathcal{X})\$
 and transforming them into operators acting on \$\\mathcal{L}(\\mathcal{Y})\$. In mathematical terms,
-a quantum channel is a superoperator \$\\Psi:\\mathcal{L}(\\mathcal{X})\\to\\mathcal{L}(\\mathcal{Y})\$
-that is *trace-preserving* (\$\\forall \\rho\\in\\mathcal{L}(\\mathcal{X})\\quad \\mathrm{Tr}(\Psi(\\rho))=\\mathrm{Tr}(\\rho)\$)
-and *completely positive* (\$\\forall \\mathcal{Z} \\forall \\rho \\in \\mathcal{L}(\\mathcal{X\\otimes Z}), \\rho\\geq 0, \\quad \\Psi\\otimes\\mathbb{I}_{\\mathcal{L}(\\mathcal{X})}(\\rho)\\geq 0\$).
-According to Kraus' theorem, any completely positive trace-preserving (CPTP) map \$\\Psi\$ can always be written as
-\$\\Psi(\\rho)=\\sum_{i}K_i \\rho K_i^\\dagger\$ for some set of operators \$\\{K_i\\}_i\$ satisfying \$\\sum_i K_i^\\dagger K_i = \\mathbb{I}\$.
+a quantum channel is a superoperator \$\\Phi:\\mathcal{L}(\\mathcal{X})\\to\\mathcal{L}(\\mathcal{Y})\$
+that is *trace-preserving* (\$\\forall \\rho\\in\\mathcal{L}(\\mathcal{X})\\quad \\mathrm{Tr}(\\Phi(\\rho))=\\mathrm{Tr}(\\rho)\$)
+and *completely positive* (\$\\forall \\mathcal{Z} \\forall \\rho \\in \\mathcal{L}(\\mathcal{X\\otimes Z}), \\rho\\geq 0, \\quad \\Phi\\otimes\\mathbb{I}_{\\mathcal{L}(\\mathcal{X})}(\\rho)\\geq 0\$).
 
 ```@repl QI
-# Amplitude damping quantum channel
 γ=0.4
 K0 = Matrix([1 0; 0 sqrt(1-γ)])
 K1 = Matrix([0 sqrt(γ); 0 0])
+ψ=(1/sqrt(2)) * (ket(0,2) - ket(1,2))
+ρ=ψ * ψ'
 
 K = [K0, K1]
-kraus_is_CPTP(K)
+Φ = SuperOperator([K0,K1])
+println(Φ)
+Φ(ρ)
+
 ```
+
+According to Kraus' theorem, any completely positive trace-preserving (CPTP) map \$\\Phi\$ can always be written as
+\$\\Phi(\\rho)=\\sum_{i}K_i \\rho K_i^\\dagger\$ for some set of operators \$\\{K_i\\}_i\$ satisfying \$\\sum_i K_i^\\dagger K_i = \\mathbb{I}\$.
+
+```@repl QI
+Φ = KrausOperators([K0,K1])
+println(Φ)
+
+iscptp(Φ)
+
+Φ(ρ)
+```
+
+Anotother way to representation of quantum channel is

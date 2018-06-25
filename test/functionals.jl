@@ -1,12 +1,12 @@
 @testset "Functionals" begin
 
-@testset "trace_norm" begin
+@testset "trace norm" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
-    @test trace_norm(ρ) ≈ 1
-    @test trace_norm(sx*ρ) ≈ 1
+    @test norm_trace(ρ) ≈ 1
+    @test norm_trace(sx*ρ) ≈ 1
 end
 
-@testset "trace_distance" begin
+@testset "trace distance" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = [0.4 0.1im; -0.1im 0.6]
 
@@ -14,13 +14,13 @@ end
     @test trace_distance(ρ, σ) ≈ 3/(10sqrt(2)) atol=1e-15
 end
 
-@testset "hs_norm" begin
+@testset "HS norm" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
-    @test hs_norm(ρ) ≈ sqrt(3)/2
-    @test hs_norm(sx*ρ) ≈ sqrt(3)/2
+    @test norm_hs(ρ) ≈ sqrt(3)/2
+    @test norm_hs(sx*ρ) ≈ sqrt(3)/2
 end
 
-@testset "hs_distance" begin
+@testset "HS distance" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = [0.4 0.1im; -0.1im 0.6]
 
@@ -47,7 +47,7 @@ end
     @test fidelity(ρ, σ) ≈ real(trace(sqrtm(sqrtm(ρ) * σ * sqrtm(ρ))))^2 atol=1e-15
 end
 
-@testset "gate_fidelity" begin
+@testset "gate fidelity" begin
     H = [1 1; 1 -1+0im]/sqrt(2)
     @test gate_fidelity(sx, sy) ≈ 0
     @test gate_fidelity(sx, H) ≈ 1/sqrt(2)
@@ -56,20 +56,20 @@ end
     @test gate_fidelity(H, sx) ≈ 1/sqrt(2)
 end
 
-@testset "shannon_entropy" begin
+@testset "Shannon entropy" begin
     @test shannon_entropy(1/2) ≈ log(2) atol=1e-15
     @test shannon_entropy(1/4) ≈ 0.5623351446188083 atol=1e-15
     @test shannon_entropy(0.5*ones(20)) ≈ 10log(2) atol=1e-15
 end
 
-@testset "quantum_entropy" begin
+@testset "quantum entropy" begin
     ϕ = ket(0, 2)
     ρ = [0.25 0.25im; -0.25im 0.75]
     @test quantum_entropy(ϕ) == 0
     @test quantum_entropy(ρ) ≈ 0.25(log(64)-2sqrt(2)*acoth(sqrt(2)))
 end
 
-@testset "relative_entropy, js_divergence" begin
+@testset "relative entropy, js divergence" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = [0.4 0.1im; -0.1im 0.6]
     expected = -acoth(5/sqrt(2))/sqrt(2)+acoth(sqrt(2))/sqrt(2)+log(5)-log(46)/2
@@ -81,7 +81,7 @@ end
     @test js_divergence(ρ, σ) ≈ 0.5expected+0.5expected2
 end
 
-@testset "bures_distance, bures_angle" begin
+@testset "bures distance, bures angle" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = [0.4 0.1im; -0.1im 0.6]
     fsqrt = 1/2 * sqrt(1/5 * (12 + sqrt(46)))
@@ -100,7 +100,7 @@ end
     @test superfidelity(ρ, σ) ≈ superfidelity(σ, ρ)
 end
 
-@testset "(log)_negativity, ppt" begin
+@testset "(log) negativity, ppt" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = [0.4 0.1im; -0.1im 0.6]
     @test negativity(ρ ⊗ σ, [2, 2], 2) ≈ 0 atol=1e-15

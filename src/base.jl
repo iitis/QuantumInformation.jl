@@ -1,9 +1,9 @@
 function ket(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractVector{T} where T<:Number
     dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
     val < dim ? () : throw(ArgumentError("Label have to be smaller than vector dimmension"))
-    ϕ = zeros(T, dim)
-    ϕ[val+1] = one(T)
-    ϕ
+    ψ = zeros(T, dim)
+    ψ[val+1] = one(T)
+    ψ
 end
 
 """
@@ -30,9 +30,9 @@ bra(val::Int, dim::Int) = bra(Vector{ComplexF64}, val, dim)
 function ketbra(::Type{Tm}, valk::Int, valb::Int, dim::Int) where Tm<:AbstractMatrix{T} where T<:Number
     dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
     valk < dim && valb < dim ? () : throw(ArgumentError("Ket and bra labels have to be smaller than operator dimmension"))
-    ϕψ = zeros(T, dim, dim)
-    ϕψ[valk+1,valb+1] = one(T)
-    ϕψ
+    ρ = zeros(T, dim, dim)
+    ρ[valk+1,valb+1] = one(T)
+    ρ
 end
 
 """
@@ -51,14 +51,8 @@ $(SIGNATURES)
 
 Return outer product \$|ket\\rangle\\langle ket|\$ of `ket`.
 """
-proj(ket::AbstractVector{<:Number}) = ket * ket'
+proj(ψ::AbstractVector{<:Number}) = ψ * ψ'
 
-"""
-$(SIGNATURES)
-- `dim`: length of the matrix.
-
-Returns elementary matrices of dimension `dim` x `dim`.
-"""
 # TODO: allow rectangular matrices
 base_matrices(::Type{Tm}, dim::Int) where Tm<:AbstractMatrix{<:Number} = Channel() do c
     dim > 0 ? () : error("Operator dimension has to be nonnegative")
@@ -67,6 +61,12 @@ base_matrices(::Type{Tm}, dim::Int) where Tm<:AbstractMatrix{<:Number} = Channel
     end
 end
 
+"""
+$(SIGNATURES)
+- `dim`: length of the matrix.
+
+Returns elementary matrices of dimension `dim` x `dim`.
+"""
 base_matrices(dim::Int) = base_matrices(Matrix{ComplexF64}, dim)
 
 """
@@ -91,10 +91,10 @@ $(SIGNATURES)
 
 Return de-reshaping of the vector into a matrix.
 """
-function unres(ϕ::AbstractVector{<:Number})
-    dim = size(ϕ, 1)
+function unres(ρ::AbstractVector{<:Number})
+    dim = size(ρ, 1)
     s = isqrt(dim)
-    unres(ϕ, s)
+    unres(ρ, s)
 end
 
 
@@ -120,6 +120,7 @@ function max_entangled(d::Int)
 end
 
 """
+$(SIGNATURES)
 - `d`: length of the vector.
 - `α`: real number from [0, 1].
 
@@ -131,8 +132,15 @@ function werner_state(d::Int, α::Float64)
     α * proj(max_entangled(d)) + (1 - α) * max_mixed(d)
 end
 
+"""
+$(SIGNATURES)
+- `ρ`: input state.
+- `dims`: dimensions of registers of `ρ`.
+- `systems`: permuted registers.
 
-function permute_systems(ρ::AbstractMatrix{T}, dims::Vector{Int}, systems::Vector{Int}) where T<:Number
+Returns state ρ with permutated registers denoted by `systems`.
+"""
+function permutesystems(ρ::AbstractMatrix{T}, dims::Vector{Int}, systems::Vector{Int}) where T<:Number
     if size(ρ,1)!=size(ρ,2)
         throw(ArgumentError("Non square matrix passed to ptrace"))
     end
