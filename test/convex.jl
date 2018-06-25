@@ -1,12 +1,12 @@
 @testset "Convex" begin
 
-@testset "diamond_norm" begin
+@testset "diamond norm" begin
     srand(42)
     J = random_dynamical_matrix(3, 4)
-    @test diamond_norm(DynamicalMatrix(J,3, 4)) ≈ 1 atol=1e-6
+    @test norm_diamond(DynamicalMatrix(J,3, 4)) ≈ 1 atol=1e-6
 end
 
-@testset "diamond_distance" begin
+@testset "diamond distance" begin
     d = 4
     U1 = qft(d)
     U2 = eye(ComplexF64, d)
