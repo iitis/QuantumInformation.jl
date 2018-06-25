@@ -192,7 +192,8 @@ Transforms list of Kraus operators into Stinespring representation of quantum ch
 """
 function Base.convert(::Type{Stinespring{T1}}, Φ::KrausOperators{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
     ko = orthogonalize(Φ)
-    Stinespring{T1}(sum(k ⊗ ket(i-1, 2*ko.odim) for (i, k) in enumerate(ko.matrices)), ko.idim, ko.odim)
+    # TODO: transform to stacking
+    Stinespring{T1}(sum(k ⊗ ket(i-1, ko.idim*ko.odim) for (i, k) in enumerate(ko.matrices)), ko.idim, ko.odim)
 end
 
 """
@@ -335,7 +336,8 @@ Application of Stinespring representation of quantum channel into state `ρ`.
 """
 function applychannel(Φ::Stinespring{<:AbstractMatrix{<:Number}}, ρ::AbstractMatrix{<:Number})
     # TODO: Check this function carefully
-    ptrace(Φ.matrix * ρ * Φ.matrix', [Φ.idim, Φ.odim^2], [2])
+    s = Φ.matrix * ρ * Φ.matrix'
+    ptrace(s, [Φ.idim, Φ.idim*Φ.odim], [2])
 end
 
 function applychannel(Φ::IdentityChannel{<:AbstractMatrix{<:Number}}, ρ::AbstractMatrix{<:Number})

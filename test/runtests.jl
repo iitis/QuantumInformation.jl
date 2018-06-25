@@ -17,7 +17,6 @@ else
     push!(my_tests, "convex.jl")
 end
 
-my_tests = ["channels.jl"]
 for my_test in my_tests
     include(my_test)
 end
