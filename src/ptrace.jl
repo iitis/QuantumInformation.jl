@@ -41,3 +41,16 @@ $(SIGNATURES)
 Return [partial trace](https://en.wikipedia.org/wiki/Partial_trace) of matrix `ρ` over the subsystems determined by `isystems`.
 """
 ptrace(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, sys::Int) = ptrace(ρ, idims, [sys])
+
+# TODO: allow for more than bipartite systems???
+function ptrace(ϕ::AbstractVector{<:Number}, idims::Vector{Int}, sys::Int)
+    _, cols = idims
+    A = unres(ϕ, cols)
+    if sys == 1
+        return A'*A
+    elseif sys == 2
+        return A*A'
+    else
+        throw(ArgumentError("sys must be 1 or 2"))
+    end
+end

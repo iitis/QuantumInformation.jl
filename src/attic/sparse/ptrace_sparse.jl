@@ -32,17 +32,3 @@ function ptrace(ρ::AbstractSparseMatrix{T}, idims::Vector{Int}, sys::Int) where
 end
 
 ptrace(ρ::AbstractSparseMatrix{<:Number}, idims::Vector{Int}, sys::Vector{Int}) = ptrace(ρ, idims, sys[1])
-
-# TODO: allow for more than bipartite systems???
-function ptrace(ϕ::AbstractVector{<:Number}, idims::Vector{Int}, sys::Int)
-    _, cols = idims
-    A = unres(ϕ, cols)
-    if sys == 1
-        return A'*A
-    elseif sys == 2
-        return A*A'
-    else
-        throw(ArgumentError("sys must be 1 or 2"))
-    end
-
-end

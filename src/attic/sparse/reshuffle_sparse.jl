@@ -13,17 +13,3 @@ function reshuffle(ρ::AbstractSparseMatrix{<:Number}, dims::Matrix{Int})
     end
     sparse(newI+1, newJ+1, V, prod(newdimsI), prod(newdimsJ))
 end
-
-"""
-  $(SIGNATURES)
-  - `ρ`: reshuffled matrix.
-  Performs reshuffling of indices of a matrix.
-  Given multiindexed matrix \$M_{(m,μ),(n,ν)}\$ it returns
-  matrix \$M_{(m,n),(μ,ν)}\$.
-"""
-function reshuffle(ρ::AbstractMatrix{<:Number})
-    (r, c) = size(ρ)
-    sqrtr = isqrt(r)
-    sqrtc = isqrt(c)
-    reshuffle(ρ, [sqrtr sqrtr; sqrtc sqrtc])
-end
