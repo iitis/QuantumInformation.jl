@@ -9,7 +9,7 @@ $(SIGNATURES)
 Return [diamond norm](https://arxiv.org/pdf/1004.4110.pdf) of matrix `J`.
 """
 
-function diamond_norm(Φ::AbstractQuantumOperation{T}) where T<:AbstractMatrix{<:Number}
+function norm_diamond(Φ::AbstractQuantumOperation{T}) where T<:AbstractMatrix{<:Number}
     J = DynamicalMatrix{T}(Φ).matrix
     # TODO: compare d1, d2 with idim, odim
     d1 = Φ.idim
@@ -44,5 +44,5 @@ function diamond_distance(Φ1::AbstractQuantumOperation{T}, Φ2::AbstractQuantum
     J2 = DynamicalMatrix{T}(Φ2).matrix
     # TODO: Test dimnesions
     Φ = DynamicalMatrix{T}(J1-J2, Φ1.idim, Φ1.odim)
-    diamond_norm(Φ)
+    norm_diamond(Φ)
 end
