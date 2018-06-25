@@ -1,4 +1,12 @@
-function ptranspose(ρ::AbstractMatrix{T}, idims::Vector, isystems::Vector) where T<:Number
+"""
+$(SIGNATURES)
+- `ρ`: quantum state.
+- `idims`: dimensins of subsystems.
+- `isystems`: transposed subsystems.
+
+Return [partial transposition](http://en.wikipedia.org/wiki/Peres-Horodecki_criterion) of matrix `ρ` over the subsystems determined by `isystems`.
+"""
+function ptranspose(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, isystems::Vector{Int})
     dims=reverse(idims)
     systems=length(idims)-isystems+1
 
@@ -24,9 +32,9 @@ function ptranspose(ρ::AbstractMatrix{T}, idims::Vector, isystems::Vector) wher
     reshape(tensor, size(ρ))
 end
 
-ptranspose(ρ::AbstractMatrix{T}, idims::Vector, sys::Int) where T<:Number = ptranspose(ρ, idims, [sys])
+ptranspose(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, sys::Int) = ptranspose(ρ, idims, [sys])
 
-function ptranspose(ρ::AbstractSparseMatrix{T}, dims::Vector, sys::Int) where T<:Number
+function ptranspose(ρ::AbstractSparseMatrix{<:Number}, dims::Vector{Int}, sys::Int)
 
     if size(ρ,1)!=size(ρ,2)
         throw(ArgumentError("Non square matrix passed to ptrace"))
@@ -47,5 +55,5 @@ function ptranspose(ρ::AbstractSparseMatrix{T}, dims::Vector, sys::Int) where T
         i[sys], j[sys] = j[sys], i[sys]
         newI[k], newJ[k] = mixedradix2number(i, dims), mixedradix2number(j, dims)
     end
-    sparse(newJ+1, newI+1, V, size(ρ)...)
+    sparse(newI+1, newJ+1, V, size(ρ)...)
 end

@@ -1,4 +1,12 @@
-function ptrace(ρ::AbstractMatrix{T}, idims::Vector, isystems::Vector) where T<:Number
+"""
+$(SIGNATURES)
+- `ρ`: quantum state.
+- `idims`: dimensins of subsystems.
+- `isystems`: traced subsystems.
+
+Return [partial trace](https://en.wikipedia.org/wiki/Partial_trace) of matrix `ρ` over the subsystems determined by `isystems`.
+"""
+function ptrace(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, isystems::Vector{Int})
     # TODO: convert notation to column-major form
     dims=reverse(idims)
     systems=length(idims)-isystems+1
@@ -31,9 +39,9 @@ function ptrace(ρ::AbstractMatrix{T}, idims::Vector, isystems::Vector) where T<
     return ret
 end
 
-ptrace(ρ::AbstractMatrix{T}, idims::Vector, sys::Int) where T<:Number = ptrace(ρ, idims, [sys])
+ptrace(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, sys::Int) = ptrace(ρ, idims, [sys])
 
-function ptrace(ρ::AbstractSparseMatrix{T}, idims::Vector, sys::Int) where T<:Number
+function ptrace(ρ::AbstractSparseMatrix{T}, idims::Vector{Int}, sys::Int) where T<:Number
 
     if size(ρ,1)!=size(ρ,2)
         throw(ArgumentError("Non square matrix passed to ptrace"))
@@ -42,7 +50,7 @@ function ptrace(ρ::AbstractSparseMatrix{T}, idims::Vector, sys::Int) where T<:N
         throw(ArgumentError("Product of dimensions do not match shape of matrix."))
     end
     if sys > 2 || sys < 1
-        throw(ArgumentError("sys mus be either 1 or 2, not $sys"))
+        throw(ArgumentError("sys must be either 1 or 2, not $sys"))
     end
     if length(idims) != 2
         throw(ArgumentError("Only bipartite systems supported"))
@@ -66,17 +74,18 @@ function ptrace(ρ::AbstractSparseMatrix{T}, idims::Vector, sys::Int) where T<:N
     end
 end
 
-ptrace(ρ::AbstractSparseMatrix{T}, idims::Vector, sys::Vector) where T<:Number = ptrace(ρ, idims, sys[1])
+ptrace(ρ::AbstractSparseMatrix{<:Number}, idims::Vector{Int}, sys::Vector{Int}) = ptrace(ρ, idims, sys[1])
 
 # TODO: allow for more than bipartite systems???
-function ptrace(ϕ::AbstractVector{T}, idims::Vector, sys::Int) where T<:Number
-    A = unres(ϕ, idims...)
+function ptrace(ϕ::AbstractVector{<:Number}, idims::Vector{Int}, sys::Int)
+    _, cols = idims
+    A = unres(ϕ, cols)
     if sys == 1
         return A'*A
     elseif sys == 2
         return A*A'
     else
-        throw(ArgumentError("sys must 1 or 2"))
+        throw(ArgumentError("sys must be 1 or 2"))
     end
 
 end
