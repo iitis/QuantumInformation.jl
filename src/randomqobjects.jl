@@ -1,19 +1,28 @@
+using Distributions
+
 """
 $(SIGNATURES)
 - `ϕ`: vector.
 
 Generates random ket based on `ϕ`.
 """
-function random_ket!(ϕ::AbstractVector{<:Real})
-    randn!(ϕ)
-    renormalize!(ϕ)
+struct HaarKet{β} <: ContinuousMatrixDistribution
+    d::Int
 end
 
-function random_ket!(ϕ::AbstractVector{<:Complex})
-    n = length(ϕ)
-    ϕ[:] = randn(n) + 1im * randn(n)
-    renormalize!(ϕ)
-end
+HaarKet(d::Int) = HaarKet{2}(d)
+
+function rand(h::HaarKet{1})
+    ψ = randn(h.d)
+    renormalize!(ψ)
+    ψ
+ end
+
+ function rand(h::HaarKet{2})
+     ψ = randn(h.d) + 1im * randn(h.d)
+     renormalize!(ψ)
+     ψ
+  end
 
 """
 $(SIGNATURES)
@@ -21,80 +30,82 @@ $(SIGNATURES)
 
 Generates random ket of length `d`.
 """
-function random_ket(::Type{T}, d::Int) where T<:Union{Real, Complex}
-    ϕ=zeros(T, d)
-    random_ket!(ϕ)
-    ϕ
+struct HilbertSchmidtStates{β, K}
+    w::WishartEnsemble
+    d::Int
+
+    function HilbertSchmidtStates{β, K}(d::Int) where {β, K}
+        w = WishartEnsemble{β, K}(d)
+        new(w, w.d)
+    end
 end
+HilbertSchmidtStates{β}(d::Int) where β = HilbertSchmidtStates{β, 1}(d)
+HilbertSchmidtStates(d::Int) = HilbertSchmidtStates{2, 1}(d)
 
-random_ket(d::Int) = random_ket(ComplexF64, d)
-
-function random_mixed_state!!(ρ::AbstractMatrix{T}, A::AbstractMatrix{T}) where T<:Union{Real, Complex}
-    random_ginibre_matrix!(A)
-    ρ[:] = A*A'
+function rand(hs::HilbertSchmidtStates{β, K}) where {β, K}
+    ρ = rand(hs.w)
     renormalize!(ρ)
-    ρ[:] = Hermitian(ρ)
-end
-
-function random_mixed_state!(ρ::AbstractMatrix{T}, k::Int) where T<:Union{Real, Complex}
-    d = size(ρ, 1)
-    A = zeros(T, d, k)
-    random_mixed_state!!(ρ, A)
-    renormalize!(ρ)
-end
-
-"""
-$(SIGNATURES)
-- `ρ`: quantum state.
-
-Generates random quantum mixed state on the place of `ρ`.
-"""
-function random_mixed_state!(ρ::AbstractMatrix{T}) where T<:Union{Real, Complex}
-    random_mixed_state!(ρ, 1)
-end
-
-"""
-$(SIGNATURES)
-- `d`: dimension.
-
-Generates random quantum mixed state of dimension `d`.
-"""
-function random_mixed_state(::Type{T}, d::Int64, k::Int=d) where T<:Union{Real, Complex}
-    ρ = zeros(T, d, d)
-    random_mixed_state!(ρ, k)
     ρ
 end
 
-random_mixed_state(d::Int64, k::Int=d) = random_mixed_state(ComplexF64, d, k)
-random_mixed_state_hs(d::Int64) = random_mixed_state(d) #backwards compat
+struct ChoiJamiolkowskiMatrices{β, K}
+    w::WishartEnsemble
+    idim::Int
+    odim::Int
 
-"""
-$(SIGNATURES)
-- `J`: dimension.
-
-Generates random Jamiolkowski state of dimension on the place of `J`.
-"""
-function random_jamiolkowski_state!(J::AbstractMatrix{T}) where T<:Union{Real, Complex}
-    random_dynamical_matrix!(J)
-    n = isqrt(size(J, 1))
-    J[:] = J[:] / n
+    function ChoiJamiolkowskiMatrices{β, K}(idim::Int, odim::Int)  where {β, K}
+        w = WishartEnsemble{β, K}(idim * odim)
+        new(w, idim, odim)
+    end
 end
 
-"""
-$(SIGNATURES)
-- `d`: dimension.
-
-Generates random Jamiolkowski state of dimension `d`.
-"""
-function random_jamiolkowski_state(::Type{T}, n::Int) where T<:Union{Real, Complex}
-    J = zeros(T, n*n, n*n)
-    random_jamiolkowski_state!(J)
-    J
+function ChoiJamiolkowskiMatrices{β}(idim::Int, odim::Int) where β
+    ChoiJamiolkowskiMatrices{β, 1}(idim, odim)
 end
 
-#function random_mixed_state_fixed_purity(d::Int, p::Real)
-#  error("Not implemented")
-#  l = random_vector_fixed_l1_l2(1., p, d)
-#  u = random_unitary(d)
-#  return u' * diagm(l) * u
-#end
+function ChoiJamiolkowskiMatrices{β}(d::Int) where β
+    ChoiJamiolkowskiMatrices{β, 1}(d, d)
+end
+
+function ChoiJamiolkowskiMatrices(idim::Int, odim::Int)
+    ChoiJamiolkowskiMatrices{2}(idim, odim)
+end
+
+function ChoiJamiolkowskiMatrices(d::Int)
+    ChoiJamiolkowskiMatrices(d, d)
+end
+
+function rand(c::ChoiJamiolkowskiMatrices{β, K}) where {β, K}
+    z = rand(c.w)
+    y = ptrace(z, [c.odim, c.idim], [1])
+    sy = funcmh!(x -> 1 / sqrt(x), y)
+    onesy = eye(c.odim) ⊗ sy
+    DynamicalMatrix(onesy * z * onesy, c.idim, c.odim)
+end
+# """
+# $(SIGNATURES)
+# - `ρ`: quantum state.
+#
+# Generates random quantum mixed state on the place of `ρ`.
+# """
+#
+# """
+# $(SIGNATURES)
+# - `d`: dimension.
+#
+# Generates random quantum mixed state of dimension `d`.
+# """
+#
+# """
+# $(SIGNATURES)
+# - `J`: dimension.
+#
+# Generates random Jamiolkowski state of dimension on the place of `J`.
+# """
+#
+# """
+# $(SIGNATURES)
+# - `d`: dimension.
+#
+# Generates random Jamiolkowski state of dimension `d`.
+# """
