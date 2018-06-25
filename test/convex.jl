@@ -2,8 +2,9 @@
 
 @testset "diamond norm" begin
     srand(42)
-    J = random_dynamical_matrix(3, 4)
-    @test norm_diamond(DynamicalMatrix(J,3, 4)) ≈ 1 atol=1e-6
+    c = ChoiJamiolkowskiMatrices(3, 4)
+    Φ = rand(c)
+    @test norm_diamond(Φ) ≈ 1 atol=1e-6
 end
 
 @testset "diamond distance" begin
