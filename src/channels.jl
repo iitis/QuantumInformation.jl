@@ -4,6 +4,12 @@
 
 abstract type AbstractQuantumOperation{T} end
 
+"""
+$(SIGNATURES)
+- `T`: quantum channel map.
+
+Representation of quantum channel by Kraus operators.
+"""
 struct KrausOperators{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     matrices::Vector{T}
     idim::Int
@@ -32,6 +38,12 @@ end
 
 # TODO: create iterator over KrausOperators see: https://docs.julialang.org/en/v0.6.3/manual/interfaces/
 
+"""
+$(SIGNATURES)
+- `T`: quantum channel map.
+
+Representation of quantum channel by super-operator.
+"""
 struct SuperOperator{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     matrix::T
     idim::Int
@@ -56,7 +68,7 @@ end
 """
 $(SIGNATURES)
 - `channel`: quantum channel map.
-- `dim`: square root of the super-operator matrix dimension.
+- `dim`: square root of the [super-operator](https://en.wikipedia.org/wiki/Superoperator) matrix dimension.
 
 Transforms quntum channel into super-operator matrix.
 """
@@ -71,6 +83,12 @@ function SuperOperator{T}(channel::Function, idim::Int, odim::Int) where T<:Abst
     SuperOperator(m, idim, odim)
 end
 
+"""
+$(SIGNATURES)
+- `T`: quantum channel map.
+
+Representation of quantum channel by Dynamical matrix operators.
+"""
 struct DynamicalMatrix{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     matrix::T
     idim::Int
@@ -78,6 +96,12 @@ struct DynamicalMatrix{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{
     # TODO: write inner constructor
 end
 
+"""
+$(SIGNATURES)
+- `T`: quantum channel map.
+
+Stinespring representation of quantum channel.
+"""
 struct Stinespring{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     matrix::T
     idim::Int
@@ -85,6 +109,12 @@ struct Stinespring{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     # TODO: write inner constructor
 end
 
+"""
+$(SIGNATURES)
+- `T`: quantum channel map.
+
+Representation of unitary channel.
+"""
 struct UnitaryChannel{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     matrix::T
     idim::Int
@@ -104,7 +134,12 @@ function UnitaryChannel{T}(m::T, idim::Int, odim::Int) where T<:AbstractMatrix{<
     UnitaryChannel(m)
 end
 
+"""
+$(SIGNATURES)
+- `T`: quantum channel map.
 
+Representation of identity channel.
+"""
 struct IdentityChannel{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     idim::Int
     odim::Int
@@ -141,7 +176,7 @@ end
 
 """
 $(SIGNATURES)
-- `kraus_list`: list of Kraus operators.
+- `Φ`: list of Kraus operators.
 
 Transforms list of Kraus operators into super-operator matrix.
 """
@@ -151,7 +186,7 @@ end
 
 """
 $(SIGNATURES)
-- `kraus_list`: list of Kraus operators.
+- `Φ`: list of Kraus operators.
 
 Transforms list of Kraus operators into Stinespring representation of quantum channel.
 """
@@ -162,7 +197,7 @@ end
 
 """
 $(SIGNATURES)
-- `kraus_list`: list of Kraus operators.
+- `Φ`: list of Kraus operators.
 
 Transforms list of Kraus operators into dynamical matrix.
 """
@@ -172,7 +207,7 @@ end
 
 """
 $(SIGNATURES)
-- `m`: super-operator matrix.
+- `Φ`: super-operator matrix.
 
 Transforms super-operator matrix into list of Kraus operators.
 """
@@ -182,7 +217,7 @@ end
 
 """
 $(SIGNATURES)
-- `m`: super-operator matrix.
+- `Φ`: super-operator matrix.
 
 Transforms super-operator matrix into dynamical matrix.
 """
@@ -192,7 +227,7 @@ end
 
 """
 $(SIGNATURES)
-- `m`: super-operator matrix.
+- `Φ`: super-operator matrix.
 
 Transforms super-operator matrix into Stinespring representation of quantum channel.
 """
@@ -202,7 +237,7 @@ end
 
 """
 $(SIGNATURES)
-- `R`: dynamical matrix.
+- `Φ`: dynamical matrix.
 
 Transforms dynamical matrix into list of Kraus operators.
 """
@@ -221,7 +256,7 @@ end
 
 """
 $(SIGNATURES)
-- `R`: dynamical matrix.
+- `Φ`: dynamical matrix.
 
 Transforms dynamical matrix into Stinespring representation of quantum channel.
 """
@@ -231,7 +266,7 @@ end
 
 """
 $(SIGNATURES)
-- `R`: dynamical matrix.
+- `Φ`: dynamical matrix.
 
 Transforms dynamical matrix into super-operator matrix.
 """
@@ -256,7 +291,7 @@ end
 ################################################################################
 """
 $(SIGNATURES)
-- `R`: dynamical matrix.
+- `Φ`: dynamical matrix.
 - `ρ`: quantum state.
 
 Application of dynamical matrix into state `ρ`.
@@ -267,7 +302,7 @@ end
 
 """
 $(SIGNATURES)
-- `kraus_list`: list of vectors.
+- `Φ`: list of vectors.
 - `ρ`: input matrix.
 
 Return mapping of `kraus_list` on `ρ`. Krauss representation of quantum channel
@@ -281,7 +316,7 @@ end
 
 """
 $(SIGNATURES)
-- `M`: super-operator matrix.
+- `Φ`: super-operator matrix.
 - `ρ`: quantum state.
 
 Application of super-operator matrix into state `ρ`.
@@ -292,7 +327,7 @@ end
 
 """
 $(SIGNATURES)
-- `A`: Stinespring representation of quantum channel.
+- `Φ`: Stinespring representation of quantum channel.
 - `ρ`: quantum state.
 - `dims`: dimensions of registers of `ρ`.
 
@@ -377,7 +412,7 @@ end
 ################################################################################
 """_
 $(SIGNATURES)
-- `kraus`: list of Kraus operators.
+- `Φ`: list of Kraus operators.
 - `atol`: tolerance of approximation.
 
 Checks if set of Kraus operators fulfill completness relation.

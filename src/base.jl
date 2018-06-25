@@ -53,12 +53,6 @@ Return outer product \$|ket\\rangle\\langle ket|\$ of `ket`.
 """
 proj(ket::AbstractVector{<:Number}) = ket * ket'
 
-"""
-$(SIGNATURES)
-- `dim`: length of the matrix.
-
-Returns elementary matrices of dimension `dim` x `dim`.
-"""
 # TODO: allow rectangular matrices
 base_matrices(::Type{Tm}, dim::Int) where Tm<:AbstractMatrix{<:Number} = Channel() do c
     dim > 0 ? () : error("Operator dimension has to be nonnegative")
@@ -67,6 +61,12 @@ base_matrices(::Type{Tm}, dim::Int) where Tm<:AbstractMatrix{<:Number} = Channel
     end
 end
 
+"""
+$(SIGNATURES)
+- `dim`: length of the matrix.
+
+Returns elementary matrices of dimension `dim` x `dim`.
+"""
 base_matrices(dim::Int) = base_matrices(Matrix{ComplexF64}, dim)
 
 """
@@ -120,6 +120,7 @@ function max_entangled(d::Int)
 end
 
 """
+$(SIGNATURES)
 - `d`: length of the vector.
 - `α`: real number from [0, 1].
 
@@ -131,7 +132,14 @@ function werner_state(d::Int, α::Float64)
     α * proj(max_entangled(d)) + (1 - α) * max_mixed(d)
 end
 
+"""
+$(SIGNATURES)
+- `ρ`: input state.
+- `dims`: dimensions of registers of `ρ`.
+- `systems`: permuted registers.
 
+Returns state ρ with permutated registers denoted by `systems`.
+"""
 function permute_systems(ρ::AbstractMatrix{T}, dims::Vector{Int}, systems::Vector{Int}) where T<:Number
     if size(ρ,1)!=size(ρ,2)
         throw(ArgumentError("Non square matrix passed to ptrace"))
