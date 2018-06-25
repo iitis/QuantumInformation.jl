@@ -15,7 +15,7 @@ end
 using Compat, DocStringExtensions
 import Compat.Markdown
 
-import Base: convert, size, length, kron, *
+import Base: convert, size, length, kron, *, rand
 
 const ⊗ = kron
 
@@ -30,14 +30,9 @@ fidelity_sqrt, fidelity, gate_fidelity,
 shannon_entropy, quantum_entropy, relative_entropy, kl_divergence, js_divergence,
 bures_distance, bures_angle, superfidelity,
 negativity, log_negativity, ppt,
-norm_diamond, diamond_distance,
-random_ket, random_ket!,
-random_GOE, random_GUE,
-random_ginibre_matrix!, random_ginibre_matrix,
-random_mixed_state!, random_mixed_state_hs, random_mixed_state,
-random_dynamical_matrix!, random_dynamical_matrix,
-random_jamiolkowski_state!, random_jamiolkowski_state,
-random_unitary, random_orthogonal, random_isometry,
+diamond_norm, diamond_distance,
+HaarKet, HilbertSchmidtStates, ChoiJamiolkowskiMatrices,
+rand,
 funcmh, funcmh!, renormalize!, random_ball,
 sx,sy,sz, qft, hadamard, grover, ⊗, *,
 iscptp, iscp, istp, istni, iscptp, iscptni,
@@ -48,9 +43,12 @@ KrausOperators, SuperOperator, DynamicalMatrix, Stinespring,
 UnitaryChannel, IdentityChannel,
 kron, compose
 
+include("../randommatrices/src/RandomMatrices.jl")
+using .RandomMatrices
+eval(Expr(:export, names(RandomMatrices)...))
+
 include("base.jl")
-include("randommatrix.jl")
-include("randomstate.jl")
+include("randomqobjects.jl")
 include("gates.jl")
 include("utils.jl")
 include("channels.jl")

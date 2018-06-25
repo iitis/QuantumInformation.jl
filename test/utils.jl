@@ -41,10 +41,4 @@ end
     @test R ≈ ref atol=1e-15
 end
 
-@testset "random_ball" begin
-    b = random_ball(10)
-
-    @test norm(b) < 1.
-end
-
 end

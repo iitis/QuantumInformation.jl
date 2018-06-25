@@ -8,8 +8,8 @@ else
     using Base.Test
 end
 
-my_tests = ["utils.jl", "base.jl", "ptrace.jl", "ptranspose.jl", "reshuffle.jl", "channels.jl",
-"functionals.jl", "randommatrix.jl", "randomstate.jl", "gates.jl", "permute_systems.jl"]
+my_tests = ["utils.jl", "base.jl", "ptrace.jl", "ptranspose.jl", "reshuffle.jl",
+"functionals.jl", "gates.jl", "permute_systems.jl", "randomqobjects.jl"]
 
 if VERSION>v"0.7.0-DEV"
     # Convex.jl does not support julia 0.7 yet
