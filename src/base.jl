@@ -193,6 +193,27 @@ function werner_state(d::Int, α::Float64,)
     α * proj(max_entangled(d)) + (1 - α) * max_mixed(d)
 end
 
+
+function permute_systems(ρ::AbstractMatrix{T}, dims::Vector{Int}, systems::Vector{Int}) where T<:Number
+    if size(ρ,1)!=size(ρ,2)
+        throw(ArgumentError("Non square matrix passed to ptrace"))
+    end
+    if prod(dims)!=size(ρ,1)
+        throw(ArgumentError("Product of dimensions does not match the shape of matrix."))
+    end
+    if maximum(systems) > length(dims) || minimum(systems) < 1
+        throw(ArgumentError("System index out of range"))
+    end
+    offset = length(dims)
+    perm_1 = systems
+    perm_2 = [p + offset for p in perm_1]
+    perm = [perm_1 ; perm_2] # vcat(perm_1 ; perm_2)
+    tensor = reshape(ρ, tuple([dims ; dims]...))
+    transposed_tensor = permutedims(tensor, perm)
+    return reshape(transposed_tensor, size(ρ))
+end
+
+
 #=
 TODO: port to julia
 def base_hermitian_matrices(dim):
@@ -207,22 +228,4 @@ def base_hermitian_matrices(dim):
         else:
             yield np.matrix(ketbra(a, b, dim))
 
-
-def permute_systems(rho, dims, systemperm):
-    rho = np.asarray(rho)
-    dims = list(dims)
-    systemperm = list(systemperm)
-    if rho.shape[0] != rho.shape[1]:
-        raise Exception("Non square matrix passed to ptrace")
-    if np.prod(dims) != rho.shape[0]:
-        raise Exception("Product of dimensions do not match shape of matrix.")
-    if not ((max(systemperm) <= len(dims) or (min(systemperm) > len(dims)))):
-        raise Exception("System index out of range")
-    offset = len(dims)
-    perm1 = systemperm
-    perm2 = map(lambda x: x + offset, perm1)
-    perm = perm1 + perm2
-    tensor = np.array(rho).reshape(2 * dims)
-    tensor = tensor.transpose(perm)
-    return np.asmatrix(tensor.reshape(rho.shape))
 =#
