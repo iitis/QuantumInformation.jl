@@ -29,3 +29,8 @@ function product_superoperator(M1, M2)
     # TODO:
     error("not imeplented")
 end
+
+function ispositive(M::AbstractSparseMatrix{<:Number}, atol=1e-08)
+    warn("converting to full matrix")
+    ispositive(full(M))
+end
