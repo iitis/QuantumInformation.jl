@@ -34,43 +34,40 @@ function renormalize!(ρ::AbstractMatrix{<:Number})
     end
 end
 
-function funcmh!(f::Function, H::Hermitian{T}, R::Matrix{T})  where T<:Union{Real, Complex}
-    F = eigfact!(H)
-    for i=1:length(F.values)
-        F.values[i] = f(F.values[i])
+function funcmh!(f::Function, h::Hermitian{T}, r::Matrix{T})  where T<:Union{Real, Complex}
+    fact = eigfact!(h)
+    times_diag = zero(fact.vectors)
+    for i=1:size(fact.vectors, 2)
+        times_diag[:, i] = fact.vectors[:, i] * f(fact.values[i])
     end
-    times_diag = zero(F.vectors)
-    for i=1:size(F.vectors, 2)
-        times_diag[:, i] = F.vectors[:, i] * F.values[i]
-    end
-    R[:] = times_diag * F.vectors' # A_mul_Bc!(R, times_diag, F.vectors) deprecated
+    r[:] = times_diag * fact.vectors'
 end
 
-function funcmh!(f::Function, H::Hermitian{T}) where T<:Union{Real, Complex}
-    R = zeros(T, size(H))
-    funcmh!(f, H, R)
-    R
+function funcmh!(f::Function, h::Hermitian{T}) where T<:Union{Real, Complex}
+    r = zeros(T, size(h))
+    funcmh!(f, h, r)
+    r
 end
 
-function funcmh(f::Function, H::Hermitian{T}) where T<:Union{Real, Complex}
-    R = zeros(T, size(H))
-    funcmh!(f, copy(H), R)
-    R
+function funcmh(f::Function, h::Hermitian{T}) where T<:Union{Real, Complex}
+    r = zeros(T, size(h))
+    funcmh!(f, copy(h), r)
+    r
 end
 
-function funcmh!(f::Function, H::Matrix{T}, R::Matrix{T}) where T<:Union{Real, Complex}
-    ishermitian(H) ? funcmh!(f, Hermitian(H), R) : error("Non-hermitian matrix passed to funcmh")
+function funcmh!(f::Function, h::Matrix{T}, r::Matrix{T}) where T<:Union{Real, Complex}
+    ishermitian(h) ? funcmh!(f, Hermitian(h), r) : error("Non-hermitian matrix passed to funcmh")
 end
 
-function funcmh!(f::Function, H::Matrix{T}) where T<:Union{Real, Complex}
-    ishermitian(H) ? funcmh!(f, Hermitian(H)) : error("Non-hermitian matrix passed to funcmh")
+function funcmh!(f::Function, h::Matrix{T}) where T<:Union{Real, Complex}
+    ishermitian(h) ? funcmh!(f, Hermitian(h)) : error("Non-hermitian matrix passed to funcmh")
 end
 
-function funcmh(f::Function, H::Matrix{T}) where T<:Union{Real, Complex}
-    ishermitian(H) ? funcmh(f, Hermitian(H)) : error("Non-hermitian matrix passed to funcmh")
+function funcmh(f::Function, h::Matrix{T}) where T<:Union{Real, Complex}
+    ishermitian(h) ? funcmh(f, Hermitian(h)) : error("Non-hermitian matrix passed to funcmh")
 end
 
-function isidentity(ρ::AbstractMatrix{<:Number}, atol=1e-08)
+function isidentity(ρ::AbstractMatrix{<:Number}, atol=1e-13)
     rows, cols = size(ρ)
     if rows!=cols
         return false
@@ -79,7 +76,7 @@ function isidentity(ρ::AbstractMatrix{<:Number}, atol=1e-08)
     isapprox(ρ, eye(ρ), atol=atol)
 end
 
-function ispositive(ρ::AbstractMatrix{<:Number}, atol=1e-08)
+function ispositive(ρ::AbstractMatrix{<:Number}, atol=1e-13)
     rows, cols = size(ρ)
     if rows!=cols
         return false
@@ -87,7 +84,8 @@ function ispositive(ρ::AbstractMatrix{<:Number}, atol=1e-08)
     if !ishermitian(ρ)
         return false
     end
-    fact = eigfact(Hermitian(ρ))
+    h = Hermitian(ρ)
+    fact = eigfact!(h)
     all(fact.values .> -atol)
 end
 

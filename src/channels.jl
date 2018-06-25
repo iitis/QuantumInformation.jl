@@ -419,39 +419,47 @@ $(SIGNATURES)
 
 Checks if set of Kraus operators fulfill completness relation.
 """
-function iscptp(Φ::KrausOperators{<:AbstractMatrix{<:Number}}, atol=1e-08)
+function iscptp(Φ::KrausOperators{<:AbstractMatrix{<:Number}}, atol=1e-13)
+    cr = sum(k'*k for k in Φ.matrices)
+    isidentity(cr, atol=atol)
+end
+
+function iscptni(Φ::KrausOperators{<:AbstractMatrix{<:Number}}, atol=1e-13)
     complentess_relation = sum(k'*k for k in Φ.matrices)
-    isapprox(complentess_relation, eye(complentess_relation), atol=atol)
+    ispositive(eye(cr) - cr, atol=atol)
 end
 
-function iscptp(Φ::SuperOperator)
+function iscptp(Φ::SuperOperator{T}, atol=1e-13) where T<:AbstractMatrix{<:Number}
+    iscpt(DynamicalMatrix{T}(Φ))
+end
+
+function iscptni(Φ::SuperOperator{T}, atol=1e-13) where T<:AbstractMatrix{<:Number}
+    iscptni(DynamicalMatrix{T}(Φ))
+end
+
+function iscptp(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}, atol=1e-13)
+    # TODO : check it
+    pt = ptrace(Φ.matrix, [Φ.idim*Φ.idim, Φ.odim*Φ.odim], [2])
+    isidentity(pt, atol=atol)
+end
+
+function iscptni(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}, atol=1e-13)
+    pt = ptrace(Φ.matrix, [Φ.idim*Φ.idim, Φ.odim*Φ.odim], [2])
+    ispositive(eye(pt) - pt, atol=atol)
+end
+
+function iscptp(Φ::Stinespring{<:AbstractMatrix{<:Number}}, atol=1e-13)
     #TODO: implement
 end
 
-function iscptp(Φ::DynamicalMatrix)
-    #TODO: implement
-end
-
-function iscptp(Φ::Stinespring)
+function iscptni(Φ::Stinespring{<:AbstractMatrix{<:Number}}, atol=1e-13)
     #TODO: implement
 end
 
 function iscptp(Φ::UnitaryChannel)
-    #TODO: implement
+    true
 end
 
-function iscp(Φ::SuperOperator)
-    #TODO: implement
-end
-
-function iscptni(Φ::SuperOperator)
-    #TODO: implement
-end
-
-function istp(Φ::SuperOperator)
-    #TODO: implement
-end
-
-function istni(Φ::SuperOperator)
-    #TODO: implement
+function iscptni(Φ::UnitaryChannel)
+    true
 end
