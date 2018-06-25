@@ -49,7 +49,6 @@ UnitaryChannel, IdentityChannel,
 kron, compose
 
 include("base.jl")
-include("randommatrix.jl")
 include("randomstate.jl")
 include("gates.jl")
 include("utils.jl")
@@ -58,6 +57,9 @@ include("functionals.jl")
 include("reshuffle.jl")
 include("ptrace.jl")
 include("ptranspose.jl")
+include("../randommatrices/src/RandomMatrices.jl")
+using .RandomMatrices
+eval(Expr(:export, names(RandomMatrices)...))
 
 if VERSION>v"0.7.0-DEV"
     # Convex.jl does not support julia 0.7 yet
