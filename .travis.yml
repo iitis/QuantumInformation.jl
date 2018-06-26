@@ -13,6 +13,6 @@ script:
   - julia --code-coverage randommatrices/test/runtests.jl
 
 after_success:
-  - julia -e 'cd(Pkg.dir("QI")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(vcat(process_folder(), process_folder("randommatrices")))'
+  - julia -e 'cd(Pkg.dir("QI")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(vcat(process_folder(), process_folder("randommatrices/src")))'
   - julia -e 'Pkg.add("Documenter")'
   - julia -e 'cd(Pkg.dir("QI")); ENV["DOCUMENTER_KEY"] = "true"; include(joinpath("docs", "make.jl"))'
