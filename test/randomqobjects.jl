@@ -62,7 +62,8 @@ srand(42)
         @test norm(tr - eye(idim)) ≈ 0. atol=1e-13
         @test trace(j.matrix) ≈ idim atol=1e-13
         @test typeof(j.matrix) == Matrix{ComplexF64}
-
+        
+        @test ChoiJamiolkowskiMatrices{1}(idim) == ChoiJamiolkowskiMatrices{1, 1}(idim, idim)
         @test ChoiJamiolkowskiMatrices{1}(idim, odim) == ChoiJamiolkowskiMatrices{1, 1}(idim, odim)
         @test ChoiJamiolkowskiMatrices(idim, odim) == ChoiJamiolkowskiMatrices{2, 1}(idim, odim)
         @test ChoiJamiolkowskiMatrices(idim) == ChoiJamiolkowskiMatrices{2, 1}(idim, idim)
