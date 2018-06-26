@@ -1,36 +1,33 @@
-function number2mixedradix(n::Int, bases::Vector{Int})
-    if n >= prod(bases)
-        error("number to big to transform")
-    end
+function number2mixedradix(n::Int, radices::Vector{Int})
+    n >= prod(radices) ? throw(ArgumentError("number to big to transform")) : ()
 
-    digits = Array{Int64}(length(bases))
-    for (i, base) in enumerate(reverse(bases))
-        n, digits[i] = divrem(n, base)
+    digits = Array{Int}(length(radices))
+    for (i, radix) in enumerate(reverse(radices))
+        n, digits[end-i+1] = divrem(n, radix)
     end
     digits
 end
 # FIX THESE
-function mixedradix2number(digits::Vector{Int}, bases::Vector{Int})
-    if length(digits)>length(bases)
-        error("more digits than radices")
-    end
+function mixedradix2number(digits::Vector{Int}, radices::Vector{Int})
+    length(digits)>length(radices) ? throw(ArgumentError("more digits than radices")) : ()
 
     res = 0
     digitsreversed = reverse(digits)
-    for i=1:length(digits)
-        res = res * bases[i] + digitsreversed[i]
+    for (digit, radix) = zip(digits, radices)
+        digit >= radix ? throw(ArgumentError("digit larger or equal to base")) : ()
+        res = res * radix + digit
     end
     res
 end
 
-function renormalize!(ϕ::AbstractVector{T}) where T<:Union{Real, Complex}
+function renormalize!(ϕ::AbstractVector{<:Number})
     n = norm(ϕ)
     for i=1:length(ϕ)
         ϕ[i] = ϕ[i]/n
     end
 end
 
-function renormalize!(ρ::AbstractMatrix{T}) where T<:Union{Real, Complex}
+function renormalize!(ρ::AbstractMatrix{<:Number})
     t = trace(ρ)
     for i=1:length(ρ)
         ρ[i] = ρ[i]/t
@@ -75,6 +72,31 @@ end
 
 random_ball(dim::Int) = rand()^(1/dim) * random_ket(Float64, dim)
 
+function isidentity(M::AbstractMatrix{<:Number}, atol=1e-08)
+    rows, cols = size(M)
+    if rows!=cols
+        return false
+    end
+
+    isapprox(M, eye(M), atol=atol)
+end
+
+function ispositive(M::AbstractMatrix{<:Number}, atol=1e-08)
+    rows, cols = size(M)
+    if rows!=cols
+        return false
+    end
+    if !ishermitian(M)
+        return false
+    end
+    F = eigfact(Hermitian(M))
+    all(F.values .> -atol)
+end
+
+function ispositive(M::AbstractSparseMatrix{<:Number}, atol=1e-08)
+    warn("converting to full matrix")
+    ispositive(full(M))
+end
 #function random_vector_fixed_l1_l2(l1::Real, l2::Real, d::Int)
 #  #from here http://stats.stackexchange.com/questions/61692/generating-vectors-under-constraints-on-1-and-2-norm
 #  u, _ = qr(ones(d, d))
