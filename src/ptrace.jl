@@ -36,7 +36,7 @@ end
 $(SIGNATURES)
 - `ρ`: quantum state.
 - `idims`: dimensins of subsystems.
-- `sys`: traced subsystems.
+- `sys`: traced subsystem.
 
 Return [partial trace](https://en.wikipedia.org/wiki/Partial_trace) of matrix `ρ` over the subsystems determined by `isystems`.
 """
@@ -45,11 +45,12 @@ ptrace(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, sys::Int) = ptrace(ρ, 
 # TODO: allow for more than bipartite systems???
 function ptrace(ϕ::AbstractVector{<:Number}, idims::Vector{Int}, sys::Int)
     _, cols = idims
-    A = unres(ϕ, cols)
+    m = unres(ϕ, cols)
+    length(idims) != 2 ? () : throw(ArgumentError("idims has to be of length 2"))
     if sys == 1
-        return A'*A
+        return m'*m
     elseif sys == 2
-        return A*A'
+        return m*m'
     else
         throw(ArgumentError("sys must be 1 or 2"))
     end

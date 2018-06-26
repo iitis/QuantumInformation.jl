@@ -2,7 +2,7 @@
 # Channels definitions and constructors
 ################################################################################
 
-abstract type AbstractQuantumOperation{T} end
+abstract type AbstractQuantumOperation{T<:AbstractMatrix{<:Number}} end
 
 """
 $(SIGNATURES)
@@ -14,21 +14,21 @@ struct KrausOperators{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T
     matrices::Vector{T}
     idim::Int
     odim::Int
-    function KrausOperators(v::Vector{T}) where T<:AbstractMatrix{<:Number}
+    function KrausOperators{T1}(v::Vector{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
         sizes = [size(k) for k in v]
         for s in sizes[2:end]
             if s!=sizes[1]
-                throw(ArgumentError("Kraus operators list contains matrices of different dimmension"))
+                throw(ArgumentError("Kraus operators list contains matrices of different dimension"))
             end
         end
         idim, odim = sizes[1]
-        new{T}(v, idim, odim)
+        new{T1}(map(T1, v), idim, odim)
     end
 end
 
-function KrausOperators{T}(v::Vector{T}, idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
-    # TODO: Check if idim and odim are compatible with matrix
-    KrausOperators(v)
+function KrausOperators{T1}(v::Vector{T2}, idim::Int, odim::Int) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+    all((idim, odim) == size(k) for k in v) ? () : throw(ArgumentError("Matrix size and operator dimensions mismatch"))
+    KrausOperators{T1}(v)
 end
 
 length(Φ::KrausOperators) = length(Φ.matrices)
@@ -48,7 +48,7 @@ struct SuperOperator{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     matrix::T
     idim::Int
     odim::Int
-    function SuperOperator(m::T) where T<:AbstractMatrix{<:Number}
+    function SuperOperator{T1}(m::T2) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
         r, c = size(m)
         sr = isqrt(r)
         sc = isqrt(c)
@@ -56,13 +56,13 @@ struct SuperOperator{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
             throw(ArgumentError("Superoperator matrix has bad dimensions"))
         end
         idim, odim = sr, sc
-        new{T}(T(m), idim, odim)
+        new{T1}(T1(m), idim, odim)
     end
 end
 
-function SuperOperator{T}(m::T, idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
-    # TODO: Check if idim and odim are compatible with matrix
-    SuperOperator(m)
+function SuperOperator{T1}(m::T2, idim::Int, odim::Int) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+    (idim^2, odim^2) == size(m) ? () : throw(ArgumentError("Matrix size and operator dimensions mismatch"))
+    SuperOperator{T1}(m)
 end
 
 """
@@ -94,6 +94,7 @@ struct DynamicalMatrix{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{
     idim::Int
     odim::Int
     # TODO: write inner constructor
+    # where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
 end
 
 """
@@ -107,6 +108,7 @@ struct Stinespring{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     idim::Int
     odim::Int
     # TODO: write inner constructor
+    # where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
 end
 
 """
@@ -119,19 +121,16 @@ struct UnitaryChannel{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T
     matrix::T
     idim::Int
     odim::Int
-    function UnitaryChannel(m::T) where T<:AbstractMatrix{<:Number}
-        r, c = size(m)
-        if r!=c
-            throw(ArgumentError("UnitaryChannel matrix has to be square"))
-        end
-        idim, odim = r, c
-        new{T}(m, idim, odim)
+    function UnitaryChannel{T1}(m::T2) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+        idim, odim = size(m)
+        idim == odim ? () : throw(ArgumentError("UnitaryChannel matrix has to be square"))
+        new{T1}(T1(m), idim, odim)
     end
 end
 
-function UnitaryChannel{T}(m::T, idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
-    # TODO: Check if idim and odim are compatible with matrix
-    UnitaryChannel(m)
+function UnitaryChannel{T1}(m::T2, idim::Int, odim::Int) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+    (idim, odim) == size(m) ? () : throw(ArgumentError("Matrix size and operator dimensions mismatch"))
+    UnitaryChannel{T1}(T1(m))
 end
 
 """
@@ -143,36 +142,47 @@ Representation of identity channel.
 struct IdentityChannel{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     idim::Int
     odim::Int
+    function IdentityChannel{T}(dim::Int) where T<:AbstractMatrix{<:Number}
+         new{T}(dim, dim)
+    end
 end
+
+function IdentityChannel{T}(idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
+    idim == odim ? () : throw(ArgumentError("IdentityChannel has to be square"))
+    IdentityChannel{T}(idim)
+end
+
+# TODO : add constructors with no type
 
 ################################################################################
 # measurements
 ################################################################################
 
-struct POVMMeaurement{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
+struct POVMMeasurement{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     matrices::Vector{T}
     idim::Int
     odim::Int
-    function POVMMeaurement(v::Vector{T}) where T<:AbstractMatrix{<:Number}
+    function POVMMeasurement{T1}(v::Vector{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
         sizes = [size(p) for p in v]
         for s in sizes[2:end]
             if s!=sizes[1]
-                throw(ArgumentError("Kraus operators list contains matrices of different dimmension"))
+                throw(ArgumentError("Kraus operators list contains matrices of different dimension"))
             end
         end
         idim = size(v[1],1)
         odim = length(v)
 
-        new{T}(v, idim, odim)
+        new{T1}(map(T1, v), idim, odim)
     end
 end
 
-function POVMMeaurement{T}(v::Vector{T}, idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
-    # TODO: Check if idim and odim are compatible with matrix and length
-    POVMMeaurement(v)
+function POVMMeasurement{T1}(v::Vector{T2}, idim::Int, odim::Int) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+    all((idim, idim) == size(p) for p in v) ? () : throw(ArgumentError("POVMs must be square matrices of size equal to operator inupt dimension"))
+    odim == length(v) ? () : throw(ArgumentError("Operator output dimension must match number of POVM operators"))
+    POVMMeasurement{T1}(v)
 end
 
-function ispovm(Φ::POVMMeaurement{<:AbstractMatrix{<:Number}})
+function ispovm(Φ::POVMMeasurement{<:AbstractMatrix{<:Number}})
     isidentity(sum(Φ.matrices))
 end
 
@@ -180,15 +190,15 @@ struct PostSelectionMeasurement{T<:AbstractMatrix{<:Number}} <: AbstractQuantumO
     matrix::T
     idim::Int
     odim::Int
-    function PostSelectionMeasurement(m::T) where T<:AbstractMatrix{<:Number}
+    function PostSelectionMeasurement{T1}(m::T2) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
         idim, odim = size(m)
-        new{T}(m, idim, odim)
+        new{T1}(T1(m), idim, odim)
     end
 end
 
-function PostSelectionMeasurement{T}(m::T, idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
-    idim, odim == size(m) ? () : throw(ArgumentError("Matrix size and operator dimmensions mismatch"))
-    PostSelectionMeasurement(m)
+function PostSelectionMeasurement{T1}(m::T2, idim::Int, odim::Int) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+    idim, odim == size(m) ? () : throw(ArgumentError("Matrix size and operator dimensions mismatch"))
+    PostSelectionMeasurement{T1}(m)
 end
 
 function iseffect(Φ::PostSelectionMeasurement{<:AbstractMatrix{<:Number}})
@@ -198,11 +208,48 @@ function iseffect(Φ::PostSelectionMeasurement{<:AbstractMatrix{<:Number}})
 end
 
 ################################################################################
+# typeless constructors
+################################################################################
+for qop in (:SuperOperator, :UnitaryChannel, :PostSelectionMeasurement)
+    @eval begin
+        function $qop(m::T) where T<:AbstractMatrix{<:Number}
+            $qop{T}(m)
+        end
+
+        function $qop(m::T, idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
+            $qop{T}(m)
+        end
+    end
+end
+
+for qop in (:DynamicalMatrix, :Stinespring)
+    @eval begin
+        function $qop(m::T, idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
+            $qop{T}(m)
+        end
+    end
+end
+
+for qop in (:KrausOperators, :POVMMeasurement)
+    @eval begin
+        function $qop(v::T) where T<:Vector{M} where M<:AbstractMatrix{<:Number}
+            $qop{M}(m)
+        end
+
+        function $qop(m::T, idim::Int, odim::Int) where  T<:Vector{M} where M<:AbstractMatrix{<:Number}
+            $qop{M}(m)
+        end
+    end
+end
+
+
+################################################################################
 # size() function
 ################################################################################
 size(Φ::KrausOperators) = (idim, odim)
 
-for qop in (:SuperOperator, :DynamicalMatrix, :Stinespring, :UnitaryChannel)
+for qop in (:SuperOperator, :DynamicalMatrix, :Stinespring,
+            :UnitaryChannel, :POVMMeasurement, :PostSelectionMeasurement)
     @eval size(Φ::$qop) = size(Φ.matrix)
 end
 
@@ -211,7 +258,8 @@ size(Φ::IdentityChannel) = (idim, odim)
 ################################################################################
 # making channels callable
 ################################################################################
-for qop in (:KrausOperators, :SuperOperator, :DynamicalMatrix, :Stinespring, :UnitaryChannel)
+for qop in (:KrausOperators, :SuperOperator, :DynamicalMatrix, :Stinespring,
+            :UnitaryChannel, :POVMMeasurement, :PostSelectionMeasurement)
     @eval begin
         function (Φ::$qop)(ρ)
             applychannel(Φ, ρ)
@@ -222,7 +270,8 @@ end
 ################################################################################
 # conversions functions
 ################################################################################
-for qop in (:SuperOperator, :DynamicalMatrix, :Stinespring, :UnitaryChannel)
+for qop in (:SuperOperator, :DynamicalMatrix, :Stinespring, :UnitaryChannel,
+            :PostSelectionMeasurement)
     @eval convert(::Type{<:AbstractMatrix{<:Number}}, Φ::$qop) = Φ.matrix
 end
 
@@ -245,7 +294,7 @@ Transforms list of Kraus operators into Stinespring representation of quantum ch
 """
 function Base.convert(::Type{Stinespring{T1}}, Φ::KrausOperators{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
     ko = orthogonalize(Φ)
-    # TODO: transform to stacking
+    # TODO: improvement: transform to stacking
     m = sum(k ⊗ ket(i-1, ko.idim*ko.odim) for (i, k) in enumerate(ko.matrices))
     Stinespring{T1}(T1(m), ko.idim, ko.odim)
 end
@@ -340,7 +389,7 @@ function Base.convert(::Type{KrausOperators{T1}}, Φ::IdentityChannel{T2}) where
     KrausOperators{T1}(T1[eye(T1, Φ.idim)], Φ.idim, Φ.odim)
 end
 
-function Base.convert(::Type{KrausOperators{T1}}, Φ::POVMMeaurement{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+function Base.convert(::Type{KrausOperators{T1}}, Φ::POVMMeasurement{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
     # TODO : Verify!
     v = T1[ket(i-1, Φ.odim)*bra(j-1, Φ.idim)*sqrtm(p) for (i, p) in enumerate(Φ.matrices) for j in 1:Φ.idim]
     KrausOperators{T1}(v, Φ.idim, Φ.odim)
@@ -353,7 +402,7 @@ function Base.convert(::Type{KrausOperators{T1}}, Φ::PostSelectionMeasurement{T
 end
 
 for chout in (:SuperOperator, :DynamicalMatrix, :Stinespring)
-    for chin in (:UnitaryChannel, :IdentityChannel, :POVMMeaurement, :PostSelectionMeasurement)
+    for chin in (:UnitaryChannel, :IdentityChannel, :POVMMeasurement, :PostSelectionMeasurement)
         @eval begin
             function Base.convert(::Type{$chout{T1}}, Φ::$chin{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
                 convert($chout{T1}, convert(KrausOperators{T1}, Φ))
@@ -445,12 +494,7 @@ function applychannel(Φ::IdentityChannel{<:AbstractMatrix{<:Number}}, ψ::Abstr
     ψ
 end
 
-function applychannel(Φ::IdentityChannel{<:AbstractMatrix{<:Number}}, ψ::AbstractVector{<:Number})
-    # TODO: promote type
-    ψ
-end
-
-function applychannel(Φ::POVMMeaurement{T}, ρ::AbstractMatrix{<:Number}) where T<:AbstractMatrix{<:Number}
+function applychannel(Φ::POVMMeasurement{T}, ρ::AbstractMatrix{<:Number}) where T<:AbstractMatrix{<:Number}
     # TODO: Check if idim and odim are compatible with matrix and length
     probs = [real(trace(p'*ρ)) for p in Φ.matrices]
     diagm(probs)
@@ -467,31 +511,45 @@ end
 ################################################################################
 
 # TODO : Specialise this function for different quantum ops
-function Base.kron(Φ1::T, Φ2::T) where {T<:AbstractQuantumOperation{TM}} where {TM<:AbstractMatrix{<:Number}}
-    s1 = SuperOperator{TM}(Φ1)
-    s2 = SuperOperator{TM}(Φ2)
-    T(SuperOperator{TM}(s1.matrix ⊗ s2.matrix, s1.idim * s2.idim, s1.odim * s2.odim))
+function Base.kron(Φ1::T, Φ2::T) where {T<:AbstractQuantumOperation{M}} where {M<:AbstractMatrix{<:Number}}
+    s1 = SuperOperator{M}(Φ1)
+    s2 = SuperOperator{M}(Φ2)
+    so = SuperOperator{M}(s1.matrix ⊗ s2.matrix, s1.idim * s2.idim, s1.odim * s2.odim)
+    T(so)
 end
 
-function Base.kron(Φ1::T, Φ2::T) where {T<:UnitaryChannel{TM}} where {TM<:AbstractMatrix{<:Number}}
+function Base.kron(Φ1::UnitaryChannel, Φ2::UnitaryChannel)
     UnitaryChannel(Φ1.matrix ⊗ Φ2.matrix, Φ1.idim * Φ2.idim, Φ1.odim * Φ2.odim)
 end
 
-# """
-#     Compose channels in sequence
-# """
-# TODO: allow for composition of different quantum ops - create type hierarchy
-function compose(Φ1::T, Φ2::T) where {T<:AbstractQuantumOperation{TM}} where {TM<:AbstractMatrix{<:Number}}
-    # TODO : Specialise this function for different quantum ops
+# # """
+# #     Compose channels in sequence
+# # """
+# # TODO: allow for composition of different quantum ops - create type hierarchy
+# function compose(Φ1::T, Φ2::T) where {T<:AbstractQuantumOperation{TM}} where {TM<:AbstractMatrix{<:Number}}
+#     # TODO : Specialise this function for different quantum ops
+#     if Φ1.odim != Φ2.idim
+#         throw(ArgumentError("Channels are incompatible"))
+#     end
+#     s1 = SuperOperator{TM}(Φ1)
+#     s2 = SuperOperator{TM}(Φ2)
+#     T(SuperOperator{TM}(s1.matrix * s2.matrix, s1.idim, s2.odim))
+# end
+
+function compose(::Type{T1}, Φ1::T2, Φ2::T3) where {T1<:AbstractQuantumOperation{M1}, T2<:AbstractQuantumOperation{M2}, T3<:AbstractQuantumOperation{M3}} where {M1<:AbstractMatrix{<:Number}, M2<:AbstractMatrix{<:Number}, M3<:AbstractMatrix{<:Number}}
     if Φ1.odim != Φ2.idim
         throw(ArgumentError("Channels are incompatible"))
     end
-    s1 = SuperOperator{TM}(Φ1)
-    s2 = SuperOperator{TM}(Φ2)
-    T(SuperOperator{TM}(s1.matrix * s2.matrix, s1.idim, s2.odim))
+    s1 = SuperOperator{M1}(Φ1)
+    s2 = SuperOperator{M2}(Φ2)
+    so = SuperOperator{M3}(M3(s1.matrix * s2.matrix), s1.idim, s2.odim)
+    T3(so)
 end
 
-function Base.:*(Φ1::T, Φ2::T) where {T<:AbstractQuantumOperation{TM}} where {TM<:AbstractMatrix{<:Number}}
+function compose(Φ1::T, Φ2::T) where {T<:AbstractQuantumOperation{<:Number}}
+    compose(T, Φ1, Φ2)
+end
+function Base.:*(Φ1::T, Φ2::T) where {T<:AbstractQuantumOperation{<:Number}}
     compose(Φ1, Φ2)
 end
 
@@ -546,18 +604,21 @@ function iscptni(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}; atol=1e-13)
 end
 
 function iscptp(Φ::Stinespring{<:AbstractMatrix{<:Number}}; atol=1e-13)
-    #TODO: implement
+    u = Φ.matrix
+    isidentity(u'*u, atol=atol)
 end
 
 function iscptni(Φ::Stinespring{<:AbstractMatrix{<:Number}}; atol=1e-13)
-    #TODO: implement
+    u = Φ.matrix
+    m = u'*u
+    ispositive(eye(m) - m, atol=atol)
 end
 
 function iscptp(Φ::UnitaryChannel; atol=1e-13)
     u = Φ.matrix
-    isidentity(u'*u, atol=1e-13) && isidentity(u*u', atol=1e-13)
+    isidentity(u'*u, atol=atol) && isidentity(u*u', atol=atol)
 end
 
 function iscptni(Φ::UnitaryChannel; atol=1e-13)
-    iscptp(Φ, atol=1e-13)
+    iscptp(Φ, atol=atol)
 end

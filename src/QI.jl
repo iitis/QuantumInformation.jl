@@ -42,7 +42,7 @@ isidentity, ispositive,
 AbstractQuantumOperation,
 KrausOperators, SuperOperator, DynamicalMatrix, Stinespring,
 UnitaryChannel, IdentityChannel,
-POVMMeaurement, PostSelectionMeasurement, 
+POVMMeasurement, PostSelectionMeasurement,
 kron, compose
 
 include("../randommatrices/src/RandomMatrices.jl")
