@@ -1,10 +1,19 @@
+__precompile__()
+
+"""
+Main module for `QI.jl` -- a Julia package for numerical computation in quantum information theory.
+"""
+
 module QI
-if VERSION<=v"0.7"
-    const ComplexF64 = Complex128
-else
+if VERSION>v"0.7.0-DEV"
     using LinearAlgebra
     using SparseArrays
+else
+    const ComplexF64 = Complex128
 end
+
+using Compat, DocStringExtensions
+import Compat.Markdown
 
 const ⊗ = kron
 export ket, bra, ketbra, proj, base_matrices,
@@ -27,8 +36,24 @@ random_dynamical_matrix!, random_dynamical_matrix,
 random_jamiolkowski_state!, random_jamiolkowski_state,
 random_unitary, random_orthogonal, random_isometry,
 funcmh, funcmh!, renormalize!, random_ball,
-sx,sy,sz, qft, hadamard, grover,
-⊗
+sx,sy,sz, qft, hadamard, grover,⊗,
+kraus_check_size,
+kraus_is_CPTP,
+kraus_to_superoperator,
+kraus_to_stinespring,
+kraus_to_dynamical_matrix,
+superoperator_to_kraus,
+superoperator_to_stinespring,
+superoperator_to_dynamical_matrix,
+dynamical_matrix_to_kraus,
+dynamical_matrix_to_stinespring,
+dynamical_matrix_to_superoperator,
+apply_channel_dynamical_matrix,
+apply_channel_kraus,
+apply_channel_superoperator,
+apply_channel_stinespring,
+channel_to_superoperator,
+isidentity, ispositive
 
 include("base.jl")
 include("randommatrix.jl")
@@ -40,5 +65,11 @@ include("functionals.jl")
 include("reshuffle.jl")
 include("ptrace.jl")
 include("ptranspose.jl")
+
+if VERSION>v"0.7.0-DEV"
+    # Convex.jl does not support julia 0.7 yet
+else
+    include("convex.jl")
+end
 
 end # module
