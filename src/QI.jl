@@ -10,6 +10,7 @@ if VERSION>v"0.7.0-DEV"
     using SparseArrays
 else
     const ComplexF64 = Complex128
+    export ComplexF64
 end
 
 using Compat, DocStringExtensions
@@ -41,6 +42,7 @@ isidentity, ispositive,
 AbstractQuantumOperation,
 KrausOperators, SuperOperator, DynamicalMatrix, Stinespring,
 UnitaryChannel, IdentityChannel,
+POVMMeaurement, PostSelectionMeasurement, 
 kron, compose
 
 include("../randommatrices/src/RandomMatrices.jl")

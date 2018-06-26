@@ -67,7 +67,7 @@ function funcmh(f::Function, h::Matrix{T}) where T<:Union{Real, Complex}
     ishermitian(h) ? funcmh(f, Hermitian(h)) : error("Non-hermitian matrix passed to funcmh")
 end
 
-function isidentity(ρ::AbstractMatrix{<:Number}, atol=1e-13)
+function isidentity(ρ::AbstractMatrix{<:Number}; atol=1e-13)
     rows, cols = size(ρ)
     if rows!=cols
         return false
@@ -76,7 +76,7 @@ function isidentity(ρ::AbstractMatrix{<:Number}, atol=1e-13)
     isapprox(ρ, eye(ρ), atol=atol)
 end
 
-function ispositive(ρ::AbstractMatrix{<:Number}, atol=1e-13)
+function ispositive(ρ::AbstractMatrix{<:Number}; atol=1e-13)
     rows, cols = size(ρ)
     if rows!=cols
         return false

@@ -56,7 +56,7 @@ struct SuperOperator{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
             throw(ArgumentError("Superoperator matrix has bad dimensions"))
         end
         idim, odim = sr, sc
-        new{T}(m, idim, odim)
+        new{T}(T(m), idim, odim)
     end
 end
 
@@ -146,6 +146,58 @@ struct IdentityChannel{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{
 end
 
 ################################################################################
+# measurements
+################################################################################
+
+struct POVMMeaurement{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
+    matrices::Vector{T}
+    idim::Int
+    odim::Int
+    function POVMMeaurement(v::Vector{T}) where T<:AbstractMatrix{<:Number}
+        sizes = [size(p) for p in v]
+        for s in sizes[2:end]
+            if s!=sizes[1]
+                throw(ArgumentError("Kraus operators list contains matrices of different dimmension"))
+            end
+        end
+        idim = size(v[1],1)
+        odim = length(v)
+
+        new{T}(v, idim, odim)
+    end
+end
+
+function POVMMeaurement{T}(v::Vector{T}, idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
+    # TODO: Check if idim and odim are compatible with matrix and length
+    POVMMeaurement(v)
+end
+
+function ispovm(Φ::POVMMeaurement{<:AbstractMatrix{<:Number}})
+    isidentity(sum(Φ.matrices))
+end
+
+struct PostSelectionMeasurement{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
+    matrix::T
+    idim::Int
+    odim::Int
+    function PostSelectionMeasurement(m::T) where T<:AbstractMatrix{<:Number}
+        idim, odim = size(m)
+        new{T}(m, idim, odim)
+    end
+end
+
+function PostSelectionMeasurement{T}(m::T, idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
+    idim, odim == size(m) ? () : throw(ArgumentError("Matrix size and operator dimmensions mismatch"))
+    PostSelectionMeasurement(m)
+end
+
+function iseffect(Φ::PostSelectionMeasurement{<:AbstractMatrix{<:Number}})
+    e = Φ.matrix
+    m = e'*e
+    ispositive(eye(m) - m)
+end
+
+################################################################################
 # size() function
 ################################################################################
 size(Φ::KrausOperators) = (idim, odim)
@@ -181,7 +233,8 @@ $(SIGNATURES)
 Transforms list of Kraus operators into super-operator matrix.
 """
 function Base.convert(::Type{SuperOperator{T1}}, Φ::KrausOperators{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-    SuperOperator{T1}(sum(k⊗(conj.(k)) for k in Φ.matrices), Φ.idim, Φ.odim)
+    m = sum(k⊗(conj.(k)) for k in Φ.matrices)
+    SuperOperator{T1}(T1(m), Φ.idim, Φ.odim)
 end
 
 """
@@ -193,7 +246,8 @@ Transforms list of Kraus operators into Stinespring representation of quantum ch
 function Base.convert(::Type{Stinespring{T1}}, Φ::KrausOperators{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
     ko = orthogonalize(Φ)
     # TODO: transform to stacking
-    Stinespring{T1}(sum(k ⊗ ket(i-1, ko.idim*ko.odim) for (i, k) in enumerate(ko.matrices)), ko.idim, ko.odim)
+    m = sum(k ⊗ ket(i-1, ko.idim*ko.odim) for (i, k) in enumerate(ko.matrices))
+    Stinespring{T1}(T1(m), ko.idim, ko.odim)
 end
 
 """
@@ -203,7 +257,8 @@ $(SIGNATURES)
 Transforms list of Kraus operators into dynamical matrix.
 """
 function Base.convert(::Type{DynamicalMatrix{T1}}, Φ::KrausOperators{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-    DynamicalMatrix{T1}(sum(res(k) * res(k)' for k in Φ.matrices), Φ.idim, Φ.odim)
+    m = sum(res(k) * res(k)' for k in Φ.matrices)
+    DynamicalMatrix{T1}(T1(m), Φ.idim, Φ.odim)
 end
 
 """
@@ -223,7 +278,8 @@ $(SIGNATURES)
 Transforms super-operator matrix into dynamical matrix.
 """
 function Base.convert(::Type{DynamicalMatrix{T1}}, Φ::SuperOperator{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-    DynamicalMatrix{T1}(reshuffle(Φ.matrix, [Φ.idim Φ.idim; Φ.odim Φ.odim]), Φ.idim, Φ.odim)
+    m = reshuffle(Φ.matrix, [Φ.idim Φ.idim; Φ.odim Φ.odim])
+    DynamicalMatrix{T1}(T1(m), Φ.idim, Φ.odim)
 end
 
 """
@@ -247,9 +303,9 @@ function Base.convert(::Type{KrausOperators{T1}}, Φ::DynamicalMatrix{T2}) where
     v = T1[]
     for i in 1:length(F.values)
         if F.values[i] >= 0.0
-            push!(v, sqrt(F.values[i]) * unres(F.vectors[:,i], Φ.odim))
+            push!(T1(v), sqrt(F.values[i]) * unres(F.vectors[:,i], Φ.odim))
         else
-            push!(v, zero(unres(F.vectors[:,i], Φ.odim)))
+            push!(T1(v), zero(unres(F.vectors[:,i], Φ.odim)))
         end
     end
     KrausOperators{T1}(v, Φ.idim, Φ.odim)
@@ -272,20 +328,44 @@ $(SIGNATURES)
 Transforms dynamical matrix into super-operator matrix.
 """
 function Base.convert(::Type{SuperOperator{T1}}, Φ::DynamicalMatrix{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-    SuperOperator{T1}(reshuffle(Φ.matrix, [Φ.idim Φ.odim; Φ.idim Φ.odim]), Φ.idim, Φ.odim)
+    m = reshuffle(Φ.matrix, [Φ.idim Φ.odim; Φ.idim Φ.odim])
+    SuperOperator{T1}(T1(m), Φ.idim, Φ.odim)
 end
 
 function Base.convert(::Type{KrausOperators{T1}}, Φ::UnitaryChannel{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-    KrausOperators{T1}(T1[Φ], Φ.idim, Φ.odim)
+    KrausOperators{T1}(T1[T1(Φ)], Φ.idim, Φ.odim)
 end
 
-for ch in (:SuperOperator, :DynamicalMatrix, :Stinespring)
-    @eval begin
-        function Base.convert(::Type{$ch{T1}}, Φ::UnitaryChannel{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-            convert($ch{T}, convert(KrausOperators{T}, Φ))
+function Base.convert(::Type{KrausOperators{T1}}, Φ::IdentityChannel{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+    KrausOperators{T1}(T1[eye(T1, Φ.idim)], Φ.idim, Φ.odim)
+end
+
+function Base.convert(::Type{KrausOperators{T1}}, Φ::POVMMeaurement{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+    # TODO : Verify!
+    v = T1[ket(i-1, Φ.odim)*bra(j-1, Φ.idim)*sqrtm(p) for (i, p) in enumerate(Φ.matrices) for j in 1:Φ.idim]
+    KrausOperators{T1}(v, Φ.idim, Φ.odim)
+end
+
+function Base.convert(::Type{KrausOperators{T1}}, Φ::PostSelectionMeasurement{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+    m = Φ.matrix
+    v = T1[T1(m)]
+    KrausOperators{T1}(v, Φ.idim, Φ.odim)
+end
+
+for chout in (:SuperOperator, :DynamicalMatrix, :Stinespring)
+    for chin in (:UnitaryChannel, :IdentityChannel, :POVMMeaurement, :PostSelectionMeasurement)
+        @eval begin
+            function Base.convert(::Type{$chout{T1}}, Φ::$chin{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+                convert($chout{T1}, convert(KrausOperators{T1}, Φ))
+            end
         end
     end
 end
+
+
+# function Base.convert(::Type{KrausOperators{T1}}, Φ::SuperOperator{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+#     convert(KrausOperators{T1}, convert(DynamicalMatrix{T2}, Φ))
+# end
 
 ################################################################################
 # Application of channels
@@ -365,6 +445,23 @@ function applychannel(Φ::IdentityChannel{<:AbstractMatrix{<:Number}}, ψ::Abstr
     ψ
 end
 
+function applychannel(Φ::IdentityChannel{<:AbstractMatrix{<:Number}}, ψ::AbstractVector{<:Number})
+    # TODO: promote type
+    ψ
+end
+
+function applychannel(Φ::POVMMeaurement{T}, ρ::AbstractMatrix{<:Number}) where T<:AbstractMatrix{<:Number}
+    # TODO: Check if idim and odim are compatible with matrix and length
+    probs = [real(trace(p'*ρ)) for p in Φ.matrices]
+    diagm(probs)
+end
+
+function applychannel(Φ::PostSelectionMeasurement{T}, ρ::AbstractMatrix{<:Number}) where T<:AbstractMatrix{<:Number}
+    # TODO: Check if idim and odim are compatible with matrix and length
+    e = Φ.matrix
+    e * ρ * e'
+end
+
 ################################################################################
 # composition functions
 ################################################################################
@@ -419,47 +516,48 @@ $(SIGNATURES)
 
 Checks if set of Kraus operators fulfill completness relation.
 """
-function iscptp(Φ::KrausOperators{<:AbstractMatrix{<:Number}}, atol=1e-13)
+function iscptp(Φ::KrausOperators{<:AbstractMatrix{<:Number}}; atol=1e-13)
     cr = sum(k'*k for k in Φ.matrices)
     isidentity(cr, atol=atol)
 end
 
-function iscptni(Φ::KrausOperators{<:AbstractMatrix{<:Number}}, atol=1e-13)
+function iscptni(Φ::KrausOperators{<:AbstractMatrix{<:Number}}; atol=1e-13)
     complentess_relation = sum(k'*k for k in Φ.matrices)
     ispositive(eye(cr) - cr, atol=atol)
 end
 
-function iscptp(Φ::SuperOperator{T}, atol=1e-13) where T<:AbstractMatrix{<:Number}
+function iscptp(Φ::SuperOperator{T}; atol=1e-13) where T<:AbstractMatrix{<:Number}
     iscpt(DynamicalMatrix{T}(Φ))
 end
 
-function iscptni(Φ::SuperOperator{T}, atol=1e-13) where T<:AbstractMatrix{<:Number}
+function iscptni(Φ::SuperOperator{T}; atol=1e-13) where T<:AbstractMatrix{<:Number}
     iscptni(DynamicalMatrix{T}(Φ))
 end
 
-function iscptp(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}, atol=1e-13)
+function iscptp(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}; atol=1e-13)
     # TODO : check it
     pt = ptrace(Φ.matrix, [Φ.idim*Φ.idim, Φ.odim*Φ.odim], [2])
     isidentity(pt, atol=atol)
 end
 
-function iscptni(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}, atol=1e-13)
+function iscptni(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}; atol=1e-13)
     pt = ptrace(Φ.matrix, [Φ.idim*Φ.idim, Φ.odim*Φ.odim], [2])
     ispositive(eye(pt) - pt, atol=atol)
 end
 
-function iscptp(Φ::Stinespring{<:AbstractMatrix{<:Number}}, atol=1e-13)
+function iscptp(Φ::Stinespring{<:AbstractMatrix{<:Number}}; atol=1e-13)
     #TODO: implement
 end
 
-function iscptni(Φ::Stinespring{<:AbstractMatrix{<:Number}}, atol=1e-13)
+function iscptni(Φ::Stinespring{<:AbstractMatrix{<:Number}}; atol=1e-13)
     #TODO: implement
 end
 
-function iscptp(Φ::UnitaryChannel)
-    true
+function iscptp(Φ::UnitaryChannel; atol=1e-13)
+    u = Φ.matrix
+    isidentity(u'*u, atol=1e-13) && isidentity(u*u', atol=1e-13)
 end
 
-function iscptni(Φ::UnitaryChannel)
-    true
+function iscptni(Φ::UnitaryChannel; atol=1e-13)
+    iscptp(Φ, atol=1e-13)
 end
