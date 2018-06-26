@@ -78,10 +78,6 @@ K1 = Matrix([0 sqrt(γ); 0 0])
 Φ = KrausOperators([K0,K1])
 
 iscptp(Φ)
-istp(Φ)
-istni(Φ)
-iscptp(Φ)
-
 ```
 ### Conversion
 Conversions between all quantum channel types are implemented. The user is not
@@ -89,7 +85,7 @@ limited by any single channel representation and can transform between
 representations he finds the most efficient or suitable for his purpose.
 
 ```@repl QI
-Ψ1 = convert(SuperOperator{Matrix{Float64}}, Φ)
+Ψ1 = convert(SuperOperator{Matrix{ComplexF64}}, Φ)
 
 Ψ2 = convert(DynamicalMatrix{Matrix{Float64}}, Φ)
 
@@ -114,7 +110,7 @@ Channels can be composed in parallel or in sequence. Composition in parallel is 
 be done in two ways either by using `Julia` build in function composition operator \$(f\\circ g)(\\cdot)=f(g)(\\cdot)\$ or by using multiplication of objects inheriting from `AbstractQuantumOperation{T}` abstract type.
 
 ```@repl QI
-ϕ=(1/sqrt(2)) * (ket(0,2) - ket(1,2))
+ϕ=(1/2) * ket(0,2) + (sqrt(3)/2) * ket(1,2)
 ρ2=ϕ * ϕ'
 
 (Φ⊗Φ)(ρ1⊗ρ2)
