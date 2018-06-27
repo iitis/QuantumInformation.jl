@@ -85,7 +85,7 @@ function ispositive(ρ::AbstractMatrix{<:Number}; atol=1e-13)
         return false
     end
     h = Hermitian(ρ)
-    fact = eigfact!(h)
+    fact = eigfact(h)
     all(fact.values .> -atol)
 end
 
