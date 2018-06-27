@@ -93,8 +93,13 @@ struct DynamicalMatrix{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{
     matrix::T
     idim::Int
     odim::Int
-    # TODO: write inner constructor
-    # where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+    function DynamicalMatrix{T1}(m, idim, odim) where {T1<:AbstractMatrix{<:Number}}
+        r, c = size(m)
+        if r!=c || r!=idim*odim
+            throw(ArgumentError("DynamicalMatrix matrix has bad dimensions"))
+        end
+        new(T1(m), idim, odim)
+    end
 end
 
 """
@@ -147,12 +152,7 @@ struct IdentityChannel{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{
     end
 end
 
-function IdentityChannel{T}(idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
-    idim == odim ? () : throw(ArgumentError("IdentityChannel has to be square"))
-    IdentityChannel{T}(idim)
-end
-
-# TODO : add constructors with no type
+IdentityChannel(dim::Int) = IdentityChannel{Matrix{ComplexF64}}(dim)
 
 ################################################################################
 # measurements
@@ -225,7 +225,7 @@ end
 for qop in (:DynamicalMatrix, :Stinespring)
     @eval begin
         function $qop(m::T, idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
-            $qop{T}(m)
+            $qop{T}(m, idim, odim)
         end
     end
 end
@@ -270,10 +270,12 @@ end
 ################################################################################
 # conversions functions
 ################################################################################
-for qop in (:SuperOperator, :DynamicalMatrix, :Stinespring, :UnitaryChannel,
-            :PostSelectionMeasurement)
-    @eval convert(::Type{<:AbstractMatrix{<:Number}}, Φ::$qop) = Φ.matrix
-end
+
+#FIXME: here be dragons!! causes compilation failure!! WHY?!? WTF??
+# for qop in (:SuperOperator, :DynamicalMatrix, :Stinespring, :UnitaryChannel,
+#             :PostSelectionMeasurement)
+#     @eval convert(::Type{<:AbstractMatrix{<:Number}}, Φ::$qop) = Φ.matrix
+# end
 
 """
 $(SIGNATURES)
