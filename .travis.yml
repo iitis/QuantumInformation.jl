@@ -10,8 +10,9 @@ notifications:
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
   - julia -e 'Pkg.clone(pwd()); Pkg.build("QI"); Pkg.add("StatsBase"); Pkg.test("QI"; coverage=true)'
+  - julia --code-coverage randommatrices/test/runtests.jl
 
 after_success:
-  - julia -e 'cd(Pkg.dir("QI")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder())'
+  - julia -e 'cd(Pkg.dir("QI")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(vcat(process_folder(), process_folder("randommatrices/src")))'
   - julia -e 'Pkg.add("Documenter")'
   - julia -e 'cd(Pkg.dir("QI")); ENV["DOCUMENTER_KEY"] = "true"; include(joinpath("docs", "make.jl"))'

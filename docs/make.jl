@@ -36,8 +36,5 @@ makedocs(
 #     target = "build",
 #     repo = "github.com/ZKSI/QI.jl.git",
 #     latest = "master",
-#     branch = "documentation",
-#     julia  = "nightly",
-#     make = nothing,
-#     julia = "0.6",
+#     branch = "documentation"
 # )
