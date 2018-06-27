@@ -46,7 +46,7 @@ ptrace(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, sys::Int) = ptrace(ρ, 
 function ptrace(ϕ::AbstractVector{<:Number}, idims::Vector{Int}, sys::Int)
     _, cols = idims
     m = unres(ϕ, cols)
-    length(idims) != 2 ? () : throw(ArgumentError("idims has to be of length 2"))
+    length(idims) == 2 ? () : throw(ArgumentError("idims has to be of length 2"))
     if sys == 1
         return m'*m
     elseif sys == 2

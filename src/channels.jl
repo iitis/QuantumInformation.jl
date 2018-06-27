@@ -233,11 +233,11 @@ end
 for qop in (:KrausOperators, :POVMMeasurement)
     @eval begin
         function $qop(v::T) where T<:Vector{M} where M<:AbstractMatrix{<:Number}
-            $qop{M}(m)
+            $qop{M}(v)
         end
 
-        function $qop(m::T, idim::Int, odim::Int) where  T<:Vector{M} where M<:AbstractMatrix{<:Number}
-            $qop{M}(m)
+        function $qop(v::T, idim::Int, odim::Int) where  T<:Vector{M} where M<:AbstractMatrix{<:Number}
+            $qop{M}(v)
         end
     end
 end
@@ -352,9 +352,9 @@ function Base.convert(::Type{KrausOperators{T1}}, Φ::DynamicalMatrix{T2}) where
     v = T1[]
     for i in 1:length(F.values)
         if F.values[i] >= 0.0
-            push!(T1(v), sqrt(F.values[i]) * unres(F.vectors[:,i], Φ.odim))
+            push!(v, sqrt(F.values[i]) * unres(F.vectors[:,i], Φ.odim))
         else
-            push!(T1(v), zero(unres(F.vectors[:,i], Φ.odim)))
+            push!(v, zero(unres(F.vectors[:,i], Φ.odim)))
         end
     end
     KrausOperators{T1}(v, Φ.idim, Φ.odim)
