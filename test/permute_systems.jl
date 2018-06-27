@@ -10,4 +10,18 @@
          @test_throws ArgumentError permutesystems(ones(2, 2), [3, 4], [2])
          @test_throws ArgumentError permutesystems(ones(4, 4), [2, 2], [3])
     end
+
+    @testset "More complex diagonal matrix" begin
+        # the following example has been generated
+        # using original python implementation of permute_systems
+        initial_diagonal = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
+        permuted_diagonal = [1, 5, 9, 13, 3, 7, 11, 15, 2, 6, 10, 14, 4, 8, 12, 16]
+        initial = diagm(initial_diagonal)
+        initial[1,8] = 42
+#         println(findfirst(initial, 42))
+        permuted = diagm(permuted_diagonal)
+        permuted[1, 14] = 42
+        @test sum(abs.(permutesystems(initial, [2,2,2,2], [4,3,1,2]) - permuted)) ≈ 0. atol=1e-15
+
+    end
 end
