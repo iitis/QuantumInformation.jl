@@ -395,7 +395,13 @@ end
 
 function Base.convert(::Type{KrausOperators{T1}}, Φ::POVMMeasurement{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
     # TODO : Verify!
-    v = T1[ket(i-1, Φ.odim)*bra(j-1, Φ.idim)*sqrtm(p) for (i, p) in enumerate(Φ.matrices) for j in 1:Φ.idim]
+    # v = T1[ket(i-1, Φ.odim)*bra(j-1, Φ.idim)*sqrtm(p) for (i, p) in enumerate(Φ.matrices) for j in 1:Φ.idim]
+    v = T1[]
+    for (i, p) in enumerate(Φ.matrices)
+        sqrtp = sqrtm(p)
+        k = ket(i-1, Φ.odim)*sum(bra(j-1, Φ.idim)*sqrtp for j in 1:Φ.idim)
+        push!(v, T1(k))
+    end
     KrausOperators{T1}(v, Φ.idim, Φ.odim)
 end
 
@@ -516,10 +522,11 @@ end
 
 # TODO : Specialise this function for different quantum ops
 function Base.kron(Φ1::T, Φ2::T) where {T<:AbstractQuantumOperation{M}} where {M<:AbstractMatrix{<:Number}}
-    s1 = SuperOperator{M}(Φ1)
-    s2 = SuperOperator{M}(Φ2)
-    so = SuperOperator{M}(s1.matrix ⊗ s2.matrix, s1.idim * s2.idim, s1.odim * s2.odim)
-    T(so)
+    ko1 = KrausOperators{M}(Φ1)
+    ko2 = KrausOperators{M}(Φ2)
+    v = M[k1⊗k2 for k1 in ko1.matrices for k2 in ko2.matrices]
+    ko = KrausOperators{M}(v, Φ1.idim * Φ2.idim, Φ1.odim * Φ2.odim)
+    T(ko)
 end
 
 function Base.kron(Φ1::UnitaryChannel, Φ2::UnitaryChannel)
@@ -608,7 +615,7 @@ function iscptni(Φ::KrausOperators{<:AbstractMatrix{<:Number}}; atol=1e-13)
 end
 
 function iscptp(Φ::SuperOperator{T}; atol=1e-13) where T<:AbstractMatrix{<:Number}
-    iscpt(DynamicalMatrix{T}(Φ))
+    iscptp(DynamicalMatrix{T}(Φ))
 end
 
 function iscptni(Φ::SuperOperator{T}; atol=1e-13) where T<:AbstractMatrix{<:Number}
@@ -617,12 +624,12 @@ end
 
 function iscptp(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}; atol=1e-13)
     # TODO : check it
-    pt = ptrace(Φ.matrix, [Φ.idim*Φ.idim, Φ.odim*Φ.odim], [2])
-    isidentity(pt, atol=atol)
+    pt = ptrace(Φ.matrix, [Φ.odim, Φ.idim], [1])
+    ispositive(Φ.matrix) && isidentity(pt, atol=atol)
 end
 
 function iscptni(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}; atol=1e-13)
-    pt = ptrace(Φ.matrix, [Φ.idim*Φ.idim, Φ.odim*Φ.odim], [2])
+    pt = ptrace(Φ.matrix, [Φ.odim, Φ.idim], [1])
     ispositive(eye(pt) - pt, atol=atol)
 end
 
