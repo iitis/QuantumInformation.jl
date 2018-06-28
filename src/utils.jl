@@ -34,6 +34,25 @@ function renormalize!(ρ::AbstractMatrix{<:Number})
     end
 end
 
+#FIXME: here be dragons again
+# function realdiag!(a::AbstractMatrix{ComplexF64})
+#     r, c = size(a)
+#     r == c ? () : throw(ArgumentError("Non-square matrix"))
+#     for i=1:r
+#         a[i, i] = real(a[i, i])
+#     end
+# end
+#
+# function realdiag(a::AbstractMatrix{ComplexF64})
+#     b = copy(a)
+#     realdiag!(b)
+#     b
+# end
+#
+# function realdiag(a::AbstractMatrix{<:Number})
+#     a
+# end
+
 function funcmh!(f::Function, h::Hermitian{T}, r::Matrix{T})  where T<:Union{Real, Complex}
     fact = eigfact!(h)
     times_diag = zero(fact.vectors)

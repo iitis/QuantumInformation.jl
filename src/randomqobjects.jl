@@ -64,7 +64,7 @@ function ChoiJamiolkowskiMatrices{β}(idim::Int, odim::Int) where β
 end
 
 function ChoiJamiolkowskiMatrices{β}(d::Int) where β
-    ChoiJamiolkowskiMatrices{β, 1}(d, d)
+    ChoiJamiolkowskiMatrices{β}(d, d)
 end
 
 function ChoiJamiolkowskiMatrices(idim::Int, odim::Int)

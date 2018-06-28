@@ -351,7 +351,11 @@ $(SIGNATURES)
 Transforms dynamical matrix into list of Kraus operators.
 """
 function Base.convert(::Type{KrausOperators{T1}}, Φ::DynamicalMatrix{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-    F = eigfact(Hermitian(Φ.matrix))
+    d = copy(Φ.matrix)
+    for i=1:size(d, 1)
+        d[i, i] = real(d[i, i])
+    end
+    F = eigfact(Hermitian(d))
     v = T1[]
     for i in 1:length(F.values)
         if F.values[i] >= 0.0
@@ -385,11 +389,12 @@ function Base.convert(::Type{SuperOperator{T1}}, Φ::DynamicalMatrix{T2}) where 
 end
 
 function Base.convert(::Type{KrausOperators{T1}}, Φ::UnitaryChannel{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-    KrausOperators{T1}(T1[T1(Φ)], Φ.idim, Φ.odim)
+    KrausOperators{T1}(T1[T1(Φ.matrix)], Φ.idim, Φ.odim)
 end
 
-function Base.convert(::Type{KrausOperators{T1}}, Φ::IdentityChannel{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-    KrausOperators{T1}(T1[eye(T1, Φ.idim)], Φ.idim, Φ.odim)
+function Base.convert(::Type{KrausOperators{T1}}, Φ::IdentityChannel{T2}) where {T1<:AbstractMatrix{N1}, T2<:AbstractMatrix{N2}} where {N1<:Number, N2<:Number}
+    N = promote_type(N1, N2)
+    KrausOperators{T1}(T1[eye(N, Φ.idim)], Φ.idim, Φ.odim)
 end
 
 function Base.convert(::Type{KrausOperators{T1}}, Φ::POVMMeasurement{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
@@ -520,12 +525,13 @@ end
 ################################################################################
 
 # TODO : Specialise this function for different quantum ops
-function Base.kron(Φ1::T, Φ2::T) where {T<:AbstractQuantumOperation{M}} where {M<:AbstractMatrix{<:Number}}
-    ko1 = KrausOperators{M}(Φ1)
-    ko2 = KrausOperators{M}(Φ2)
+function Base.kron(Φ1::T1, Φ2::T2) where {T1<:AbstractQuantumOperation{M1}, T2<:AbstractQuantumOperation{M2}} where {M1<:AbstractMatrix{<:Number}, M2<:AbstractMatrix{<:Number}}
+    ko1 = KrausOperators{M1}(Φ1)
+    ko2 = KrausOperators{M2}(Φ2)
+    M = promote_type(M1, M2)
     v = M[k1⊗k2 for k1 in ko1.matrices for k2 in ko2.matrices]
-    ko = KrausOperators{M}(v, Φ1.idim * Φ2.idim, Φ1.odim * Φ2.odim)
-    T(ko)
+    ko = KrausOperators{M1}(v, Φ1.idim * Φ2.idim, Φ1.odim * Φ2.odim)
+    ko
 end
 
 function Base.kron(Φ1::UnitaryChannel, Φ2::UnitaryChannel)
