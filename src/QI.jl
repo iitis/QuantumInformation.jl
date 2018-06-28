@@ -43,6 +43,7 @@ AbstractQuantumOperation,
 KrausOperators, SuperOperator, DynamicalMatrix, Stinespring,
 UnitaryChannel, IdentityChannel,
 POVMMeasurement, PostSelectionMeasurement,
+ispovm, iseffect,
 kron, compose
 
 include("../randommatrices/src/RandomMatrices.jl")

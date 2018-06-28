@@ -157,7 +157,6 @@ IdentityChannel(dim::Int) = IdentityChannel{Matrix{ComplexF64}}(dim)
 ################################################################################
 # measurements
 ################################################################################
-
 struct POVMMeasurement{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     matrices::Vector{T}
     idim::Int
