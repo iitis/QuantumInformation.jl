@@ -33,9 +33,10 @@ end
 function rand(c::CSE)
     z = rand(GinibreEnsemble(c.d))
     u = _qr_fix(z)
+    #TODO this does not require matrix multiplication
     a = diagm(-ones(c.d-1), 1) + diagm(ones(c.d-1), -1)
-    b = diagm(-ones(c.d-1), -1) + diagm(ones(c.d-1), 1)
-    a*transpose(u)*b
+    ur = -a*transpose(u)*a
+    ur*u
 end
 
 struct CircularRealEnsemble <: ContinuousMatrixDistribution
