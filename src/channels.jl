@@ -615,7 +615,7 @@ function iscptp(Φ::KrausOperators{<:AbstractMatrix{<:Number}}; atol=1e-13)
 end
 
 function iscptni(Φ::KrausOperators{<:AbstractMatrix{<:Number}}; atol=1e-13)
-    complentess_relation = sum(k'*k for k in Φ.matrices)
+    cr = sum(k'*k for k in Φ.matrices)
     ispositive(eye(cr) - cr, atol=atol)
 end
 
