@@ -217,7 +217,7 @@ for qop in (:SuperOperator, :UnitaryChannel, :PostSelectionMeasurement)
         end
 
         function $qop(m::T, idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
-            $qop{T}(m)
+            $qop{T}(m, idim, odim)
         end
     end
 end
@@ -246,14 +246,16 @@ end
 ################################################################################
 # size() function
 ################################################################################
-size(Φ::KrausOperators) = (idim, odim)
+for qop in (:KrausOperators, :POVMMeasurement)
+    @eval size(Φ::$qop) = (Φ.idim, Φ.odim)
+end
 
 for qop in (:SuperOperator, :DynamicalMatrix, :Stinespring,
-            :UnitaryChannel, :POVMMeasurement, :PostSelectionMeasurement)
+            :UnitaryChannel, :PostSelectionMeasurement)
     @eval size(Φ::$qop) = size(Φ.matrix)
 end
 
-size(Φ::IdentityChannel) = (idim, odim)
+size(Φ::IdentityChannel) = (Φ.idim, Φ.odim)
 
 ################################################################################
 # making channels callable
@@ -566,6 +568,25 @@ end
 #     end
 # end
 
+################################################################################
+# Channels printing
+################################################################################
+function Base.show(io::IO, Φ::AbstractQuantumOperation{<:Matrix{<:Number}})
+    println(io, typeof(Φ))
+    println(io, "    dimensions: ($(Φ.idim), $(Φ.odim))")
+    if :matrix in fieldnames(Φ)
+        print(io, "    ")
+        print(io, Φ.matrix)
+    end
+    if :matrices in fieldnames(Φ)
+        for (i,m) in enumerate(Φ.matrices)
+            print(io, "    ")
+            print(io, m)
+            if i < length(Φ.matrices) println(io, "") end
+        end
+    end
+end
+# Base.show(io::IO, m::MIME"text/plain", Φ::AbstractQuantumOperation{<:Matrix{<:Number}}) = show(io, m, Φ)
 ################################################################################
 # CPTP, CPTNI
 ################################################################################

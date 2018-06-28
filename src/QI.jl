@@ -16,7 +16,7 @@ end
 using Compat, DocStringExtensions
 import Compat.Markdown
 
-import Base: convert, size, length, kron, *, rand
+import Base: convert, size, length, kron, *, rand, show
 
 const ⊗ = kron
 
@@ -43,7 +43,7 @@ AbstractQuantumOperation,
 KrausOperators, SuperOperator, DynamicalMatrix, Stinespring,
 UnitaryChannel, IdentityChannel,
 POVMMeasurement, PostSelectionMeasurement,
-kron, compose
+kron, compose, show
 
 include("../randommatrices/src/RandomMatrices.jl")
 using .RandomMatrices
