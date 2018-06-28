@@ -147,6 +147,7 @@ are callable and therefore mimic application of a~function on a~quantum state.
 
 Φ(ρ1)
 Ψ1(ρ1)
+Φ(ψ)
 ```
 
 ### Composition
