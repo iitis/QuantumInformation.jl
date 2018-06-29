@@ -49,7 +49,7 @@ function fidelity_sqrt(ρ::AbstractMatrix{<:Number}, σ::AbstractMatrix{<:Number
     throw(ArgumentError("Non square matrix"))
   end
   λ = real(eigvals(ρ * σ))
-  r = sum(sqrt.(λ[λ.>0]))
+  r = real(sum(sqrt.(λ[λ.>0])))
 end
 
 """
@@ -64,7 +64,7 @@ function fidelity(ρ::AbstractMatrix{<:Number}, σ::AbstractMatrix{<:Number})
 end
 
 fidelity(ϕ::AbstractVector{<:Number}, ψ::AbstractVector{<:Number}) = abs2(dot(ϕ, ψ))
-fidelity(ϕ::AbstractVector{<:Number}, ρ::AbstractMatrix{<:Number}) = ϕ' * ρ * ϕ
+fidelity(ϕ::AbstractVector{<:Number}, ρ::AbstractMatrix{<:Number}) = real(ϕ' * ρ * ϕ)
 fidelity(ρ::AbstractMatrix{<:Number}, ϕ::AbstractVector{<:Number}) = fidelity(ϕ, ρ)
 
 """
