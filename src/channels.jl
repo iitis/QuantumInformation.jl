@@ -490,7 +490,7 @@ end
 
 function applychannel(Φ::UnitaryChannel{<:AbstractMatrix{<:Number}}, ρ::AbstractMatrix{<:Number})
     # TODO: promote type
-    Φ*ρ*Φ'
+    Φ.matrix*ρ*Φ.matrix'
 end
 
 function applychannel(Φ::AbstractQuantumOperation, ψ::AbstractVector{<:Number})
