@@ -115,6 +115,8 @@ One of the entanglement measure is [*negativity*](https://en.wikipedia.org/wiki/
 distance is Bures angle \$D_A(\\rho,\\sigma)=\\arccos(\\sqrt{F(\\rho,\\sigma)})\$
 ```@repl QI
 negativity(ρ ⊗ σ, [2, 2], 2)
+negativity(proj((1/sqrt(2)*(ket(0,2)⊗ket(0,2)-ket(1,2)⊗ket(1,2)))), [2, 2], 2)
+
 log_negativity(ρ ⊗ σ, [2, 2], 2)
 ```
 
@@ -122,4 +124,5 @@ log_negativity(ρ ⊗ σ, [2, 2], 2)
 
 ```@repl QI
 ppt(ρ ⊗ σ, [2, 2], 2)
+ppt(proj((1/sqrt(2)*(ket(0,2)⊗ket(0,2)-ket(1,2)⊗ket(1,2)))), [2, 2], 2)
 ```
