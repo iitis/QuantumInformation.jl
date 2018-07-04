@@ -31,10 +31,9 @@ makedocs(
     ]
 )
 
-# deploydocs(
-#     deps = Deps.pip("pygments", "mkdocs", "python-markdown-math"),
-#     target = "build",
-#     repo = "github.com/ZKSI/QI.jl.git",
-#     latest = "master",
-#     branch = "documentation"
-# )
+deploydocs(
+    deps = Deps.pip("pygments", "mkdocs", "python-markdown-math"),
+    target = "site",
+    repo = "github.com/ZKSI/QI.jl.git",
+    julia = "nightly"
+)
