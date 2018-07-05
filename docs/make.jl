@@ -6,6 +6,8 @@ using Documenter, QI
 #
 # )
 makedocs(
+    modules = [QI],
+    clean = false,
     format = :html,
     sitename = "QI.jl",
     authors = "Piotr Gawron, Dariusz Kurzyk, Łukasz Pawela",
