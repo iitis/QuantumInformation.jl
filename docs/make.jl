@@ -30,7 +30,8 @@ makedocs(
         #     "lib/content/randomstate.md",
         #     "lib/content/utils.md"
         # ]
-    ]
+    ],
+    html_canonical = "https://zksi.github.io/QI.jl/latest/",
 )
 
 deploydocs(
