@@ -6,8 +6,7 @@ using Documenter, QI
 #
 # )
 makedocs(
-    modules = [QI],
-    clean = false,
+    clean = true,
     format = :html,
     sitename = "QI.jl",
     authors = "Piotr Gawron, Dariusz Kurzyk, Łukasz Pawela",
@@ -30,8 +29,7 @@ makedocs(
         #     "lib/content/randomstate.md",
         #     "lib/content/utils.md"
         # ]
-    ],
-    html_canonical = "https://zksi.github.io/QI.jl/latest/",
+    ]
 )
 
 deploydocs(
@@ -39,6 +37,5 @@ deploydocs(
     target = "build",
     repo = "github.com/ZKSI/QI.jl.git",
     julia = "0.6.3",
-    deps = nothing,
-    make = nothing
+    latest = "master"
 )
