@@ -1,20 +1,19 @@
-__precompile__()
-
 """
 Main module for `QI.jl` -- a Julia package for numerical computation in quantum information theory.
 """
-
 module QI
-if VERSION>v"0.7.0-DEV"
-    using LinearAlgebra
-    using SparseArrays
-else
+if VERSION<v"0.7.0"
+    __precompile__()
     const ComplexF64 = Complex128
     export ComplexF64
+else
+    using LinearAlgebra
+    using SparseArrays
 end
 
-using Compat, DocStringExtensions
-import Compat.Markdown
+using DocStringExtensions
+# using Compat
+# import Compat.Markdown
 
 import Base: convert, size, length, kron, *, rand, show
 
@@ -60,10 +59,10 @@ include("reshuffle.jl")
 include("ptrace.jl")
 include("ptranspose.jl")
 
-if VERSION>v"0.7.0-DEV"
-    # Convex.jl does not support julia 0.7 yet
-else
+if VERSION<v"0.7.0"
     include("convex.jl")
+else
+    # Convex.jl does not support julia 0.7 yet
 end
 
 end # module

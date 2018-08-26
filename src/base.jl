@@ -41,7 +41,7 @@ $(SIGNATURES)
 - `valb`: non-zero entry - label.
 - `dim`: length of the vector
 
-Return outer product \$\|valk\\rangle\\langle vakb|\$ of states \$\|valk\\rangle\$ and \$\|valb\\rangle\$.
+# Return outer product \$|valk\\rangle\\langle vakb|\$ of states \$|valk\\rangle\$ and \$|valb\\rangle\$.
 """
 ketbra(valk::Int, valb::Int, dim::Int) = ketbra(Matrix{ComplexF64}, valk, valb, dim)
 
@@ -154,7 +154,7 @@ function permutesystems(ρ::AbstractMatrix{T}, dims::Vector{Int}, systems::Vecto
     perm_1 = systems
     perm_2 = [p + offset for p in perm_1]
     perm = [perm_1 ; perm_2] # vcat(perm_1 ; perm_2)
-    reversed_indices = (length(perm):-1:1...)
+    reversed_indices = (length(perm):-1:1...,)
     tensor = reshape(ρ, tuple([dims ; dims]...))
     # reversed_tensor is introduced because of differences how arrays are stored and reshaped in julia and numpy
     reversed_tensor = permutedims(tensor, reversed_indices)

@@ -21,13 +21,13 @@ end
     A = randn(10, 10)
     renormalize!(A)
 
-    @test trace(A) ≈ 1 atol=1e-13
+    @test tr(A) ≈ 1 atol=1e-13
 end
 
 @testset "funcmh" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
-    R = zeros(ρ)
-    ref = expm(ρ)
+    R = zero(ρ)
+    ref = exp(ρ)
     funcmh!(x->exp(x), Hermitian(ρ), R)
     @test R ≈ ref atol=1e-15
     ρ = [0.25 0.25im; -0.25im 0.75]
@@ -35,7 +35,7 @@ end
     @test R ≈ ref atol=1e-15
 
     ρ = [0.25 0.25im; -0.25im 0.75]
-    R = zeros(ρ)
+    R = zero(ρ)
     funcmh!(x->exp(x), ρ, R)
 
     @test R ≈ ref atol=1e-15

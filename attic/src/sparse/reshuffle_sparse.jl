@@ -4,8 +4,8 @@ function reshuffle(ρ::AbstractSparseMatrix{<:Number}, dims::Matrix{Int})
     newdimsI =[dims[1, 1], dims[2, 1]]
     newdimsJ =[dims[1, 2], dims[2, 2]]
     I, J, V = findnz(ρ)
-    newI = zeros(I)
-    newJ = zeros(J)
+    newI = zero(I)
+    newJ = zero(J)
     for k=1:length(I)
         i, j = number2mixedradix(I[k]-1, dimsI), number2mixedradix(J[k]-1, dimsJ)
         i[1], i[2], j[1], j[2] = i[1], j[1], i[2], j[2]

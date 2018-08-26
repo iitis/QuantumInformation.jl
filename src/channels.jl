@@ -203,7 +203,8 @@ end
 function iseffect(Φ::PostSelectionMeasurement{<:AbstractMatrix{<:Number}})
     e = Φ.matrix
     m = e'*e
-    ispositive(eye(m) - m)
+    # ispositive(eye(m) - m)
+    ispositive(Matrix(one(eltype(m))I, size(m)) - m)
 end
 
 ################################################################################
@@ -355,7 +356,7 @@ function Base.convert(::Type{KrausOperators{T1}}, Φ::DynamicalMatrix{T2}) where
     for i=1:size(d, 1)
         d[i, i] = real(d[i, i])
     end
-    F = eigfact(Hermitian(d))
+    F = eigen(Hermitian(d))
     v = T1[]
     for i in 1:length(F.values)
         if F.values[i] >= 0.0
@@ -394,7 +395,8 @@ end
 
 function Base.convert(::Type{KrausOperators{T1}}, Φ::IdentityChannel{T2}) where {T1<:AbstractMatrix{N1}, T2<:AbstractMatrix{N2}} where {N1<:Number, N2<:Number}
     N = promote_type(N1, N2)
-    KrausOperators{T1}(T1[eye(N, Φ.idim)], Φ.idim, Φ.odim)
+    # KrausOperators{T1}(T1[eye(N, Φ.idim)], Φ.idim, Φ.odim)
+    KrausOperators{T1}(T1[Matrix(one(N)I, Φ.idim)], Φ.idim, Φ.odim)
 end
 
 function Base.convert(::Type{KrausOperators{T1}}, Φ::POVMMeasurement{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
@@ -441,7 +443,8 @@ $(SIGNATURES)
 Application of dynamical matrix into state `ρ`.
 """
 function applychannel(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}, ρ::AbstractMatrix{<:Number})
-    ptrace(Φ.matrix * (eye(Φ.idim)⊗transpose(ρ)), [Φ.idim, Φ.odim], [2])
+    id = Matrix(one(eltype(Φ.matrix))I, Φ.idim)
+    ptrace(Φ.matrix * (id⊗transpose(ρ)), [Φ.idim, Φ.odim], [2])
 end
 
 """

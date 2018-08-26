@@ -15,9 +15,9 @@ $(SIGNATURES)
 
 Checks if set of Kraus operators fulfill completness relation.
 """
-function kraus_is_CPTP(kraus_list::Vector{<:AbstractMatrix{<:Number}}, atol=1e-08)
+function kraus_is_CPTP(kraus_list::Vector{<:AbstractMatrix{T}}, atol=1e-08) where T<:Number
     complentess_relation = sum(k'*k for k in kraus_list)
-    isapprox(complentess_relation, eye(complentess_relation), atol=atol)
+    isapprox(complentess_relation, Matrix(one(T)I, size(complentess_relation)), atol=atol)
 end
 
 """
@@ -76,7 +76,7 @@ $(SIGNATURES)
 Transforms super-operator matrix into list of Kraus operators.
 """
 function superoperator_to_kraus(M::AbstractMatrix{<:Number})
-    F = eigfact(Hermitian(reshuffle(M)))
+    F = eigen(Hermitian(reshuffle(M)))
     _, c = size(M)
     sc = isqrt(c)
 
