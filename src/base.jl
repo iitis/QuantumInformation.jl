@@ -15,8 +15,7 @@ Return complex column vector \$|val\\rangle\$ of unit norm describing quantum st
 """
 ket(val::Int, dim::Int) = ket(Vector{ComplexF64}, val, dim)
 
-
-bra(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractVector{T} where T<:Number = ket(Tv, val, dim)'
+bra(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractVector{<:Number} = ket(Tv, val, dim)'
 
 """
 $(SIGNATURES)

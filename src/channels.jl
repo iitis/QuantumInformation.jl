@@ -203,8 +203,7 @@ end
 function iseffect(Φ::PostSelectionMeasurement{<:AbstractMatrix{<:Number}})
     e = Φ.matrix
     m = e'*e
-    # ispositive(eye(m) - m)
-    ispositive(Matrix(one(eltype(m))I, size(m)) - m)
+    ispositive(one(m) - m)
 end
 
 ################################################################################
@@ -442,9 +441,8 @@ $(SIGNATURES)
 
 Application of dynamical matrix into state `ρ`.
 """
-function applychannel(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}, ρ::AbstractMatrix{<:Number})
-    id = Matrix(one(eltype(Φ.matrix))I, Φ.idim)
-    ptrace(Φ.matrix * (id⊗transpose(ρ)), [Φ.idim, Φ.odim], [2])
+function applychannel(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}, ρ::AbstractMatrix{T}) where T<:Number
+    ptrace(Φ.matrix * (Diagonal{T}(I, Φ.idim[1])⊗transpose(ρ)), [Φ.idim, Φ.odim], [2])
 end
 
 """
@@ -619,7 +617,7 @@ end
 
 function iscptni(Φ::KrausOperators{<:AbstractMatrix{<:Number}}; atol=1e-13)
     cr = sum(k'*k for k in Φ.matrices)
-    ispositive(eye(cr) - cr, atol=atol)
+    ispositive(one(cr) - cr, atol=atol)
 end
 
 function iscptp(Φ::SuperOperator{T}; atol=1e-13) where T<:AbstractMatrix{<:Number}
@@ -638,7 +636,7 @@ end
 
 function iscptni(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}; atol=1e-13)
     pt = ptrace(Φ.matrix, [Φ.odim, Φ.idim], [1])
-    ispositive(eye(pt) - pt, atol=atol)
+    ispositive(one(pt) - pt, atol=atol)
 end
 
 function iscptp(Φ::Stinespring{<:AbstractMatrix{<:Number}}; atol=1e-13)
@@ -649,7 +647,7 @@ end
 function iscptni(Φ::Stinespring{<:AbstractMatrix{<:Number}}; atol=1e-13)
     u = Φ.matrix
     m = u'*u
-    ispositive(eye(m) - m, atol=atol)
+    ispositive(one(m) - m, atol=atol)
 end
 
 function iscptp(Φ::UnitaryChannel; atol=1e-13)
