@@ -6,7 +6,7 @@ srand(42)
         n=10
         c = CUE(n)
         u = rand(c)
-        @test norm(u*u' - eye(n)) ≈ 0 atol=1e-13
+        @test norm(u*u' - I) ≈ 0 atol=1e-13
 
         n = 100
         c = CUE(n)
@@ -26,7 +26,7 @@ srand(42)
         n = 10
         c = COE(n)
         o = rand(c)
-        @test norm(o*o' - eye(n)) ≈ 0 atol=1e-13
+        @test norm(o*o' - I) ≈ 0 atol=1e-13
 
         n = 100
         c = COE(n)

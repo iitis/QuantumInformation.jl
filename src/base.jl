@@ -103,7 +103,7 @@ $(SIGNATURES)
 
 Return maximally mixed state \$\\frac{1}{d}\\sum_{i=0}^{d-1}|i\\rangle\\langle i |\$ of length \$d\$.
 """
-max_mixed(d::Int) = eye(ComplexF64, d, d)/d
+max_mixed(d::Int) = Matrix(I/d, d, d)  # eye(ComplexF64, d, d)/d
 
 """
 $(SIGNATURES)
@@ -113,7 +113,7 @@ Return maximally entangled state \$\\frac{1}{\\sqrt{d}}\\sum_{i=0}^{\\sqrt{d}-1}
 """
 function max_entangled(d::Int)
     sd = isqrt(d)
-    ρ = res(eye(ComplexF64, sd, sd))
+    ρ = res(Diagonal{ComplexF64}(I, sd))
     renormalize!(ρ)
     ρ
 end

@@ -5,8 +5,8 @@ haar = HaarKet(2)
 ψ = (ket(0, 4) + ket(3, 4))/sqrt(2)
 γs = 0.0:0.01:1.0
 Φ = KrausOperators([[1 0; 0 sqrt(1-γ)], [0 sqrt(γ); 0 0]])
-post = [PostSelectionMeasurement(proj(ket(i, 4)) ⊗ eye(2)) for i=0:3]
-rots = [UnitaryChannel(eye(2)), UnitaryChannel(sx), UnitaryChannel(sz), UnitaryChannel(sx*sz)]
+post = [PostSelectionMeasurement(proj(ket(i, 4)) ⊗ 𝕀(2)) for i=0:3]
+rots = [UnitaryChannel(𝕀(2)), UnitaryChannel(sx), UnitaryChannel(sz), UnitaryChannel(sx*sz)]
 had = UnitaryChannel{Matrix{Complex128}}(hadamard(2))
 cnot = UnitaryChannel{Matrix{Complex128}}([1 0 0 0; 0 1 0 0; 0 0 0 1; 0 0 1 0])
 r = zeros(steps, length(γs), 4);

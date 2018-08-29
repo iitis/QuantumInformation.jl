@@ -1,4 +1,4 @@
-srand(42)
+Random.seed!(42)
 
 @testset "randomqobjects" begin
     @testset "HaarKet" begin
@@ -32,7 +32,7 @@ srand(42)
         @test size(ρ) == (d, d)
         @test typeof(ρ) == Matrix{Float64}
         @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
-        @test trace(ρ) ≈ 1. atol=1e-15
+        @test tr(ρ) ≈ 1. atol=1e-15
 
         hs = HilbertSchmidtStates{2, 0.1}(d)
         ρ = rand(hs)
@@ -40,7 +40,7 @@ srand(42)
         @test size(ρ) == (d, d)
         @test typeof(ρ) == Matrix{ComplexF64}
         @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
-        @test trace(ρ) ≈ 1. atol=1e-15
+        @test tr(ρ) ≈ 1. atol=1e-15
 
         @test HilbertSchmidtStates{1}(d) == HilbertSchmidtStates{1, 1}(d)
         @test HilbertSchmidtStates(d) == HilbertSchmidtStates{2, 1}(d)
@@ -51,18 +51,16 @@ srand(42)
         odim = 6
         c = ChoiJamiolkowskiMatrices{1, 0.1}(idim, odim)
         j = rand(c)
-        tr = ptrace(j.matrix, [odim, idim], [1])
-        @test norm(tr - eye(idim)) ≈ 0. atol=1e-13
-        @test trace(j.matrix) ≈ idim atol=1e-13
+        @test ptrace(j.matrix, [odim, idim], [1]) ≈ I atol=1e-13
+        @test tr(j.matrix) ≈ idim atol=1e-13
         @test typeof(j.matrix) == Matrix{Float64}
 
         c = ChoiJamiolkowskiMatrices{2, 0.1}(idim, odim)
         j = rand(c)
-        tr = ptrace(j.matrix, [odim, idim], [1])
-        @test norm(tr - eye(idim)) ≈ 0. atol=1e-13
-        @test trace(j.matrix) ≈ idim atol=1e-13
+        @test ptrace(j.matrix, [odim, idim], [1]) ≈ I atol=1e-13
+        @test tr(j.matrix) ≈ idim atol=1e-13
         @test typeof(j.matrix) == Matrix{ComplexF64}
-        
+
         @test ChoiJamiolkowskiMatrices{1}(idim) == ChoiJamiolkowskiMatrices{1, 1}(idim, idim)
         @test ChoiJamiolkowskiMatrices{1}(idim, odim) == ChoiJamiolkowskiMatrices{1, 1}(idim, odim)
         @test ChoiJamiolkowskiMatrices(idim, odim) == ChoiJamiolkowskiMatrices{2, 1}(idim, odim)

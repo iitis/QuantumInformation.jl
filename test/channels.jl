@@ -125,7 +125,6 @@ end
 end
 
 @testset "Channels applications" begin
-    # TODO : add test for no square channels !
     α = 0.25
     K₁ = ComplexF64[0 sqrt(α); 0 0; 0 0]
     K₂ = ComplexF64[1 0; 0 0; 0 sqrt(1 - α)]
@@ -136,36 +135,36 @@ end
 
     @testset "KrausOperators" begin
         σ = KrausOperators(kl)(ρ)
-        @test trace(σ) ≈ 1. atol=1e-15
+        @test tr(σ) ≈ 1. atol=1e-15
         @test ishermitian(σ)
-        @test σ ≈ ξ atol=1e-15
+        @test σ ≈ ξ atol=1e-8
     end
 
     @testset "DynamicalMatrix" begin
         ko = KrausOperators(kl)
         T = typeof(ko.matrices[1])
         σ = DynamicalMatrix{T}(ko)(ρ)
-        @test trace(σ) ≈ 1. atol=1e-15
+        @test tr(σ) ≈ 1. atol=1e-15
         @test ishermitian(σ)
-        @test σ ≈ ξ atol=1e-15
+        @test σ ≈ ξ atol=1e-8
     end
 
     @testset "SuperOperator" begin
         ko = KrausOperators(kl)
         T = typeof(ko.matrices[1])
         σ = SuperOperator{T}(ko)(ρ)
-        @test trace(σ) ≈ 1. atol=1e-15
+        @test tr(σ) ≈ 1. atol=1e-15
         @test ishermitian(σ)
-        @test σ ≈ ξ atol=1e-15
+        @test σ ≈ ξ atol=1e-8
     end
 
     @testset "Stinespring" begin
         ko = KrausOperators(kl)
         T = typeof(ko.matrices[1])
         σ = Stinespring{T}(ko)(ρ)
-        @test trace(σ) ≈ 1. atol=1e-15
+        @test tr(σ) ≈ 1. atol=1e-15
         @test ishermitian(σ)
-        @test σ ≈ ξ atol=1e-15
+        @test σ ≈ ξ atol=1e-8
     end
 end
 end

@@ -272,11 +272,10 @@ end
 # conversions functions
 ################################################################################
 
-#FIXME: here be dragons!! causes compilation failure!! WHY?!? WTF??
-# for qop in (:SuperOperator, :DynamicalMatrix, :Stinespring, :UnitaryChannel,
-#             :PostSelectionMeasurement)
-#     @eval convert(::Type{<:AbstractMatrix{<:Number}}, Φ::$qop) = Φ.matrix
-# end
+for qop in (:SuperOperator, :DynamicalMatrix, :Stinespring, :UnitaryChannel,
+            :PostSelectionMeasurement)
+    @eval convert(::Type{<:AbstractMatrix{<:Number}}, Φ::$qop) = Φ.matrix
+end
 
 """
 $(SIGNATURES)
@@ -341,7 +340,7 @@ $(SIGNATURES)
 Transforms super-operator matrix into Stinespring representation of quantum channel.
 """
 function Base.convert(::Type{Stinespring{T1}}, Φ::SuperOperator{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-    convert(Stinespring{T1},convert(KrausOperators{T1}, Φ))
+    convert(Stinespring{T1}, convert(KrausOperators{T1}, Φ))
 end
 
 """
@@ -395,7 +394,7 @@ end
 function Base.convert(::Type{KrausOperators{T1}}, Φ::IdentityChannel{T2}) where {T1<:AbstractMatrix{N1}, T2<:AbstractMatrix{N2}} where {N1<:Number, N2<:Number}
     N = promote_type(N1, N2)
     # KrausOperators{T1}(T1[eye(N, Φ.idim)], Φ.idim, Φ.odim)
-    KrausOperators{T1}(T1[Matrix(one(N)I, Φ.idim)], Φ.idim, Φ.odim)
+    KrausOperators{T1}(T1[Matrix{N}(I, Φ.idim)], Φ.idim, Φ.odim)
 end
 
 function Base.convert(::Type{KrausOperators{T1}}, Φ::POVMMeasurement{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
@@ -511,8 +510,8 @@ end
 
 function applychannel(Φ::POVMMeasurement{T}, ρ::AbstractMatrix{<:Number}) where T<:AbstractMatrix{<:Number}
     # TODO: Check if idim and odim are compatible with matrix and length
-    probs = [real(trace(p'*ρ)) for p in Φ.matrices]
-    diagm(probs)
+    probs = [real(tr(p'*ρ)) for p in Φ.matrices]
+    Diagonal(probs)
 end
 
 function applychannel(Φ::PostSelectionMeasurement{T}, ρ::AbstractMatrix{<:Number}) where T<:AbstractMatrix{<:Number}
@@ -587,11 +586,11 @@ end
 function Base.show(io::IO, Φ::AbstractQuantumOperation{<:Matrix{<:Number}})
     println(io, typeof(Φ))
     println(io, "    dimensions: ($(Φ.idim), $(Φ.odim))")
-    if :matrix in fieldnames(Φ)
+    if :matrix in fieldnames(typeof(Φ))
         print(io, "    ")
         print(io, Φ.matrix)
     end
-    if :matrices in fieldnames(Φ)
+    if :matrices in fieldnames(typeof(Φ))
         for (i,m) in enumerate(Φ.matrices)
             print(io, "    ")
             print(io, m)

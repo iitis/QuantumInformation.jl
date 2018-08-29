@@ -190,7 +190,7 @@ end
 
     @testset "apply_channel_kraus" begin
         σ = apply_channel_kraus(kl, ρ)
-        @test trace(σ) ≈ 1. atol=1e-15
+        @test tr(σ) ≈ 1. atol=1e-15
         @test ishermitian(σ)
         @test σ ≈ ξ atol=1e-15
     end
@@ -198,7 +198,7 @@ end
     @testset "apply_channel_dynamical_matrix" begin
         r = kraus_to_dynamical_matrix(kl)
         σ = apply_channel_dynamical_matrix(r, ρ)
-        @test trace(σ) ≈ 1. atol=1e-15
+        @test tr(σ) ≈ 1. atol=1e-15
         @test ishermitian(σ)
         @test σ ≈ ξ atol=1e-15
     end
@@ -206,7 +206,7 @@ end
     @testset "apply_channel_superoperator" begin
         s = kraus_to_superoperator(kl)
         σ = apply_channel_superoperator(s, ρ)
-        @test trace(σ) ≈ 1. atol=1e-15
+        @test tr(σ) ≈ 1. atol=1e-15
         @test ishermitian(σ)
         @test σ ≈ ξ atol=1e-15
     end
@@ -215,7 +215,7 @@ end
         u = kraus_to_stinespring(kl)
         dims = [size(kl[1])...]
         σ = apply_channel_stinespring(u, ρ, dims)
-        @test trace(σ) ≈ 1. atol=1e-15
+        @test tr(σ) ≈ 1. atol=1e-15
         @test ishermitian(σ)
         @test σ ≈ ξ atol=1e-15
     end

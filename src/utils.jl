@@ -92,7 +92,7 @@ function isidentity(ρ::AbstractMatrix{<:Number}; atol=1e-13)
         return false
     end
 
-    isapprox(ρ, eye(ρ), atol=atol)
+    isapprox(ρ, I, atol=atol)
 end
 
 function ispositive(ρ::AbstractMatrix{<:Number}; atol=1e-13)
@@ -107,9 +107,6 @@ function ispositive(ρ::AbstractMatrix{<:Number}; atol=1e-13)
     fact = eigen(h)
     all(fact.values .> -atol)
 end
-
-idmat(::Type{T}, dim::Int) where T<:Number = Diagonal(ones(T, dim)) 
-idmat(dim::Int) = idmat(Float64, dim)
 
 #function random_vector_fixed_l1_l2(l1::Real, l2::Real, d::Int)
 #  #from here http://stats.stackexchange.com/questions/61692/generating-vectors-under-constraints-on-1-and-2-norm
