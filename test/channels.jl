@@ -18,14 +18,16 @@ include("test_channels.jl")
     @testset "convert to SuperOperator" begin
         ket0 = ket(0, 2)
         ket1 = ket(1, 2)
-        @test SuperOperator{Matrix{ComplexF64}}(KrausOperators(kraus_list_u))(proj(ket1)) - proj(ket0) ≈ zero(proj(ket0))
+        ko = KrausOperators(kraus_list_u)
+        Φ = convert(SuperOperator{Matrix{ComplexF64}}, ko)
+        @test Φ(proj(ket1)) - proj(ket0) ≈ zero(proj(ket0))
 
         for kraus_list in kraus_set
             r, c = size(kraus_list[1])
             ko = KrausOperators(kraus_list)
             T = typeof(ko.matrices[1])
-            s = SuperOperator{T}(ko)
-            @test ispositive(reshuffle(s.matrix, [r r; c c])) == true
+            Φ = convert(SuperOperator{T}, ko)
+            @test ispositive(reshuffle(Φ.matrix, [r r; c c])) == true
         end
     end
 
@@ -33,8 +35,8 @@ include("test_channels.jl")
         for kraus_list in kraus_set
             ko = KrausOperators(kraus_list)
             T = typeof(ko.matrices[1])
-            st = Stinespring{T}(ko)
-            u = st.matrix
+            Φ = convert(Stinespring{T}, ko)
+            u = Φ.matrix
             @test isidentity(u'*u) == true
         end
     end
@@ -43,9 +45,9 @@ include("test_channels.jl")
         for kraus_list in kraus_set
             ko = KrausOperators(kraus_list)
             T = typeof(ko.matrices[1])
-            st = DynamicalMatrix{T}(ko)
+            Φ = convert(DynamicalMatrix{T}, ko)
             r, c = size(kraus_list[1])
-            @test isidentity(ptrace(st.matrix, [r, c], 1)) == true
+            @test isidentity(ptrace(Φ.matrix, [r, c], 1)) == true
         end
     end
 end
@@ -62,11 +64,11 @@ end
         for kraus_list in kraus_set
             ko1 = KrausOperators(kraus_list)
             T = typeof(ko1.matrices[1])
-            s1 = SuperOperator{T}(ko1)
-            ko2 = KrausOperators{T}(s1)
-            s2 = SuperOperator{T}(ko2)
+            Φ1 = convert(SuperOperator{T}, ko1)
+            ko2 = convert(KrausOperators{T}, Φ1)
+            Φ2 = convert(SuperOperator{T}, ko2)
             @test iscptp(ko2)
-            @test s1.matrix ≈ s2.matrix
+            @test Φ1.matrix ≈ Φ2.matrix
         end
     end
     @testset "convert to DynamicalMatrix" begin
@@ -74,9 +76,10 @@ end
             r, c = size(kraus_list[1])
             ko = KrausOperators(kraus_list)
             T = typeof(ko.matrices[1])
-            s = SuperOperator{T}(ko)
+            s = convert(SuperOperator{T}, ko)
             r1 = reshuffle(s.matrix, [r r; c c])
-            r2 = DynamicalMatrix{T}(s).matrix
+            Φ = convert(DynamicalMatrix{T}, s)
+            r2 = Φ.matrix
             @test r1 ≈ r2
             @test ispositive(r2)
             @test isidentity(ptrace(r2, [r, c], 1)) == true
@@ -86,8 +89,9 @@ end
         for kraus_list in kraus_set
             ko = KrausOperators(kraus_list)
             T = typeof(ko.matrices[1])
-            s = SuperOperator{T}(ko)
-            u = Stinespring{T}(s).matrix
+            s = convert(SuperOperator{T}, ko)
+            Φ = convert(Stinespring{T}, s)
+            u = Φ.matrix
             @test isidentity(u'*u) == true
         end
     end
@@ -98,8 +102,8 @@ end
         for kraus_list in kraus_set
             ko = KrausOperators(kraus_list)
             T = typeof(ko.matrices[1])
-            r = DynamicalMatrix{T}(ko)
-            kl = KrausOperators{T}(r)
+            d = convert(DynamicalMatrix{T}, ko)
+            kl = convert(KrausOperators{T}, d)
             @test iscptp(kl) == true
         end
     end
@@ -107,8 +111,9 @@ end
         for kraus_list in kraus_set
             ko = KrausOperators(kraus_list)
             T = typeof(ko.matrices[1])
-            r = DynamicalMatrix{T}(ko)
-            u = Stinespring{T}(r).matrix
+            r = convert(DynamicalMatrix{T}, ko)
+            Φ = convert(Stinespring{T}, r)
+            u = Φ.matrix
             @test isidentity(u'*u) == true
         end
     end
@@ -116,10 +121,10 @@ end
         for kraus_list in kraus_set
             ko = KrausOperators(kraus_list)
             T = typeof(ko.matrices[1])
-            r1 = DynamicalMatrix{T}(ko)
-            s1 = SuperOperator{T}(ko).matrix
-            s2 = SuperOperator{T}(r1).matrix
-            @test s1 ≈ s2
+            r1 = convert(DynamicalMatrix{T}, ko)
+            s1 = convert(SuperOperator{T}, ko)
+            s2 = convert(SuperOperator{T}, r1)
+            @test s1.matrix ≈ s2.matrix
         end
     end
 end
@@ -143,7 +148,8 @@ end
     @testset "DynamicalMatrix" begin
         ko = KrausOperators(kl)
         T = typeof(ko.matrices[1])
-        σ = DynamicalMatrix{T}(ko)(ρ)
+        Φ = convert(DynamicalMatrix{T}, ko)
+        σ = Φ(ρ)
         @test tr(σ) ≈ 1. atol=1e-15
         @test ishermitian(σ)
         @test σ ≈ ξ atol=1e-8
@@ -152,7 +158,8 @@ end
     @testset "SuperOperator" begin
         ko = KrausOperators(kl)
         T = typeof(ko.matrices[1])
-        σ = SuperOperator{T}(ko)(ρ)
+        Φ = convert(SuperOperator{T}, ko)
+        σ = Φ(ρ)
         @test tr(σ) ≈ 1. atol=1e-15
         @test ishermitian(σ)
         @test σ ≈ ξ atol=1e-8
@@ -161,7 +168,8 @@ end
     @testset "Stinespring" begin
         ko = KrausOperators(kl)
         T = typeof(ko.matrices[1])
-        σ = Stinespring{T}(ko)(ρ)
+        Φ = convert(Stinespring{T}, ko)
+        σ = Φ(ρ)
         @test tr(σ) ≈ 1. atol=1e-15
         @test ishermitian(σ)
         @test σ ≈ ξ atol=1e-8

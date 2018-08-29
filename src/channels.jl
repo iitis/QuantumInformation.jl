@@ -33,7 +33,7 @@ end
 
 length(Φ::KrausOperators) = length(Φ.matrices)
 function orthogonalize(Φ::KrausOperators{T}) where {T<:AbstractMatrix{<:Number}}
-    KrausOperators{T}(DynamicalMatrix{T}(Φ))
+    convert(KrausOperators{T}, convert(DynamicalMatrix{T}, Φ))
 end
 
 # TODO: create iterator over KrausOperators see: https://docs.julialang.org/en/v0.6.3/manual/interfaces/
@@ -393,8 +393,8 @@ end
 
 function Base.convert(::Type{KrausOperators{T1}}, Φ::IdentityChannel{T2}) where {T1<:AbstractMatrix{N1}, T2<:AbstractMatrix{N2}} where {N1<:Number, N2<:Number}
     N = promote_type(N1, N2)
-    # KrausOperators{T1}(T1[eye(N, Φ.idim)], Φ.idim, Φ.odim)
-    KrausOperators{T1}(T1[Matrix{N}(I, Φ.idim)], Φ.idim, Φ.odim)
+    # KrausOperators{T1}(T1[eye(N, Φ.idim)], Φ.idim, Φ.odim)    
+    KrausOperators{T1}(T1[Matrix{N}(I, Φ.idim, Φ.idim)], Φ.idim, Φ.odim)
 end
 
 function Base.convert(::Type{KrausOperators{T1}}, Φ::POVMMeasurement{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
@@ -526,8 +526,8 @@ end
 
 # TODO : Specialise this function for different quantum ops
 function Base.kron(Φ1::T1, Φ2::T2) where {T1<:AbstractQuantumOperation{M1}, T2<:AbstractQuantumOperation{M2}} where {M1<:AbstractMatrix{<:Number}, M2<:AbstractMatrix{<:Number}}
-    ko1 = KrausOperators{M1}(Φ1)
-    ko2 = KrausOperators{M2}(Φ2)
+    ko1 = convert(KrausOperators{M1}, Φ1)
+    ko2 = convert(KrausOperators{M2}, Φ2)
     M = promote_type(M1, M2)
     v = M[k1⊗k2 for k1 in ko1.matrices for k2 in ko2.matrices]
     ko = KrausOperators{M1}(v, Φ1.idim * Φ2.idim, Φ1.odim * Φ2.odim)
@@ -556,8 +556,8 @@ function compose(::Type{T1}, Φ1::T2, Φ2::T3) where {T1<:AbstractQuantumOperati
     if Φ1.odim != Φ2.idim
         throw(ArgumentError("Channels are incompatible"))
     end
-    s1 = SuperOperator{M1}(Φ1)
-    s2 = SuperOperator{M2}(Φ2)
+    s1 = convert(SuperOperator{M1}, Φ1)
+    s2 = convert(SuperOperator{M2}, Φ2)
     so = SuperOperator{M3}(M3(s1.matrix * s2.matrix), s1.idim, s2.odim)
     T3(so)
 end
