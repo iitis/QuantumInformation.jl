@@ -5,6 +5,7 @@ module QI
 using LinearAlgebra
 using SparseArrays
 using DocStringExtensions
+using TensorOperations
 
 import Base: convert, size, length, kron, *, rand, show
 

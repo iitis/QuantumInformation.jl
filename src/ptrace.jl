@@ -1,6 +1,12 @@
+"""
+$(SIGNATURES)
+- `ρ`: quantum state.
+- `idims`: dimensins of subsystems.
+- `isystems`: traced subsystems.
 
+Return [partial trace](https://en.wikipedia.org/wiki/Partial_trace) of matrix `ρ` over the subsystems determined by `isystems`.
+"""
 function ptrace(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, isystems::Vector{Int})
-    # TODO: convert notation to column-major form
     dims = reverse(idims)
     systems = length(idims) .- isystems .+ 1
 
@@ -15,21 +21,17 @@ function ptrace(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, isystems::Vect
     end
     offset = length(dims)
     keep = setdiff(1:offset, systems)
-    dispose = systems
-    perm  = [dispose; keep; dispose .+ offset; keep .+ offset]
+
+    traceidx = [1:offset; 1:offset]
+    for d in 1:offset
+        if d in keep
+            traceidx[offset + d] += offset
+        end
+    end
+
     tensor = reshape(ρ, [dims; dims]...)
     keepdim = prod([size(tensor, x) for x in keep])
-    disposedim = prod([size(tensor, x) for x in dispose])
-    tensor = permutedims(tensor, perm)
-
-    tensor=reshape(tensor, disposedim, keepdim, disposedim, keepdim)
-    ret = zeros(typeof(ρ[1,1]), keepdim, keepdim)
-    for i=1:keepdim
-      for j=1:keepdim
-        ret[i,j] = sum([tensor[k, i, k, j] for k in 1:disposedim]) # TODO: change to iterator
-      end
-    end
-    return ret
+    return reshape(tensortrace(tensor, Tuple(traceidx)), keepdim, keepdim)
 end
 
 """
@@ -37,13 +39,17 @@ $(SIGNATURES)
 - `ρ`: quantum state.
 - `idims`: dimensins of subsystems.
 - `sys`: traced subsystem.
-
-Return [partial trace](https://en.wikipedia.org/wiki/Partial_trace) of matrix `ρ` over the subsystems determined by `isystems`.
 """
 ptrace(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, sys::Int) = ptrace(ρ, idims, [sys])
 
-# TODO: allow for more than bipartite systems???
+"""
+$(SIGNATURES)
+- `ψ`: quantum state pure state (ket).
+- `idims`: dimensins of subsystems - only bipartite states accepted.
+- `sys`: traced subsystem.
+"""
 function ptrace(ϕ::AbstractVector{<:Number}, idims::Vector{Int}, sys::Int)
+    # TODO : Allow mutlipartite systems
     _, cols = idims
     m = unres(ϕ, cols)
     length(idims) == 2 ? () : throw(ArgumentError("idims has to be of length 2"))
