@@ -1,5 +1,6 @@
 using Test
 using Random
+using StatsBase
 
 include("../src/RandomMatrices.jl")
 using .RandomMatrices

@@ -1,6 +1,5 @@
-using StatsBase
-
 Random.seed!(42)
+
 @testset "CircularEnsemble" begin
     @testset "CUE" begin
         n=10
