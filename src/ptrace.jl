@@ -48,7 +48,7 @@ $(SIGNATURES)
 - `idims`: dimensins of subsystems - only bipartite states accepted.
 - `sys`: traced subsystem.
 """
-function ptrace(ϕ::AbstractVector{<:Number}, idims::Vector{Int}, sys::Int)
+function ptrace(ψ::AbstractVector{<:Number}, idims::Vector{Int}, sys::Int)
     # TODO : Allow mutlipartite systems
     _, cols = idims
     m = unres(ϕ, cols)
