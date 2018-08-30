@@ -51,7 +51,7 @@ $(SIGNATURES)
 function ptrace(ψ::AbstractVector{<:Number}, idims::Vector{Int}, sys::Int)
     # TODO : Allow mutlipartite systems
     _, cols = idims
-    m = unres(ϕ, cols)
+    m = unres(ψ, cols)
     length(idims) == 2 ? () : throw(ArgumentError("idims has to be of length 2"))
     if sys == 1
         return m'*m
