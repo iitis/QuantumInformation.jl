@@ -9,7 +9,7 @@ notifications:
   email: false
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia -e 'using Pkg; pkg"add ."; pkg"add StatsBase"; pkg"add Test"; pkg"test QI --coverage'
+  - julia -e 'using Pkg; pkg"add ."; pkg"add StatsBase"; pkg"add Test"; pkg"test QI --coverage"'
   - julia --code-coverage randommatrices/test/runtests.jl
 
 after_success:
