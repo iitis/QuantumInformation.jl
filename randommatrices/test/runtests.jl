@@ -1,4 +1,5 @@
-using Base.Test
+using Test
+using Random
 
 include("../src/RandomMatrices.jl")
 using .RandomMatrices

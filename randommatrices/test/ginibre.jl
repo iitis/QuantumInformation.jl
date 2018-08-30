@@ -1,4 +1,4 @@
-srand(42)
+Random.seed!(42)
 
 @testset "GinibreEnsemble" begin
     g = GinibreEnsemble{1}(10, 20)

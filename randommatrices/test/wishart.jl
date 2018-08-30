@@ -1,4 +1,4 @@
-srand(42)
+Random.seed!(42)
 
 @testset "WishartEnsemble" begin
     w = WishartEnsemble{1, 0.1}(10)

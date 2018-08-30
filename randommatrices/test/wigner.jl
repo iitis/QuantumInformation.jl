@@ -1,4 +1,4 @@
-srand(42)
+Random.seed!(42)
 
 @testset "WignerEnsemble" begin
     w = WignerEnsemble{1}(10)

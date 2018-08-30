@@ -1,6 +1,6 @@
 using StatsBase
 
-srand(42)
+Random.seed!(42)
 @testset "CircularEnsemble" begin
     @testset "CUE" begin
         n=10
