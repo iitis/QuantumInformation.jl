@@ -1,4 +1,5 @@
 module RandomMatrices
+using LinearAlgebra
 import Base: rand
 import Distributions: ContinuousMatrixDistribution
 

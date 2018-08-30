@@ -12,5 +12,5 @@ my_tests = ["utils.jl", "base.jl", "ptrace.jl", "ptranspose.jl", "reshuffle.jl",
 # push!(my_tests, "convex.jl") # Convex.jl does not support julia 0.7 yet
 
 for my_test in my_tests
-    include(my_test)
+    # include(my_test)
 end

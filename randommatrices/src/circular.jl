@@ -15,7 +15,7 @@ function _qr_fix(z::AbstractMatrix)
     q, r = qr(z)
     d = diag(r)
     ph = d./abs.(d)
-    q.*repmat(ph, 1, size(q, 1))'
+    q .* repeat(ph, 1, size(q, 1))'
 end
 
 function rand(c::COE)

@@ -1,6 +1,7 @@
 using Test
 using Random
 using StatsBase
+using LinearAlgebra
 
 include("../src/RandomMatrices.jl")
 using .RandomMatrices
