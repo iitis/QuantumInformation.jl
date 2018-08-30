@@ -17,7 +17,7 @@ Random.seed!(42)
             r[i, :] = angle.(eigvals(u))
         end
         r = vec(r)
-        h = normalize(fit(Histogram, r, weights(ones(r)), -π:0.1π:π, closed=:left))
+        h = normalize(fit(Histogram, r, weights(ones(size(r))), -π:0.1π:π, closed=:left))
         @test all(isapprox.(h.weights, 1/2π, atol=0.01))
     end
 
@@ -36,7 +36,7 @@ Random.seed!(42)
             r[i, :] = angle.(eigvals(o))
         end
         r = vec(r)
-        h = normalize(fit(Histogram, r, weights(ones(r)), -π:0.1π:π, closed=:left))
+        h = normalize(fit(Histogram, r, weights(ones(size(r))), -π:0.1π:π, closed=:left))
         @test all(isapprox.(h.weights, 1/2π, atol=0.1))
     end
 
