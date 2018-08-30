@@ -1,7 +1,7 @@
 kraus_list_u = [sx]
 
 α = 0.2
-kraus_list_dep = [sqrt(1-α)*eye(2), sqrt(α/3)*sx, sqrt(α/3)*sz, sqrt(α/3)*sy]
+kraus_list_dep = [sqrt(1-α)*𝕀(2), sqrt(α/3)*sx, sqrt(α/3)*sz, sqrt(α/3)*sy]
 
 α = 0.3
 k1 = [1 0; 0 sqrt(1-α)]

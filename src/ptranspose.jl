@@ -1,7 +1,7 @@
 
 function ptranspose(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, isystems::Vector{Int})
-    dims=reverse(idims)
-    systems=length(idims)-isystems+1
+    dims = reverse(idims)
+    systems = length(idims) .- isystems .+ 1
 
     if size(ρ,1)!=size(ρ,2)
         throw(ArgumentError("Non square matrix passed to ptrace"))
@@ -17,8 +17,8 @@ function ptranspose(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, isystems::
     tensor = reshape(ρ, [dims; dims]...)
     perm = collect(1:(2offset))
     for s in systems
-        idx1 = find(x->x==s, perm)[1]
-        idx2 = find(x->x==(s + offset), perm)[1]
+        idx1 = findall(x->x==s, perm)[1]
+        idx2 = findall(x->x==(s + offset), perm)[1]
         perm[idx1], perm[idx2] = perm[idx2], perm[idx1]
     end
     tensor = permutedims(tensor, invperm(perm))

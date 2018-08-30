@@ -1,20 +1,10 @@
-__precompile__()
-
 """
 Main module for `QI.jl` -- a Julia package for numerical computation in quantum information theory.
 """
-
 module QI
-if VERSION>v"0.7.0-DEV"
-    using LinearAlgebra
-    using SparseArrays
-else
-    const ComplexF64 = Complex128
-    export ComplexF64
-end
-
-using Compat, DocStringExtensions
-import Compat.Markdown
+using LinearAlgebra
+using SparseArrays
+using DocStringExtensions
 
 import Base: convert, size, length, kron, *, rand, show
 
@@ -35,7 +25,7 @@ norm_diamond, diamond_distance,
 HaarKet, HilbertSchmidtStates, ChoiJamiolkowskiMatrices,
 rand,
 funcmh, funcmh!, renormalize!, realdiag, realdiag!,
-sx,sy,sz, qft, hadamard, grover, ⊗, *,
+𝕀,sx,sy,sz, qft, hadamard, grover, ⊗, *,
 iscptp, iscptni,
 applychannel,
 isidentity, ispositive,
@@ -60,10 +50,6 @@ include("reshuffle.jl")
 include("ptrace.jl")
 include("ptranspose.jl")
 
-if VERSION>v"0.7.0-DEV"
-    # Convex.jl does not support julia 0.7 yet
-else
-    include("convex.jl")
-end
+# include("convex.jl") # Convex.jl does not support julia 0.7 yet
 
 end # module

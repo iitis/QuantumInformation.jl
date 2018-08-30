@@ -49,7 +49,7 @@ end
     d = 4
     m = collect(Matrix{ComplexF64}, base_matrices(4))
     for i=1:d, j=1:d
-        v = trace(m[i]' * m[j])
+        v = tr(m[i]' * m[j])
         i == j ? @test(v == 1.) : @test(v == 0.)
     end
 end
@@ -92,7 +92,7 @@ end
 
 @testset "werner_state" begin
     ρ = werner_state(4, 0.2222)
-    @test trace(ρ) ≈ 1
+    @test tr(ρ) ≈ 1
     @test ishermitian(ρ)
 
     @test_throws ArgumentError werner_state(4, 1.2)

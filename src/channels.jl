@@ -33,7 +33,7 @@ end
 
 length(Φ::KrausOperators) = length(Φ.matrices)
 function orthogonalize(Φ::KrausOperators{T}) where {T<:AbstractMatrix{<:Number}}
-    KrausOperators{T}(DynamicalMatrix{T}(Φ))
+    convert(KrausOperators{T}, convert(DynamicalMatrix{T}, Φ))
 end
 
 # TODO: create iterator over KrausOperators see: https://docs.julialang.org/en/v0.6.3/manual/interfaces/
@@ -203,7 +203,7 @@ end
 function iseffect(Φ::PostSelectionMeasurement{<:AbstractMatrix{<:Number}})
     e = Φ.matrix
     m = e'*e
-    ispositive(eye(m) - m)
+    ispositive(one(m) - m)
 end
 
 ################################################################################
@@ -272,11 +272,10 @@ end
 # conversions functions
 ################################################################################
 
-#FIXME: here be dragons!! causes compilation failure!! WHY?!? WTF??
-# for qop in (:SuperOperator, :DynamicalMatrix, :Stinespring, :UnitaryChannel,
-#             :PostSelectionMeasurement)
-#     @eval convert(::Type{<:AbstractMatrix{<:Number}}, Φ::$qop) = Φ.matrix
-# end
+for qop in (:SuperOperator, :DynamicalMatrix, :Stinespring, :UnitaryChannel,
+            :PostSelectionMeasurement)
+    @eval convert(::Type{<:AbstractMatrix{<:Number}}, Φ::$qop) = Φ.matrix
+end
 
 """
 $(SIGNATURES)
@@ -341,7 +340,7 @@ $(SIGNATURES)
 Transforms super-operator matrix into Stinespring representation of quantum channel.
 """
 function Base.convert(::Type{Stinespring{T1}}, Φ::SuperOperator{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-    convert(Stinespring{T1},convert(KrausOperators{T1}, Φ))
+    convert(Stinespring{T1}, convert(KrausOperators{T1}, Φ))
 end
 
 """
@@ -355,7 +354,7 @@ function Base.convert(::Type{KrausOperators{T1}}, Φ::DynamicalMatrix{T2}) where
     for i=1:size(d, 1)
         d[i, i] = real(d[i, i])
     end
-    F = eigfact(Hermitian(d))
+    F = eigen(Hermitian(d))
     v = T1[]
     for i in 1:length(F.values)
         if F.values[i] >= 0.0
@@ -394,7 +393,8 @@ end
 
 function Base.convert(::Type{KrausOperators{T1}}, Φ::IdentityChannel{T2}) where {T1<:AbstractMatrix{N1}, T2<:AbstractMatrix{N2}} where {N1<:Number, N2<:Number}
     N = promote_type(N1, N2)
-    KrausOperators{T1}(T1[eye(N, Φ.idim)], Φ.idim, Φ.odim)
+    # KrausOperators{T1}(T1[eye(N, Φ.idim)], Φ.idim, Φ.odim)    
+    KrausOperators{T1}(T1[Matrix{N}(I, Φ.idim, Φ.idim)], Φ.idim, Φ.odim)
 end
 
 function Base.convert(::Type{KrausOperators{T1}}, Φ::POVMMeasurement{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
@@ -440,8 +440,8 @@ $(SIGNATURES)
 
 Application of dynamical matrix into state `ρ`.
 """
-function applychannel(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}, ρ::AbstractMatrix{<:Number})
-    ptrace(Φ.matrix * (eye(Φ.idim)⊗transpose(ρ)), [Φ.idim, Φ.odim], [2])
+function applychannel(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}, ρ::AbstractMatrix{T}) where T<:Number
+    ptrace(Φ.matrix * (Diagonal{T}(I, Φ.idim[1])⊗transpose(ρ)), [Φ.idim, Φ.odim], [2])
 end
 
 """
@@ -510,8 +510,8 @@ end
 
 function applychannel(Φ::POVMMeasurement{T}, ρ::AbstractMatrix{<:Number}) where T<:AbstractMatrix{<:Number}
     # TODO: Check if idim and odim are compatible with matrix and length
-    probs = [real(trace(p'*ρ)) for p in Φ.matrices]
-    diagm(probs)
+    probs = [real(tr(p'*ρ)) for p in Φ.matrices]
+    Diagonal(probs)
 end
 
 function applychannel(Φ::PostSelectionMeasurement{T}, ρ::AbstractMatrix{<:Number}) where T<:AbstractMatrix{<:Number}
@@ -526,8 +526,8 @@ end
 
 # TODO : Specialise this function for different quantum ops
 function Base.kron(Φ1::T1, Φ2::T2) where {T1<:AbstractQuantumOperation{M1}, T2<:AbstractQuantumOperation{M2}} where {M1<:AbstractMatrix{<:Number}, M2<:AbstractMatrix{<:Number}}
-    ko1 = KrausOperators{M1}(Φ1)
-    ko2 = KrausOperators{M2}(Φ2)
+    ko1 = convert(KrausOperators{M1}, Φ1)
+    ko2 = convert(KrausOperators{M2}, Φ2)
     M = promote_type(M1, M2)
     v = M[k1⊗k2 for k1 in ko1.matrices for k2 in ko2.matrices]
     ko = KrausOperators{M1}(v, Φ1.idim * Φ2.idim, Φ1.odim * Φ2.odim)
@@ -556,8 +556,8 @@ function compose(::Type{T1}, Φ1::T2, Φ2::T3) where {T1<:AbstractQuantumOperati
     if Φ1.odim != Φ2.idim
         throw(ArgumentError("Channels are incompatible"))
     end
-    s1 = SuperOperator{M1}(Φ1)
-    s2 = SuperOperator{M2}(Φ2)
+    s1 = convert(SuperOperator{M1}, Φ1)
+    s2 = convert(SuperOperator{M2}, Φ2)
     so = SuperOperator{M3}(M3(s1.matrix * s2.matrix), s1.idim, s2.odim)
     T3(so)
 end
@@ -586,11 +586,11 @@ end
 function Base.show(io::IO, Φ::AbstractQuantumOperation{<:Matrix{<:Number}})
     println(io, typeof(Φ))
     println(io, "    dimensions: ($(Φ.idim), $(Φ.odim))")
-    if :matrix in fieldnames(Φ)
+    if :matrix in fieldnames(typeof(Φ))
         print(io, "    ")
         print(io, Φ.matrix)
     end
-    if :matrices in fieldnames(Φ)
+    if :matrices in fieldnames(typeof(Φ))
         for (i,m) in enumerate(Φ.matrices)
             print(io, "    ")
             print(io, m)
@@ -616,7 +616,7 @@ end
 
 function iscptni(Φ::KrausOperators{<:AbstractMatrix{<:Number}}; atol=1e-13)
     cr = sum(k'*k for k in Φ.matrices)
-    ispositive(eye(cr) - cr, atol=atol)
+    ispositive(one(cr) - cr, atol=atol)
 end
 
 function iscptp(Φ::SuperOperator{T}; atol=1e-13) where T<:AbstractMatrix{<:Number}
@@ -635,7 +635,7 @@ end
 
 function iscptni(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}; atol=1e-13)
     pt = ptrace(Φ.matrix, [Φ.odim, Φ.idim], [1])
-    ispositive(eye(pt) - pt, atol=atol)
+    ispositive(one(pt) - pt, atol=atol)
 end
 
 function iscptp(Φ::Stinespring{<:AbstractMatrix{<:Number}}; atol=1e-13)
@@ -646,7 +646,7 @@ end
 function iscptni(Φ::Stinespring{<:AbstractMatrix{<:Number}}; atol=1e-13)
     u = Φ.matrix
     m = u'*u
-    ispositive(eye(m) - m, atol=atol)
+    ispositive(one(m) - m, atol=atol)
 end
 
 function iscptp(Φ::UnitaryChannel; atol=1e-13)

@@ -75,7 +75,7 @@ $(SIGNATURES)
 Return [fidelity](https://www.quantiki.org/wiki/fidelity) between gates `U` and `V`.
 """
 function gate_fidelity(U::AbstractMatrix{<:Number}, V::AbstractMatrix{<:Number})
-    abs(1.0 / size(U,1) * trace(U'*V))
+    abs(1.0 / size(U,1) * tr(U'*V))
 end
 
 """
@@ -117,7 +117,7 @@ Return [quantum relative entropy](https://en.wikipedia.org/wiki/Quantum_relative
 """
 function relative_entropy(ρ::AbstractMatrix{<:Number}, σ::AbstractMatrix{<:Number})
     log_σ = funcmh(log, σ)
-    real(-quantum_entropy(ρ) - trace(ρ * log_σ))
+    real(-quantum_entropy(ρ) - tr(ρ * log_σ))
 end
 
 """
@@ -172,7 +172,7 @@ $(SIGNATURES)
 Return [superfidelity](https://www.quantiki.org/wiki/superfidelity) between quantum states `ρ` and `σ`.
 """
 function superfidelity(ρ::AbstractMatrix{<:Number}, σ::AbstractMatrix{<:Number})
-    return trace(ρ'*σ) + sqrt(1 - trace(ρ'*ρ)) * sqrt(1 - trace(σ'*σ))
+    return tr(ρ'*σ) + sqrt(1 - tr(ρ'*ρ)) * sqrt(1 - tr(σ'*σ))
 end
 
 """

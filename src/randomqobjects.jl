@@ -79,7 +79,7 @@ function rand(c::ChoiJamiolkowskiMatrices{β, K}) where {β, K}
     z = rand(c.w)
     y = ptrace(z, [c.odim, c.idim], [1])
     sy = funcmh!(x -> 1 / sqrt(x), y)
-    onesy = eye(c.odim) ⊗ sy
+    onesy = Matrix(I, c.odim, c.odim) ⊗ sy # onesy = eye(c.odim) ⊗ sy
     DynamicalMatrix(onesy * z * onesy, c.idim, c.odim)
 end
 # """

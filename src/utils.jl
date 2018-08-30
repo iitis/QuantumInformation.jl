@@ -1,7 +1,7 @@
 function number2mixedradix(n::Int, radices::Vector{Int})
     n >= prod(radices) ? throw(ArgumentError("number to big to transform")) : ()
 
-    digits = Array{Int}(length(radices))
+    digits = Array{Int}(undef, length(radices))
     for (i, radix) in enumerate(reverse(radices))
         n, digits[end-i+1] = divrem(n, radix)
     end
@@ -28,7 +28,7 @@ function renormalize!(ψ::AbstractVector{<:Number})
 end
 
 function renormalize!(ρ::AbstractMatrix{<:Number})
-    t = trace(ρ)
+    t = tr(ρ)
     for i=1:length(ρ)
         ρ[i] = ρ[i]/t
     end
@@ -54,7 +54,7 @@ end
 # end
 
 function funcmh!(f::Function, h::Hermitian{T}, r::Matrix{T})  where T<:Union{Real, Complex}
-    fact = eigfact!(h)
+    fact = eigen!(h)
     times_diag = zero(fact.vectors)
     for i=1:size(fact.vectors, 2)
         times_diag[:, i] = fact.vectors[:, i] * f(fact.values[i])
@@ -92,7 +92,7 @@ function isidentity(ρ::AbstractMatrix{<:Number}; atol=1e-13)
         return false
     end
 
-    isapprox(ρ, eye(ρ), atol=atol)
+    isapprox(ρ, I, atol=atol)
 end
 
 function ispositive(ρ::AbstractMatrix{<:Number}; atol=1e-13)
@@ -104,7 +104,7 @@ function ispositive(ρ::AbstractMatrix{<:Number}; atol=1e-13)
         return false
     end
     h = Hermitian(ρ)
-    fact = eigfact(h)
+    fact = eigen(h)
     all(fact.values .> -atol)
 end
 

@@ -15,8 +15,7 @@ Return complex column vector \$|val\\rangle\$ of unit norm describing quantum st
 """
 ket(val::Int, dim::Int) = ket(Vector{ComplexF64}, val, dim)
 
-
-bra(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractVector{T} where T<:Number = ket(Tv, val, dim)'
+bra(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractVector{<:Number} = ket(Tv, val, dim)'
 
 """
 $(SIGNATURES)
@@ -41,7 +40,7 @@ $(SIGNATURES)
 - `valb`: non-zero entry - label.
 - `dim`: length of the vector
 
-Return outer product \$\|valk\\rangle\\langle vakb|\$ of states \$\|valk\\rangle\$ and \$\|valb\\rangle\$.
+# Return outer product \$|valk\\rangle\\langle vakb|\$ of states \$|valk\\rangle\$ and \$|valb\\rangle\$.
 """
 ketbra(valk::Int, valb::Int, dim::Int) = ketbra(Matrix{ComplexF64}, valk, valb, dim)
 
@@ -104,7 +103,7 @@ $(SIGNATURES)
 
 Return maximally mixed state \$\\frac{1}{d}\\sum_{i=0}^{d-1}|i\\rangle\\langle i |\$ of length \$d\$.
 """
-max_mixed(d::Int) = eye(ComplexF64, d, d)/d
+max_mixed(d::Int) = Matrix(I/d, d, d)  # eye(ComplexF64, d, d)/d
 
 """
 $(SIGNATURES)
@@ -114,7 +113,7 @@ Return maximally entangled state \$\\frac{1}{\\sqrt{d}}\\sum_{i=0}^{\\sqrt{d}-1}
 """
 function max_entangled(d::Int)
     sd = isqrt(d)
-    ρ = res(eye(ComplexF64, sd, sd))
+    ρ = res(Diagonal{ComplexF64}(I, sd))
     renormalize!(ρ)
     ρ
 end
@@ -154,7 +153,7 @@ function permutesystems(ρ::AbstractMatrix{T}, dims::Vector{Int}, systems::Vecto
     perm_1 = systems
     perm_2 = [p + offset for p in perm_1]
     perm = [perm_1 ; perm_2] # vcat(perm_1 ; perm_2)
-    reversed_indices = (length(perm):-1:1...)
+    reversed_indices = (length(perm):-1:1...,)
     tensor = reshape(ρ, tuple([dims ; dims]...))
     # reversed_tensor is introduced because of differences how arrays are stored and reshaped in julia and numpy
     reversed_tensor = permutedims(tensor, reversed_indices)

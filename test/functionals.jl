@@ -31,7 +31,7 @@ end
 @testset "fidelity_sqrt" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = [0.4 0.1im; -0.1im 0.6]
-    @test fidelity_sqrt(ρ, σ) ≈ real(trace(sqrtm(sqrtm(ρ) * σ * sqrtm(ρ)))) atol=1e-15
+    @test fidelity_sqrt(ρ, σ) ≈ real(tr(sqrt(sqrt(ρ) * σ * sqrt(ρ)))) atol=1e-15
     @test_throws ArgumentError fidelity_sqrt(ones(2, 3), ones(2, 2))
 end
 
@@ -44,7 +44,7 @@ end
     @test fidelity(ϕ, ψ) ≈ 0. atol=1e-15
     @test fidelity(ρ, ψ) ≈ 0.75 atol=1e-15
     @test fidelity(ϕ, σ) ≈ 0.4 atol=1e-15
-    @test fidelity(ρ, σ) ≈ real(trace(sqrtm(sqrtm(ρ) * σ * sqrtm(ρ))))^2 atol=1e-15
+    @test fidelity(ρ, σ) ≈ real(tr(sqrt(sqrt(ρ) * σ * sqrt(ρ))))^2 atol=1e-15
 end
 
 @testset "gate fidelity" begin
@@ -107,12 +107,12 @@ end
     @test log_negativity(ρ ⊗ σ, [2, 2], 2) ≈ 0 atol=1e-15
     @test ppt(ρ ⊗ σ, [2, 2], 2) > 0
 
-    ρ = proj([1, 0, 0, 1.+0im])/2
+    ρ = proj([1, 0, 0, 1. + 0im])/2
     @test negativity(ρ, [2, 2], 2) ≈ 1/2 atol=1e-15
     @test log_negativity(ρ, [2, 2], 2) ≈ log(2) atol=1e-15
     @test ppt(ρ, [2, 2], 2) ≈ -1/2 atol=1e-15
 
-    ρ = 9/10*proj([1, 0, 0, 1.+0im])/2 + 1/10*eye(4)/4
+    ρ = 9/10*proj([1, 0, 0, 1. + 0im])/2 + 1/10*I/4
 
     @test negativity(ρ, [2, 2], 2) ≈ 17/40 atol=1e-15
     @test log_negativity(ρ, [2, 2], 2) ≈ log(37/20) atol=1e-15
