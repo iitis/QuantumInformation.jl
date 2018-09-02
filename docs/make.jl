@@ -6,6 +6,7 @@ using Documenter, QI
 #
 # )
 makedocs(
+    clean = true,
     format = :html,
     sitename = "QI.jl",
     authors = "Piotr Gawron, Dariusz Kurzyk, Łukasz Pawela",
@@ -31,13 +32,10 @@ makedocs(
     ]
 )
 
-# deploydocs(
-#     deps = Deps.pip("pygments", "mkdocs", "python-markdown-math"),
-#     target = "build",
-#     repo = "github.com/ZKSI/QI.jl.git",
-#     latest = "master",
-#     branch = "documentation",
-#     julia  = "nightly",
-#     make = nothing,
-#     julia = "0.6",
-# )
+deploydocs(
+    deps = Deps.pip("pygments", "mkdocs", "python-markdown-math"),
+    target = "build",
+    repo = "github.com/ZKSI/QI.jl.git",
+    julia = "0.6.3",
+    latest = "master"
+)

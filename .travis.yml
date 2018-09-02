@@ -3,15 +3,17 @@ os:
   - linux
   - osx
 julia:
-  - 0.6.3
+  - 1.0.0
 
 notifications:
   email: false
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia -e 'Pkg.clone(pwd()); Pkg.build("QI"); Pkg.add("StatsBase"); Pkg.test("QI"; coverage=true)'
+  - julia -e 'using Pkg; pkg"add ."; pkg"add StatsBase"; pkg"add Test"; pkg"test QI --coverage"'
+  - julia -e 'using Pkg; pkg"add Distributions"';
+  - julia --code-coverage randommatrices/test/runtests.jl
 
 after_success:
-  - julia -e 'cd(Pkg.dir("QI")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(process_folder())'
-  - julia -e 'Pkg.add("Documenter")'
-  - julia -e 'cd(Pkg.dir("QI")); ENV["DOCUMENTER_KEY"] = "true"; include(joinpath("docs", "make.jl"))'
+  - julia -e 'cd(import QI; joinpath(dirname(pathof(QI)), ".."); using Pkg; pkg"add Coverage"; using Coverage; Coveralls.submit(vcat(process_folder(), process_folder("randommatrices/src")))'
+  - julia -e 'using Pkg; pkg"add Documenter"'
+  - julia -e 'cd(import QI; joinpath(dirname(pathof(QI)), ".."); include(joinpath("docs", "make.jl"))'

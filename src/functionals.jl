@@ -4,7 +4,7 @@ $(SIGNATURES)
 
 Return [trace norm](https://www.quantiki.org/wiki/trace-norm) of matrix `A`.
 """
-trace_norm(A::AbstractMatrix{<:Number}) = sum(svdvals(A))
+norm_trace(A::AbstractMatrix{<:Number}) = sum(svdvals(A))
 
 """
 $(SIGNATURES)
@@ -15,7 +15,7 @@ Return [trace distance](https://www.quantiki.org/wiki/trace-distance) between ma
 """
 function trace_distance(A::AbstractMatrix{T1}, B::AbstractMatrix{T2}) where {T1<:Number, T2<:Number}
     T = promote_type(T1, T2)
-    one(T)/2 * trace_norm(A - B)
+    one(T)/2 * norm_trace(A - B)
 end
 
 """
@@ -24,7 +24,7 @@ $(SIGNATURES)
 
 Return [Hilbert–Schmidt norm](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Schmidt_operator) of matrix `A`.
 """
-hs_norm(A::AbstractMatrix{<:Number}) = sqrt(sum(abs2.(A)))
+norm_hs(A::AbstractMatrix{<:Number}) = sqrt(sum(abs2.(A)))
 
 """
 $(SIGNATURES)
@@ -34,7 +34,7 @@ $(SIGNATURES)
 Return [Hilbert–Schmidt distance](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Schmidt_operator) between matrices `A` and `B`.
 """
 function hs_distance(A::AbstractMatrix{<:Number}, B::AbstractMatrix{<:Number})
-    hs_norm(A - B)
+    norm_hs(A - B)
 end
 
 """
@@ -49,7 +49,7 @@ function fidelity_sqrt(ρ::AbstractMatrix{<:Number}, σ::AbstractMatrix{<:Number
     throw(ArgumentError("Non square matrix"))
   end
   λ = real(eigvals(ρ * σ))
-  r = sum(sqrt.(λ[λ.>0]))
+  r = real(sum(sqrt.(λ[λ.>0])))
 end
 
 """
@@ -64,7 +64,7 @@ function fidelity(ρ::AbstractMatrix{<:Number}, σ::AbstractMatrix{<:Number})
 end
 
 fidelity(ϕ::AbstractVector{<:Number}, ψ::AbstractVector{<:Number}) = abs2(dot(ϕ, ψ))
-fidelity(ϕ::AbstractVector{<:Number}, ρ::AbstractMatrix{<:Number}) = ϕ' * ρ * ϕ
+fidelity(ϕ::AbstractVector{<:Number}, ρ::AbstractMatrix{<:Number}) = real(ϕ' * ρ * ϕ)
 fidelity(ρ::AbstractMatrix{<:Number}, ϕ::AbstractVector{<:Number}) = fidelity(ϕ, ρ)
 
 """
@@ -75,7 +75,7 @@ $(SIGNATURES)
 Return [fidelity](https://www.quantiki.org/wiki/fidelity) between gates `U` and `V`.
 """
 function gate_fidelity(U::AbstractMatrix{<:Number}, V::AbstractMatrix{<:Number})
-    abs(1.0 / size(U,1) * trace(U'*V))
+    abs(1.0 / size(U,1) * tr(U'*V))
 end
 
 """
@@ -117,7 +117,7 @@ Return [quantum relative entropy](https://en.wikipedia.org/wiki/Quantum_relative
 """
 function relative_entropy(ρ::AbstractMatrix{<:Number}, σ::AbstractMatrix{<:Number})
     log_σ = funcmh(log, σ)
-    real(-quantum_entropy(ρ) - trace(ρ * log_σ))
+    real(-quantum_entropy(ρ) - tr(ρ * log_σ))
 end
 
 """
@@ -172,7 +172,7 @@ $(SIGNATURES)
 Return [superfidelity](https://www.quantiki.org/wiki/superfidelity) between quantum states `ρ` and `σ`.
 """
 function superfidelity(ρ::AbstractMatrix{<:Number}, σ::AbstractMatrix{<:Number})
-    return trace(ρ'*σ) + sqrt(1 - trace(ρ'*ρ)) * sqrt(1 - trace(σ'*σ))
+    return tr(ρ'*σ) + sqrt(1 - tr(ρ'*ρ)) * sqrt(1 - tr(σ'*σ))
 end
 
 """
@@ -199,7 +199,7 @@ Return [log negativity](https://www.quantiki.org/wiki/negativity) of quantum sta
 """
 function log_negativity(ρ::AbstractMatrix{<:Number}, dims::Vector{Int}, sys::Int)
     ρ_s = ptranspose(ρ, dims, sys)
-    log(trace_norm(ρ_s))
+    log(norm_trace(ρ_s))
 end
 
 """

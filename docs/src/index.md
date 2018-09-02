@@ -13,10 +13,14 @@ Our goal while designing **QI.jl** library was to follow principles presented in
 [Julia](https://julialang.org/) [[2]](@ref refs).
 
 ## Package features
-
-
-## Credits
-
+The purpose of \texttt{QI.jl} library is to provide
+functions to:
+* creating and analyzing quantum
+states,
+* manipulating them with quantum channels
+* calculating functionals on these objects, *i.e. trace norm, diamond norm, entropy, fidelity*,
+* application of random matrix theory in quantum
+information processing.
 
 ## [References](@id refs)
 

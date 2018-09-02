@@ -1,3 +1,4 @@
 *.ipynb
 docs/build/
 docs/site/
+*.cov

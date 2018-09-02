@@ -20,3 +20,13 @@ julia> xc = [0.0, 1.0im]'
 1×2 RowVector{Complex{Float64},ConjArray{Complex{Float64},1,Array{Complex{Float64},1}}}:
  0.0-0.0im  0.0-1.0im
 ```
+
+Values of variables `xt` and `xc` are views of the value of
+variable `x`. When used the column and row vectors behave like bra and
+kets, for example `xc*x` denotes the inner product of *bra*
+`xc` and *ket* `x`, while `x*xc` denotes its outer
+product resulting in a two-index array.
+
+The linear algebra library in `Julia` provides standard operations on
+matrices and vectors that are designed to take in to the account the types of
+objects.

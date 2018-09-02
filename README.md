@@ -1,4 +1,29 @@
-
+[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://zksi.github.io/QI.jl/stable)
+[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://zksi.github.io/QI.jl/latest)
 [![Build Status](https://travis-ci.org/ZKSI/QI.jl.svg?branch=master)](https://travis-ci.org/ZKSI/QI.jl)
 [![Coverage Status](https://coveralls.io/repos/github/ZKSI/QI.jl/badge.svg?branch=master)](https://coveralls.io/github/ZKSI/QI.jl?branch=master)
 # QI
+
+A Julia package for numerical computation in quantum information theory.
+
+Numerical investigations are prevalent in quantum information theory. Numerical experiments can be used to find counter examples for theorems, to test hypotheses or to gain insight about quantum objects and operations.
+
+Our goal while designing **QI.jl** library was to follow principles presented in book "Geometry of Quantum States'' [1]. We work with column vectors reprinting kets and row vectors representing bras. We fix our basis to the computational one. Density matrices and quantum channels are represented as two dimensional arrays in the same fixed basis. This approach allows us to obtain low level complexity of our code, high flexibility and good computational efficiency. The design choices where highly motivated by the properties of the language in which the our library was implemented, namely
+[Julia](https://julialang.org/) [2].
+
+## Package features
+The purpose of **QI.jl** library is to provide
+functions to:
+* creating and analyzing quantum
+states,
+* manipulating them with quantum channels
+* calculating functionals on these objects, *i.e. trace norm, diamond norm, entropy, fidelity*,
+* application of random matrix theory in quantum
+information processing.
+
+## [References](@id refs)
+
+[1] I. Bengtsson, K. Życzkowski, *Geometry of Quantum States: An Introduction to Quantum Entanglement*, Cambridge University Press (2008).
+
+[2] J. Bezanson, S. Karpinski, V. B. Shah, A. Edelman, *Julia: A fast dynamic language for technical computing*,
+[preprint](https://arxiv.org/pdf/1209.5145.pdf).

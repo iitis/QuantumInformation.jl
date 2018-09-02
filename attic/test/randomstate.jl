@@ -38,8 +38,8 @@ end
     @test typeof(σ) == Matrix{ComplexF64}
     @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
     @test norm(σ - σ') ≈ 0. atol=1e-13 # is close to hermitian
-    @test trace(ρ) ≈ 1. atol=1e-15
-    @test trace(σ) ≈ 1. atol=1e-15
+    @test tr(ρ) ≈ 1. atol=1e-15
+    @test tr(σ) ≈ 1. atol=1e-15
 
     ρ = random_mixed_state(Float64, 20)
     σ = random_mixed_state(ComplexF64, 20)
@@ -49,32 +49,32 @@ end
     @test typeof(σ) == Matrix{ComplexF64}
     @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
     @test norm(σ - σ') ≈ 0. atol=1e-13 # is close to hermitian
-    @test trace(ρ) ≈ 1. atol=1e-15
-    @test trace(σ) ≈ 1. atol=1e-15
+    @test tr(ρ) ≈ 1. atol=1e-15
+    @test tr(σ) ≈ 1. atol=1e-15
 
     ρ = random_mixed_state(20)
     @test size(ρ) == (20, 20)
     @test typeof(ρ) == Matrix{Complex{Float64}}
     @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
-    @test trace(ρ) ≈ 1. atol=1e-15
+    @test tr(ρ) ≈ 1. atol=1e-15
 
     ρ = random_mixed_state(20, 10)
     @test size(ρ) == (20, 20)
     @test typeof(ρ) == Matrix{Complex{Float64}}
     @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
-    @test trace(ρ) ≈ 1. atol=1e-15
+    @test tr(ρ) ≈ 1. atol=1e-15
 
     ρ = random_mixed_state(20, 200)
     @test size(ρ) == (20, 20)
     @test typeof(ρ) == Matrix{Complex{Float64}}
     @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
-    @test trace(ρ) ≈ 1. atol=1e-15
+    @test tr(ρ) ≈ 1. atol=1e-15
 
     ρ = random_mixed_state_hs(20) #test backwards compat
     @test size(ρ) == (20, 20)
     @test typeof(ρ) == Matrix{Complex{Float64}}
     @test norm(ρ - ρ') ≈ 0. atol=1e-13 # is close to hermitian
-    @test trace(ρ) ≈ 1. atol=1e-15
+    @test tr(ρ) ≈ 1. atol=1e-15
 end
 
 @testset "random_jamiolkowski_state" begin
@@ -100,7 +100,7 @@ end
     J = random_jamiolkowski_state(ComplexF64, n)
     tr = ptrace(J, [n, n], [1])
     @test size(J) == (n^2, n^2)
-    @test trace(J) ≈ 1. atol=1e-13
+    @test tr(J) ≈ 1. atol=1e-13
     @test norm(tr - eye(n)/n) ≈ 0. atol=1e-14
     @test typeof(J) == Matrix{ComplexF64}
 end

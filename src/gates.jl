@@ -13,7 +13,7 @@ $(SIGNATURES)
 
 Prepares [Grover operator](https://en.wikipedia.org/wiki/Grover%27s_algorithm) of dimension `d`.
 """
-grover(dim::Int) = ones(ComplexF64,dim,dim)*2/dim-diagm(ones(ComplexF64,dim))
+grover(dim::Int) = ones(ComplexF64,dim,dim)*2/dim - I
 
 """
 $(SIGNATURES)
@@ -38,3 +38,5 @@ end
 sx = ComplexF64[0 1; 1 0]
 sy = ComplexF64[0 1im; -1im 0]
 sz = ComplexF64[1 0; 0 -1]
+𝕀(::Type{T}, dim=2) where T<: Number = Matrix{T}(I, dim, dim)
+𝕀(dim=2) = 𝕀(ComplexF64, dim)
