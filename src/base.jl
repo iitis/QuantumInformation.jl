@@ -163,18 +163,51 @@ function permutesystems(ρ::AbstractMatrix{T}, dims::Vector{Int}, systems::Vecto
 end
 
 
-#=
-TODO: port to julia
-def base_hermitian_matrices(dim):
-    """
-    Generator. Returns elementary hermitian matrices of dimension dim x dim.
-    """
-    for (a, b) in product(xrange(dim), repeat=2):
-        if a > b:
-            yield 1 / np.sqrt(2) * np.matrix(1j * ketbra(a, b, dim) - 1j * ketbra(b, a, dim))
-        elif a < b:
-            yield 1 / np.sqrt(2) * np.matrix(ketbra(a, b, dim) + ketbra(b, a, dim))
-        else:
-            yield np.matrix(ketbra(a, b, dim))
+"""
+$(SIGNATURES)
+- `dim`: dimensions of registers of `ρ`.
 
-=#
+Returns elementary hermitian matrices of dimension dim x dim.
+"""
+function base_hermitian_matrices(dim)
+    bhm = Any[]
+    for (a, b) in Base.product(0:dim-1, 0:dim-1)
+        if a > b
+            x = 1 / sqrt(2) * (1im * ketbra(a, b, dim) - 1im * ketbra(b, a, dim))
+            push!(bhm, x)
+        elseif a < b
+            x = 1 / sqrt(2) * (ketbra(a, b, dim) + ketbra(b, a, dim))
+            push!(bhm, x)
+        else
+            x = ketbra(a, b, dim)
+            push!(bhm, x)
+        end
+    end
+    bhm
+end
+
+
+function base_generlized_pauli_matrices(d)
+    E(i,j,d) = ketbra(j,i,d)
+
+    gm = Any[sum([E(i,i,d) for i in 0:d-1])]
+    for j in 0:d-2
+        for k in j+1:d-1
+            sm = E(j,k,d) + E(k,j,d)
+            push!(gm, sm)
+        end
+    end
+
+    for j in 0:d-2
+        for k in j+1:d-1
+            sm = -1im*(E(j,k,d) - E(k,j,d))
+            push!(gm, sm)
+        end
+    end
+
+    for l in 1:d-1
+        sm = sqrt(2.0/(l*(l+1)))*(sum([E(j-1,j-1,d) for j in 1:l]) - l*E(l,l,d))
+        push!(gm, sm)
+    end
+    gm
+end
