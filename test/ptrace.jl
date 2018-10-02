@@ -20,7 +20,7 @@
 end
 
 @testset "Vectors" begin
-    ϕ = 1/sqrt(2) * (ket(0, 4) + ket(3, 4))
+    ϕ = 1/sqrt(2) * (ket(1, 4) + ket(4, 4))
     ξ = ptrace(proj(ϕ), [2, 2], [2,])
     @test ξ ≈ I/2 atol=1e-15
     ξ = ptrace(ϕ, [2, 2], 2)

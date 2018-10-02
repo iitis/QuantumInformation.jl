@@ -36,8 +36,8 @@ end
 end
 
 @testset "fidelity" begin
-    ϕ = ket(0, 2)
-    ψ = ket(1, 2)
+    ϕ = ket(1, 2)
+    ψ = ket(2, 2)
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = [0.4 0.1im; -0.1im 0.6]
     @test fidelity(ϕ, ϕ) ≈ 1. atol=1e-15
@@ -63,7 +63,7 @@ end
 end
 
 @testset "von Neumann entropy" begin
-    ϕ = ket(0, 2)
+    ϕ = ket(1, 2)
     ρ = [0.25 0.25im; -0.25im 0.75]
     @test vonneumann_entropy(ϕ) == 0
     @test vonneumann_entropy(ρ) ≈ 0.25(log(64)-2sqrt(2)*acoth(sqrt(2)))

@@ -16,8 +16,8 @@ include("test_channels.jl")
     end
 
     @testset "convert to SuperOperator" begin
-        ket0 = ket(0, 2)
-        ket1 = ket(1, 2)
+        ket0 = ket(1, 2)
+        ket1 = ket(2, 2)
         ko = KrausOperators(kraus_list_u)
         Φ = convert(SuperOperator{Matrix{ComplexF64}}, ko)
         @test Φ(proj(ket1)) - proj(ket0) ≈ zero(proj(ket0))
