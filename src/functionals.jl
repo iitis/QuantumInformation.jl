@@ -107,6 +107,14 @@ end
 vonneumann_entropy(H::AbstractMatrix{<:Number}) = ishermitian(H) ? vonneumann_entropy(Hermitian(H)) : error("Non-hermitian matrix passed to entropy")
 vonneumann_entropy(ϕ::AbstractVector{T}) where T<:Number = zero(T)
 
+function renyi_entropy(ρ::Hermitian{<:Number}, α::Real)
+    α >= 0 && α!=1 ? () : throw(ArgumentError("Parameter α must be α ≥ 0 and α ≠ 1"))
+    λ = eigvals(ρ)
+    λ = λ[λ .> 0]
+    1/(1-α)*log(sum(λ.^α))
+end
+
+renyi_entropy(ρ::AbstractMatrix{<:Number}, α::Real) = renyi_entropy(Hermitian(ρ), α)
 """
 $(SIGNATURES)
 - `ρ`: quantum state.

@@ -69,6 +69,13 @@ end
     @test vonneumann_entropy(ρ) ≈ 0.25(log(64)-2sqrt(2)*acoth(sqrt(2)))
 end
 
+@testset "renyi entropy" begin
+    d = 3
+    ρ = 𝕀(d)/d
+    @test renyi_entropy(ρ, 2) == log(d)
+    @test renyi_entropy(ρ, 3) == log(d)
+end
+
 @testset "relative entropy, js divergence" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = [0.4 0.1im; -0.1im 0.6]
