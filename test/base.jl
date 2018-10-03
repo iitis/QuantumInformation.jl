@@ -1,44 +1,41 @@
 @testset "Basic functions" begin
 
 @testset "ket" begin
-    ϕ = ket(0, 4)
-    @test_throws ArgumentError ket(4,3)
+    ϕ = ket(1, 4)
     ψ = ComplexF64[1, 0, 0, 0]
     @test norm(ϕ - ψ) ≈ 0.
-    # TODO : Fix these tests: types depend on julia version
-    # @test typeof(ket(Float64, 0, 4)) == Vector{Float64}
-    # @test typeof(ket(ComplexF64, 0, 4)) == Vector{ComplexF64}
+
+    @test typeof(ket(Float64, 1, 4)) == Vector{Float64}
+    @test typeof(ket(ComplexF64, 1, 4)) == Vector{ComplexF64}
 
     @test_throws ArgumentError ket(4, 3)
 end
 
 @testset "bra" begin
-    ϕ = bra(0, 4)
+    ϕ = bra(1, 4)
     ψ = ComplexF64[1 0 0 0]
-    @test_throws ArgumentError bra(4,3)
     @test norm(ϕ - ψ) ≈ 0.
 
-    @test_throws ArgumentError ket(4, 3)
-    # TODO : Fix these tests: types depend on julia version
-    # @test typeof(bra(Float64, 0, 4)) == LinearAlgebra.Adjoint{Float64,Array{Float64,1}}
-    # @test typeof(bra(ComplexF64, 0, 4)) == LinearAlgebra.Adjoint{Complex{Float64},Array{Complex{Float64},1}}
+    @test_throws ArgumentError bra(4,3)
+
+    @test typeof(bra(Float64, 1, 4)) == LinearAlgebra.Adjoint{Float64,Array{Float64,1}}
+    @test typeof(bra(ComplexF64, 1, 4)) == LinearAlgebra.Adjoint{Complex{Float64},Array{Complex{Float64},1}}
 end
 
 @testset "ketbra" begin
-    ϕψ = ketbra(0, 0, 4)
+    ϕψ = ketbra(1, 1, 4)
     αβ = zeros(ComplexF64, 4, 4)
     αβ[1, 1] = 1
     @test norm(ϕψ - αβ) ≈ 0.
-    @test_throws ArgumentError ketbra(4,4,3)
 
     @test_throws ArgumentError ketbra(4, 4, 3)
-    # TODO : Fix these tests: types depend on julia version
-    # @test typeof(ketbra(Float64, 0, 0, 4)) == Matrix{Float64}
-    # @test typeof(ketbra(ComplexF64, 0, 0, 4)) == Matrix{ComplexF64}
+
+    @test typeof(ketbra(Float64, 1, 1, 4)) == Matrix{Float64}
+    @test typeof(ketbra(ComplexF64, 1, 1, 4)) == Matrix{ComplexF64}
 end
 
 @testset "proj" begin
-    ϕ = ket(0, 4)
+    ϕ = ket(1, 4)
     ϕϕ = proj(ϕ)
     ψψ = zeros(ComplexF64, 4 ,4)
     ψψ[1, 1] = 1

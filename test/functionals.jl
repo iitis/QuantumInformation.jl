@@ -36,8 +36,8 @@ end
 end
 
 @testset "fidelity" begin
-    ϕ = ket(0, 2)
-    ψ = ket(1, 2)
+    ϕ = ket(1, 2)
+    ψ = ket(2, 2)
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = [0.4 0.1im; -0.1im 0.6]
     @test fidelity(ϕ, ϕ) ≈ 1. atol=1e-15
@@ -62,11 +62,11 @@ end
     @test shannon_entropy(0.5*ones(20)) ≈ 10log(2) atol=1e-15
 end
 
-@testset "quantum entropy" begin
-    ϕ = ket(0, 2)
+@testset "von Neumann entropy" begin
+    ϕ = ket(1, 2)
     ρ = [0.25 0.25im; -0.25im 0.75]
-    @test quantum_entropy(ϕ) == 0
-    @test quantum_entropy(ρ) ≈ 0.25(log(64)-2sqrt(2)*acoth(sqrt(2)))
+    @test vonneumann_entropy(ϕ) == 0
+    @test vonneumann_entropy(ρ) ≈ 0.25(log(64)-2sqrt(2)*acoth(sqrt(2)))
 end
 
 @testset "relative entropy, js divergence" begin
@@ -100,17 +100,19 @@ end
     @test superfidelity(ρ, σ) ≈ superfidelity(σ, ρ)
 end
 
-@testset "(log) negativity, ppt" begin
+@testset "(log) negativity, ppt, concurrence" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = [0.4 0.1im; -0.1im 0.6]
     @test negativity(ρ ⊗ σ, [2, 2], 2) ≈ 0 atol=1e-15
     @test log_negativity(ρ ⊗ σ, [2, 2], 2) ≈ 0 atol=1e-15
     @test ppt(ρ ⊗ σ, [2, 2], 2) > 0
+    @test concurrence(ρ ⊗ σ) ≈ 0 atol=1e-15
 
     ρ = proj([1, 0, 0, 1. + 0im])/2
     @test negativity(ρ, [2, 2], 2) ≈ 1/2 atol=1e-15
     @test log_negativity(ρ, [2, 2], 2) ≈ log(2) atol=1e-15
     @test ppt(ρ, [2, 2], 2) ≈ -1/2 atol=1e-15
+    @test concurrence(ρ) ≈ 1 atol=1e-15
 
     ρ = 9/10*proj([1, 0, 0, 1. + 0im])/2 + 1/10*I/4
 

@@ -297,7 +297,7 @@ Transforms list of Kraus operators into Stinespring representation of quantum ch
 function Base.convert(::Type{Stinespring{T1}}, Φ::KrausOperators{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
     ko = orthogonalize(Φ)
     # TODO: improvement: transform to stacking
-    m = sum(k ⊗ ket(i-1, ko.idim*ko.odim) for (i, k) in enumerate(ko.matrices))
+    m = sum(k ⊗ ket(i, ko.idim*ko.odim) for (i, k) in enumerate(ko.matrices))
     Stinespring{T1}(T1(m), ko.idim, ko.odim)
 end
 
@@ -403,7 +403,7 @@ function Base.convert(::Type{KrausOperators{T1}}, Φ::POVMMeasurement{T2}) where
     v = T1[]
     for (i, p) in enumerate(Φ.matrices)
         sqrtp = sqrtm(p)
-        k = ket(i-1, Φ.odim)*sum(bra(j-1, Φ.idim)*sqrtp for j in 1:Φ.idim)
+        k = ket(i, Φ.odim)*sum(bra(j, Φ.idim)*sqrtp for j in 1:Φ.idim)
         push!(v, T1(k))
     end
     KrausOperators{T1}(v, Φ.idim, Φ.odim)
