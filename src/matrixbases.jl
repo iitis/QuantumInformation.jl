@@ -1,20 +1,42 @@
 abstract type AbstractMatrixBase{T<:AbstractMatrix{<:Number}} end
-struct ElementaryMatrixBase{T}<:AbstractMatrixBase{T}
-    channel::Channel{T}
+struct ElementaryMatrixBase{T<:AbstractMatrix{<:Number}} <: AbstractMatrixBase{T}
     dim::Int
+    length::Int
 end
 
-function ElementaryMatrixBase{T}(::Type{T}, dim::Int)
-    ElementaryMatrixBase(base_matrices(::Type{T}, dim::Int), dim)
+function ElementaryMatrixBase{T}(dim::Int) where T <: AbstractMatrix{<:Number}
+    dim > 0 ? () : error("Operator dimension has to be nonnegative")
+    ElementaryMatrixBase{T}(dim, dim^2)
 end
+
+Base.length(iter::AbstractMatrixBase{T}) where T<:AbstractMatrix{<:Number} = iter.length
+Base.eltype(iter::AbstractMatrixBase{T}) where T<:AbstractMatrix{<:Number} = T
+
+
+# function ElementaryMatrixBase{T}(::Type{T}, dim::Int) where T<:AbstractMatrix{<:Number}
+#     ElementaryMatrixBase(base_matrices(T, dim), dim)
+# end
 
 # TODO: allow rectangular matrices
-base_matrices(::Type{T}, dim::Int) where T<:Number = Channel() do c
-    dim > 0 ? () : error("Operator dimension has to be nonnegative")
-    for i=1:dim, j=1:dim
-        push!(c, ketbra(T, j, i, dim))
+function Base.iterate(iter::ElementaryMatrixBase{M}, state=(Iterators.product(1:iter.dim,1:iter.dim),)) where M<:AbstractMatrix{T} where T<:Number
+    # for i=1:dim, j=1:dim
+    #     push!(c, )
+    # end
+    it = first(state)
+    i, j = it
+    element = ketbra(T, j, i, iter.dim)
+    if i == iter.dim && j == iter.dim
+        return nothing
     end
+
+    state = iterate(it, state)
+    return(element, state)
 end
+
+import Base.length
+
+import Base.collect
+
 
 """
 $(SIGNATURES)
