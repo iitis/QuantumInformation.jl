@@ -31,8 +31,6 @@ function rand(c::CUE)
     z = rand(c.g)
     u = _qr_fix(z)
     u
-    # q,r=qr(z)
-    # collect(q)
 end
 
 function rand(c::CSE)
