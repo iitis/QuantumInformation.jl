@@ -18,7 +18,11 @@ function _qr_fix(z::AbstractMatrix)
     d = diag(r)
     ph = d./abs.(d)
     q = Matrix(q)
-    q .* repeat(ph, 1, size(q, 1))'
+    for i=1:size(q, 1)
+        q[:, i] .*= ph[i]
+    end
+    # q .* repeat(ph, 1, size(q, 1))'
+    q
 end
 
 function rand(c::COE)
