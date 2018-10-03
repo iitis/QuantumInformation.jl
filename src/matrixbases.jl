@@ -1,10 +1,12 @@
 abstract type AbstractMatrixBase{T<:AbstractMatrix{<:Number}} end
-struct ElementaryMatrixBase{T}<:AbstractMatrixBase{T} where T<:AbstractMatrix{<:Number}
-    channel::Channel{T},
+struct ElementaryMatrixBase{T}<:AbstractMatrixBase{T}
+    channel::Channel{T}
     dim::Int
 end
 
-
+function ElementaryMatrixBase{T}(::Type{T}, dim::Int)
+    ElementaryMatrixBase(base_matrices(::Type{T}, dim::Int), dim)
+end
 
 # TODO: allow rectangular matrices
 base_matrices(::Type{T}, dim::Int) where T<:Number = Channel() do c
