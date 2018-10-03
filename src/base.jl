@@ -169,8 +169,7 @@ $(SIGNATURES)
 
 Returns elementary hermitian matrices of dimension dim x dim.
 """
-function base_hermitian_matrices(dim)
-    bhm = Any[]
+base_hermitian_matrices(dim) = Channel(ctype=Matrix{ComplexF64}) do bhm
     for (a, b) in Base.product(0:dim-1, 0:dim-1)
         if a > b
             x = 1 / sqrt(2) * (1im * ketbra(a, b, dim) - 1im * ketbra(b, a, dim))
@@ -186,11 +185,11 @@ function base_hermitian_matrices(dim)
     bhm
 end
 
-
-function base_generlized_pauli_matrices(d)
+base_generlized_pauli_matrices(d) = Channel(ctype=Matrix{ComplexF64}) do gm
     E(i,j,d) = ketbra(j,i,d)
 
-    gm = Any[sum([E(i,i,d) for i in 0:d-1])]
+    sm = sum([E(i,i,d) for i in 0:d-1])
+    push!(gm, sm)
     for j in 0:d-2
         for k in j+1:d-1
             sm = E(j,k,d) + E(k,j,d)
