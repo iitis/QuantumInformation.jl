@@ -34,14 +34,14 @@ end
 function random_mixed_state(steps::Int, d::Int)
   dist = HilbertSchmidtStates(d)
   for i=1:steps
-    ρ = rand(dist)
+    ρ =rand(dist)
   end
 end
 
 function random_channel(steps::Int, d::Int)
   dist = ChoiJamiolkowskiMatrices(round(Int, sqrt(d)))
   for i=1:steps
-    Φ = rand(dist)
+    Φ = convert(SuperOperator{Matrix{ComplexF64}}, rand(dist))
   end
 end
 
@@ -64,17 +64,18 @@ function entropy_stationary(steps::Int, d::Int)
     dist = ChoiJamiolkowskiMatrices(round(Int, sqrt(d)))
     for i=1:steps
       Φ = rand(dist)
-      F = eigen(reshuffle(Φ.matrix))
+      F = eigen(convert(SuperOperator{Matrix{ComplexF64}}, Φ).matrix)
       idx = findfirst(x->isapprox(x, 1), F.values)
-      ρ = Matrix(unres(F.vectors[:, idx]))
-      ρ ./= tr(ρ)
-      shannon_entropy(real(eigvals(ρ)))
+      ρ = unres(F.vectors[:, idx])
+      ρ = Hermitian(ρ ./ tr(ρ))
+      vonneumann_entropy(ρ)
     end
 end
 
 function savect(steps::Int, dims::Vector)
   filename = replace("res/$(steps)_$(dims)_random.jld2", "["=>"")
   filename = replace(filename, "]"=>"")
+  filename = replace(filename, "' '"=>"")
   cases = [(random_unitary, "random_unitary"), (random_pure_state, "random_pure_state"),
   (random_mixed_state, "random_mixed_state"), (random_channel, "random_channel"),
   (entropy_stationary, "entropy_stationary"), (trace_distance_max_mixed, "trace_distance_max_mixed"),

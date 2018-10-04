@@ -5,7 +5,7 @@ import argparse
 
 def unres(op):
     n = int(np.sqrt(op.shape[0]))
-    return op.T.reshape(n, n)
+    return np.asmatrix(op.T.reshape(n, n))
 
 def reshuffle(op):
     r, c = op.shape
@@ -57,7 +57,7 @@ def trace_distance_random(steps, d):
 
 
 def trace_distance_max_mixed(steps, d):
-    rho = np.eye(d) / d
+    rho = q.Qobj(np.eye(d) / d)
     for _ in range(steps):
         q.metrics.tracedist(q.rand_dm_hs(d), rho)
 
@@ -65,15 +65,15 @@ def trace_distance_max_mixed(steps, d):
 def entropy_stationary(steps, d):
     for _ in range(steps):
         phi = q.rand_super_bcsz(int(np.sqrt(d)))
-        vals, vecs = np.linalg.eig(reshuffle(phi))
-        idx = np.where(vals == 1.)
-        rho = q.Qobj(unres(vecs[:, idx]))
-        rho /= np.trace(rho)
+        vals, vecs = np.linalg.eig(phi.data.todense())
+        idx = np.where(np.isclose(vals, 1.))[0]
+        rho = unres(vecs[:, idx])
+        rho = q.Qobj(rho/np.trace(rho))
         q.entropy_vn(rho)
 
 
 def savect(steps, dims):
-    filename = "res/$(steps)_$(dims)_random.jld2".replace("[", "").replace("]", "")
+    filename = "res/{}_{}_random".format(steps, dims).replace("[", "").replace("]", "").replace(" ", "")
     cases = [(random_unitary, "random_unitary"), (random_pure_state, "random_pure_state"),
              (random_mixed_state, "random_mixed_state"), (random_channel, "random_channel"),
              (entropy_stationary, "entropy_stationary"), (trace_distance_max_mixed, "trace_distance_max_mixed"),
