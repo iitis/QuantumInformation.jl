@@ -3,6 +3,23 @@ import numpy as np
 from timeit import default_timer as timer
 import argparse
 
+def unres(op):
+    n = int(np.sqrt(op.shape[0]))
+    return op.T.reshape(n, n)
+
+def reshuffle(op):
+    r, c = op.shape
+    sqrtr = int(np.sqrt(r))
+    sqrtc = int(np.sqrt(c))
+    dimrows = [sqrtr, sqrtr]
+    dimcolumns = [sqrtc, sqrtc]
+
+    tensor = np.asarray(op.data.todense()).reshape(dimrows + dimcolumns)
+    perm = list(range(4))
+    perm[1], perm[2] = perm[2], perm[1]
+    tensor = tensor.transpose(perm)
+    r1, r2, c1, c2 = tensor.shape
+    return np.asmatrix(tensor.reshape((r1 * r2, c1 * c2)))
 
 def comptime(ccalc, steps, dims):
     comptimes = np.zeros(len(dims))
