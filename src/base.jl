@@ -123,7 +123,7 @@ $(SIGNATURES)
 - `dims`: dimensions of registers of `ρ`.
 - `systems`: permuted registers.
 
-Returns state ρ with permutated registers denoted by `systems`.
+Returns state ρ with permuted registers denoted by `systems`.
 """
 function permutesystems(ρ::AbstractMatrix{T}, dims::Vector{Int}, systems::Vector{Int}) where T<:Number
     if size(ρ,1)!=size(ρ,2)
@@ -139,7 +139,7 @@ function permutesystems(ρ::AbstractMatrix{T}, dims::Vector{Int}, systems::Vecto
     perm_1 = systems
     perm_2 = [p + offset for p in perm_1]
     perm = [perm_1 ; perm_2] # vcat(perm_1 ; perm_2)
-    reversed_indices = (length(perm):-1:1...)
+    reversed_indices = ([length(perm):-1:1]...,)
     reversed_dims = reverse(dims)
     tensor = reshape(ρ, tuple([reversed_dims ; reversed_dims]...))
 
