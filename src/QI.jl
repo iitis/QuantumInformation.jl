@@ -51,7 +51,7 @@ include("functionals.jl")
 include("reshuffle.jl")
 include("ptrace.jl")
 include("ptranspose.jl")
-include("matrixbases.jl")
+# include("matrixbases.jl")
 
 include("convex.jl") # Convex.jl does not support julia 0.7 yet
 
