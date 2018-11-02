@@ -109,7 +109,7 @@ function ispositive(ρ::AbstractMatrix{<:Number}; atol=1e-13)
 end
 
 
-isnumbernotint(T::Type) = !((T <: Real && !(T <: Integer)) || (T <: Complex))
+isnumbernotint(T::Type) = ((T <: Real && !(T <: Integer)) || (T <: Complex))
 
 #function random_vector_fixed_l1_l2(l1::Real, l2::Real, d::Int)
 #  #from here http://stats.stackexchange.com/questions/61692/generating-vectors-under-constraints-on-1-and-2-norm
