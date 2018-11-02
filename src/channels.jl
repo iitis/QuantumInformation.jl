@@ -350,11 +350,14 @@ $(SIGNATURES)
 Transforms dynamical matrix into list of Kraus operators.
 """
 function Base.convert(::Type{KrausOperators{T1}}, Φ::DynamicalMatrix{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+    isnumbernotint(eltype(T1)) ? () : throw(ArgumentError("Kraus operators element type must be subtype of Real or Complex"))
+
     d = copy(Φ.matrix)
     for i=1:size(d, 1)
         d[i, i] = real(d[i, i])
     end
     F = eigen(Hermitian(d))
+
     v = T1[]
     for i in 1:length(F.values)
         if F.values[i] >= 0.0
@@ -400,6 +403,7 @@ end
 function Base.convert(::Type{KrausOperators{T1}}, Φ::POVMMeasurement{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
     # TODO : Verify!
     # v = T1[ket(i-1, Φ.odim)*bra(j-1, Φ.idim)*sqrtm(p) for (i, p) in enumerate(Φ.matrices) for j in 1:Φ.idim]
+    isnumbernotint(eltype(T1)) ? () : throw(ArgumentError("Kraus operators element type must be subtype of Real or Complex"))
     v = T1[]
     for (i, p) in enumerate(Φ.matrices)
         sqrtp = sqrtm(p)

@@ -8,8 +8,9 @@ k1 = [1 0; 0 sqrt(1-α)]
 k2 = [0 sqrt(α); 0 0]
 kraus_list_ad = [k1, k2]
 
-k1 = [1 0 0; 0 1 0]
-k2 = [0 0 1; 0 0 0]
+# TODO: change to integers
+k1 = [1.0 0 0; 0 1 0]
+k2 = [0.0 0 1; 0 0 0]
 kraus_list_dim = [k1, k2]
 
 J_random = [
