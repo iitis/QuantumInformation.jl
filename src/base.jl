@@ -144,7 +144,6 @@ function permutesystems(ρ::AbstractMatrix{T}, dims::Vector{Int}, systems::Vecto
     tensor = reshape(ρ, tuple([reversed_dims ; reversed_dims]...))
 
     # reversed_tensor is introduced because of differences how arrays are stored and reshaped in julia and numpy
-    println(reversed_indices)
     reversed_tensor = permutedims(tensor, reversed_indices)
     reversed_transposed_tensor = permutedims(reversed_tensor, perm)
     transposed_tensor = permutedims(reversed_transposed_tensor, reversed_indices)
