@@ -24,4 +24,15 @@
         @test sum(abs.(permutesystems(initial, [2,2,2,2], [4,3,1,2]) - permuted)) ≈ 0. atol=1e-15
 
     end
+
+    @testset "Different dimensions" begin
+        # the following example has been generated
+        # using original python implementation of permute_systems
+
+        initial = diagm(1:24)
+        permuted = diagm([1,13,2,14,3,15,4,16,5,17,6,18,7,19,8,20,9,21,10,22,11,23,12,24])
+
+        @test sum(abs.(permute_systems(initial, [2,3,4], [2,3,1]) - permuted)) ≈ 0. atol=1e-15
+    end
 end
+
