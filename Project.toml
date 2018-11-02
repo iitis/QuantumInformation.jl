@@ -1,0 +1,10 @@
+name = "QI"
+uuid = "cfb779d8-dc69-11e8-2b1e-47fdb385957e"
+authors = ["Dariusz Kurzyk <dkurzyk@iitis.pl>", "Łukasz Pawela <lpawela@iitis.pl>", "Piotr Gawron <gawron@iitis.pl>", "Marcin Przewięźlikowski <m.przewie@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+Distributions = "31c24e10-a181-5473-b8eb-7969acd0382f"
+DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+TensorOperations = "6aa20fa7-93e2-5fca-9bc0-fbd0db3c71a2"
