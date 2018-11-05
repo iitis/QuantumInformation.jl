@@ -53,6 +53,6 @@ include("ptrace.jl")
 include("ptranspose.jl")
 # include("matrixbases.jl")
 
-include("convex.jl") # Convex.jl does not support julia 0.7 yet
+#include("convex.jl") # Convex.jl does not support julia 0.7 yet
 
 end # module
