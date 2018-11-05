@@ -39,6 +39,14 @@ end
 """
 $(SIGNATURES)
 - `ρ`: matrix.
+
+Return the purity of `ρ` ∈ [1/d, 1]
+"""
+purity(ρ::AbstractMatrix{<:Number}) = tr(ρ^2)
+
+"""
+$(SIGNATURES)
+- `ρ`: matrix.
 - `σ`: matrix.
 
 Return square root of [fidelity](https://www.quantiki.org/wiki/fidelity) between matrices `ρ` and `σ`.
