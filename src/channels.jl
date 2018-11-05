@@ -453,7 +453,7 @@ $(SIGNATURES)
 - `Φ`: list of vectors.
 - `ρ`: input matrix.
 
-Return mapping of `kraus_list` on `ρ`. Krauss representation of quantum channel
+Return application of channel `Φ`` on `ρ`. Kraus representation of quantum channel
 \$\\Phi\$ is a set \$\\{K_i\\}_{i\\in I}\$ of bounded operators on \$\\mathcal{H}\$
 such that \$\\sum_{i\\in I} K_i^\\dagger K_i = \\mathcal{1}\$.
 Then \$\\Phi(\\rho)=\\sum_{i\\in I} K_i \\rho K_i^\\dagger\$.
