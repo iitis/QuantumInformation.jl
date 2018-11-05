@@ -75,7 +75,7 @@ end
 function savect(steps::Int, dims::Vector)
   filename = replace("res/$(steps)_$(dims)_random.jld2", "["=>"")
   filename = replace(filename, "]"=>"")
-  filename = replace(filename, "' '"=>"")
+  filename = replace(filename, " "=>"")
   cases = [(random_unitary, "random_unitary"), (random_pure_state, "random_pure_state"),
   (random_mixed_state, "random_mixed_state"), (random_channel, "random_channel"),
   (entropy_stationary, "entropy_stationary"), (trace_distance_max_mixed, "trace_distance_max_mixed"),
