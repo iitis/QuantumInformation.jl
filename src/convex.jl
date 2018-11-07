@@ -26,7 +26,6 @@ function norm_diamond(Φ::DynamicalMatrix{T}) where T<:AbstractMatrix{<:Number}
 
     problem = maximize(t, constraints)
     solve!(problem, SCSSolver(verbose=0))
-    print(problem)
     problem.optval
 end
 
