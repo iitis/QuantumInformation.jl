@@ -3,13 +3,13 @@
 @testset "number2mixedradix" begin
    number = 486
    bases = Int64[8, 42, 2]
-   @test_broken number2mixedradix(number, bases) == Int64[3, 7, 0]
+   @test number2mixedradix(number, bases) == Int64[5, 33, 0]
 end
 
 @testset "mixedradix2number" begin
-   number = Int64[3, 7, 0]
+   number = Int64[5, 33, 0]
    bases = Int64[8, 42, 2]
-   @test_broken mixedradix2number(number, bases) == 486
+   @test mixedradix2number(number, bases) == 486
 end
 
 @testset "renormalize" begin

@@ -10,8 +10,8 @@ WishartEnsemble,
 WignerEnsemble,
 rand
 
-include("circular.jl")
 include("ginibre.jl")
+include("circular.jl")
 include("wigner.jl")
 include("wishart.jl")
 end

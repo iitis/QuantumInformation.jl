@@ -1,8 +1,8 @@
-function ket(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractVector{T} where T<:Number
+function ket(::Type{T}, val::Int, dim::Int) where T<:Number
     dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
-    val < dim ? () : throw(ArgumentError("Label have to be smaller than vector dimmension"))
+    1 <= val <= dim ? () : throw(ArgumentError("Label have to be smaller than vector dimension"))
     ψ = zeros(T, dim)
-    ψ[val+1] = one(T)
+    ψ[val] = one(T)
     ψ
 end
 
@@ -13,9 +13,9 @@ $(SIGNATURES)
 
 Return complex column vector \$|val\\rangle\$ of unit norm describing quantum state.
 """
-ket(val::Int, dim::Int) = ket(Vector{ComplexF64}, val, dim)
+ket(val::Int, dim::Int) = ket(ComplexF64, val, dim)
 
-bra(::Type{Tv}, val::Int, dim::Int) where Tv<:AbstractVector{<:Number} = ket(Tv, val, dim)'
+bra(::Type{T}, val::Int, dim::Int) where T<:Number = ket(T, val, dim)'
 
 """
 $(SIGNATURES)
@@ -24,13 +24,13 @@ $(SIGNATURES)
 
 Return Hermitian conjugate \$\\langle val| = |val\\rangle^\\dagger\$ of the ket with the same label.
 """
-bra(val::Int, dim::Int) = bra(Vector{ComplexF64}, val, dim)
+bra(val::Int, dim::Int) = bra(ComplexF64, val, dim)
 
-function ketbra(::Type{Tm}, valk::Int, valb::Int, dim::Int) where Tm<:AbstractMatrix{T} where T<:Number
+function ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:Number
     dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
-    valk < dim && valb < dim ? () : throw(ArgumentError("Ket and bra labels have to be smaller than operator dimmension"))
+    1 <= valk <= dim && 1 <= valb <= dim ? () : throw(ArgumentError("Ket and bra labels have to be smaller than operator dimension"))
     ρ = zeros(T, dim, dim)
-    ρ[valk+1,valb+1] = one(T)
+    ρ[valk,valb] = one(T)
     ρ
 end
 
@@ -42,7 +42,7 @@ $(SIGNATURES)
 
 # Return outer product \$|valk\\rangle\\langle vakb|\$ of states \$|valk\\rangle\$ and \$|valb\\rangle\$.
 """
-ketbra(valk::Int, valb::Int, dim::Int) = ketbra(Matrix{ComplexF64}, valk, valb, dim)
+ketbra(valk::Int, valb::Int, dim::Int) = ketbra(ComplexF64, valk, valb, dim)
 
 """
 $(SIGNATURES)
@@ -52,21 +52,7 @@ Return outer product \$|ket\\rangle\\langle ket|\$ of `ket`.
 """
 proj(ψ::AbstractVector{<:Number}) = ψ * ψ'
 
-# TODO: allow rectangular matrices
-base_matrices(::Type{Tm}, dim::Int) where Tm<:AbstractMatrix{<:Number} = Channel() do c
-    dim > 0 ? () : error("Operator dimension has to be nonnegative")
-    for i=0:dim-1, j=0:dim-1
-        push!(c, ketbra(Tm, j, i, dim))
-    end
-end
 
-"""
-$(SIGNATURES)
-- `dim`: length of the matrix.
-
-Returns elementary matrices of dimension `dim` x `dim`.
-"""
-base_matrices(dim::Int) = base_matrices(Matrix{ComplexF64}, dim)
 
 """
 $(SIGNATURES)
@@ -137,7 +123,7 @@ $(SIGNATURES)
 - `dims`: dimensions of registers of `ρ`.
 - `systems`: permuted registers.
 
-Returns state ρ with permutated registers denoted by `systems`.
+Returns state ρ with permuted registers denoted by `systems`.
 """
 function permutesystems(ρ::AbstractMatrix{T}, dims::Vector{Int}, systems::Vector{Int}) where T<:Number
     if size(ρ,1)!=size(ρ,2)
@@ -153,7 +139,7 @@ function permutesystems(ρ::AbstractMatrix{T}, dims::Vector{Int}, systems::Vecto
     perm_1 = systems
     perm_2 = [p + offset for p in perm_1]
     perm = [perm_1 ; perm_2] # vcat(perm_1 ; perm_2)
-    reversed_indices = (length(perm):-1:1...)
+    reversed_indices = tuple(collect(length(perm):-1:1)...)
     reversed_dims = reverse(dims)
     tensor = reshape(ρ, tuple([reversed_dims ; reversed_dims]...))
 
@@ -163,20 +149,3 @@ function permutesystems(ρ::AbstractMatrix{T}, dims::Vector{Int}, systems::Vecto
     transposed_tensor = permutedims(reversed_transposed_tensor, reversed_indices)
     return reshape(transposed_tensor, size(ρ))
 end
-
-
-#=
-TODO: port to julia
-def base_hermitian_matrices(dim):
-    """
-    Generator. Returns elementary hermitian matrices of dimension dim x dim.
-    """
-    for (a, b) in product(xrange(dim), repeat=2):
-        if a > b:
-            yield 1 / np.sqrt(2) * np.matrix(1j * ketbra(a, b, dim) - 1j * ketbra(b, a, dim))
-        elif a < b:
-            yield 1 / np.sqrt(2) * np.matrix(ketbra(a, b, dim) + ketbra(b, a, dim))
-        else:
-            yield np.matrix(ketbra(a, b, dim))
-
-=#

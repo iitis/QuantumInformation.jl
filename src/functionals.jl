@@ -14,8 +14,7 @@ $(SIGNATURES)
 Return [trace distance](https://www.quantiki.org/wiki/trace-distance) between matrices `A` and `B`.
 """
 function trace_distance(A::AbstractMatrix{T1}, B::AbstractMatrix{T2}) where {T1<:Number, T2<:Number}
-    T = promote_type(T1, T2)
-    one(T)/2 * norm_trace(A - B)
+    norm_trace(A - B) / 2
 end
 
 """
@@ -36,6 +35,14 @@ Return [Hilbert–Schmidt distance](https://en.wikipedia.org/wiki/Hilbert%E2%80%
 function hs_distance(A::AbstractMatrix{<:Number}, B::AbstractMatrix{<:Number})
     norm_hs(A - B)
 end
+
+"""
+$(SIGNATURES)
+- `ρ`: matrix.
+
+Return the purity of `ρ` ∈ [1/d, 1]
+"""
+purity(ρ::AbstractMatrix{<:Number}) = tr(ρ^2)
 
 """
 $(SIGNATURES)
@@ -100,14 +107,22 @@ $(SIGNATURES)
 
 Return [Von Neumann entropy](https://en.wikipedia.org/wiki/Von_Neumann_entropy) of quantum state `ρ`.
 """
-function quantum_entropy(ρ::Hermitian{<:Number})
+function vonneumann_entropy(ρ::Hermitian{<:Number})
     λ = eigvals(ρ)
     shannon_entropy(λ[λ .> 0])
 end
 
-quantum_entropy(H::AbstractMatrix{<:Number}) = ishermitian(H) ? quantum_entropy(Hermitian(H)) : error("Non-hermitian matrix passed to entropy")
-quantum_entropy(ϕ::AbstractVector{T}) where T<:Number = zero(T)
+vonneumann_entropy(H::AbstractMatrix{<:Number}) = ishermitian(H) ? vonneumann_entropy(Hermitian(H)) : error("Non-hermitian matrix passed to entropy")
+vonneumann_entropy(ϕ::AbstractVector{T}) where T<:Number = zero(T)
 
+function renyi_entropy(ρ::Hermitian{<:Number}, α::Real)
+    α >= 0 && α!=1 ? () : throw(ArgumentError("Parameter α must be α ≥ 0 and α ≠ 1"))
+    λ = eigvals(ρ)
+    λ = λ[λ .> 0]
+    1/(1-α)*log(sum(λ.^α))
+end
+
+renyi_entropy(ρ::AbstractMatrix{<:Number}, α::Real) = renyi_entropy(Hermitian(ρ), α)
 """
 $(SIGNATURES)
 - `ρ`: quantum state.
@@ -117,7 +132,7 @@ Return [quantum relative entropy](https://en.wikipedia.org/wiki/Quantum_relative
 """
 function relative_entropy(ρ::AbstractMatrix{<:Number}, σ::AbstractMatrix{<:Number})
     log_σ = funcmh(log, σ)
-    real(-quantum_entropy(ρ) - tr(ρ * log_σ))
+    real(-vonneumann_entropy(ρ) - tr(ρ * log_σ))
 end
 
 """
@@ -172,7 +187,7 @@ $(SIGNATURES)
 Return [superfidelity](https://www.quantiki.org/wiki/superfidelity) between quantum states `ρ` and `σ`.
 """
 function superfidelity(ρ::AbstractMatrix{<:Number}, σ::AbstractMatrix{<:Number})
-    return tr(ρ'*σ) + sqrt(1 - tr(ρ'*ρ)) * sqrt(1 - tr(σ'*σ))
+    return real(tr(ρ'*σ) + sqrt(1 - tr(ρ'*ρ)) * sqrt(1 - tr(σ'*σ)))
 end
 
 """
@@ -213,4 +228,20 @@ Return minimum eigenvalue of [positive partial transposition](https://www.quanti
 function ppt(ρ::AbstractMatrix{<:Number}, dims::Vector{Int}, sys::Int)
     ρ_s = ptranspose(ρ, dims, sys)
     minimum(eigvals(ρ_s))
+end
+
+"""
+$(SIGNATURES)
+- `ρ`: quantum state.
+
+Calculates the [concurrence of a two-qubit system](https://en.wikipedia.org/wiki/Concurrence_(quantum_computing)) `ρ`.
+"""
+function concurrence(ρ::AbstractMatrix{<:Number})
+    if size(ρ, 1) != 4
+        throw(ArgumentError("Concurrence only properly defined for two qubit systems"))
+    end
+
+    σ = (sy ⊗ sy)*conj.(ρ)*(sy ⊗ sy)
+    λ = sqrt.(sort(real(eigvals(ρ*σ)), rev=true))
+    max(0, λ[1]-λ[2]-λ[3]-λ[4])
 end

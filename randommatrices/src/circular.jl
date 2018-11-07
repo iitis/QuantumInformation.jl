@@ -1,9 +1,11 @@
 struct CircularEnsemble{β} <: ContinuousMatrixDistribution
     d::Int
+    g::GinibreEnsemble{2}
 
     function CircularEnsemble{β}(d::Int) where β
         β == 4 && mod(d, 2) == 1 ? throw(ArgumentError("Dim must even")) : ()
-        new(d)
+        g = GinibreEnsemble{2}(d)
+        new(d, g)
     end
 end
 
@@ -15,23 +17,28 @@ function _qr_fix(z::AbstractMatrix)
     q, r = qr(z)
     d = diag(r)
     ph = d./abs.(d)
-    q .* repeat(ph, 1, size(q, 1))'
+    q = Matrix(q)
+    for i=1:size(q, 1)
+        q[:, i] .*= ph[i]
+    end
+    # q .* repeat(ph, 1, size(q, 1))'
+    q
 end
 
 function rand(c::COE)
-    z = rand(GinibreEnsemble(c.d))
+    z = rand(c.g)
     u = _qr_fix(z)
     transpose(u)*u
 end
 
 function rand(c::CUE)
-    z = rand(GinibreEnsemble(c.d))
+    z = rand(c.g)
     u = _qr_fix(z)
     u
 end
 
 function rand(c::CSE)
-    z = rand(GinibreEnsemble(c.d))
+    z = rand(c.g)
     u = _qr_fix(z)
     #TODO this does not require matrix multiplication
     a = diagm(-ones(c.d-1), 1) + diagm(ones(c.d-1), -1)
@@ -41,18 +48,30 @@ end
 
 struct CircularRealEnsemble <: ContinuousMatrixDistribution
     d::Int
+    g::GinibreEnsemble{1}
+
+    function CircularRealEnsemble(d::Int)
+        g = GinibreEnsemble{1}(d)
+        new(d, g)
+    end
 end
 
 function rand(c::CircularRealEnsemble)
-    z = rand(GinibreEnsemble{1}(c.d))
+    z = rand(c.g)
     _qr_fix(z)
 end
 
 struct CircularQuaternionEnsemble <: ContinuousMatrixDistribution
     d::Int
+    g::GinibreEnsemble{4}
+
+    function CircularRealEnsemble(d::Int)
+        g = GinibreEnsemble{4}(d)
+        new(d, g)
+    end
 end
 
 function rand(c::CircularQuaternionEnsemble)
-    z = rand(GinibreEnsemble{4}(c.d))
+    z = rand(c.g)
     _qr_fix(z)
 end

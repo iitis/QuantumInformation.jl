@@ -23,11 +23,7 @@ function ptrace(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, isystems::Vect
     keep = setdiff(1:offset, systems)
 
     traceidx = [1:offset; 1:offset]
-    for d in 1:offset
-        if d in keep
-            traceidx[offset + d] += offset
-        end
-    end
+    traceidx[keep] .+= offset
 
     tensor = reshape(ρ, [dims; dims]...)
     keepdim = prod([size(tensor, x) for x in keep])
