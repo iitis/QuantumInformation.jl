@@ -1,7 +1,7 @@
 name = "QI"
 uuid = "cfb779d8-dc69-11e8-2b1e-47fdb385957e"
 authors = ["Dariusz Kurzyk <dkurzyk@iitis.pl>", "Łukasz Pawela <lpawela@iitis.pl>", "Piotr Gawron <gawron@iitis.pl>", "Marcin Przewięźlikowski <m.przewie@gmail.com>"]
-version = "0.0.0"
+version = "0.3.2"
 
 [deps]
 Convex = "f65535da-76fb-5f13-bab9-19810c17039a"

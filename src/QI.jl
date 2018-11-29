@@ -6,6 +6,7 @@ using LinearAlgebra
 using SparseArrays
 using DocStringExtensions
 using TensorOperations
+using Convex, SCS
 
 import Base: convert, size, length, kron, *, rand, show
 
@@ -36,7 +37,9 @@ KrausOperators, SuperOperator, DynamicalMatrix, Stinespring,
 UnitaryChannel, IdentityChannel,
 POVMMeasurement, PostSelectionMeasurement,
 ispovm, iseffect,
-kron, compose, show
+kron, compose, show,
+norm_diamond, diamond_distance
+
 
 include("../randommatrices/src/RandomMatrices.jl")
 using .RandomMatrices
@@ -51,8 +54,7 @@ include("functionals.jl")
 include("reshuffle.jl")
 include("ptrace.jl")
 include("ptranspose.jl")
-# include("matrixbases.jl")
-
-include("convex.jl") # Convex.jl does not support julia 0.7 yet
+include("convex.jl")
+# include("matrixbases.jl") # unfinished
 
 end # module

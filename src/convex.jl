@@ -1,12 +1,8 @@
-using Convex, SCS, LinearAlgebra
-export norm_diamond, diamond_distance
 """
 $(SIGNATURES)
-- `J`: matrix.
-- `d1`: ?.
-- `d2`: ?.
+- `Φ`: DynamicalMatrix
 
-Return [diamond norm](https://arxiv.org/pdf/1004.4110.pdf) of matrix `J`.
+Return [diamond norm](https://arxiv.org/pdf/1004.4110.pdf) of dynamical matrix `Φ`.
 """
 function norm_diamond(Φ::DynamicalMatrix{T}) where T<:AbstractMatrix{<:Number}
     J = Φ.matrix
@@ -35,12 +31,10 @@ end
 
 """
 $(SIGNATURES)
-- `J1`: matrix.
-- `J2`: matrix.
-- `d1`: ?.
-- `d2`: ?.
+- `Φ1`: DynamicalMatrix
+- `Φ2`: DynamicalMatrix
 
-Return [diamond distance](https://arxiv.org/pdf/1004.4110.pdf) between matrices `J1` and `J2`.
+Return [diamond distance](https://arxiv.org/pdf/1004.4110.pdf) between dynamical matrices `Φ1` and `Φ2`.
 """
 function diamond_distance(Φ1::DynamicalMatrix{T}, Φ2::DynamicalMatrix{T}) where T<:AbstractMatrix{<:Number}
     J1 = Φ1.matrix
