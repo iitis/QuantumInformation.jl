@@ -1,29 +1,33 @@
 using JLD2
 using FileIO
 using NPZ
-using Plots
+using PyCall
+@pyimport matplotlib as mpl
+mpl.rc("text", usetex=true)
+@pyimport pylab as pl
 using LaTeXStrings
 ##
-filename_base = "examples/res/100_4,16,64,256_random"
+filename_base = "examples/res/100_4,16,64,256,1024_random"
 ##
 data_qutip = NPZ.npzread(filename_base*".npz")
 data_julia = load(filename_base*".jld2")
 ##
 labels = keys(data_julia)
 results = Dict()
-p = undef
 for l in labels
     if l == "dims" || l == "steps" continue end
     println(l)
     results[l] = data_qutip[l] ./ data_julia[l]
-    # p = plot(data_qutip["dims"], results[l], title=l)
-    p=plot(data_qutip["dims"], [data_qutip[l], data_julia[l]], marker=[:o :^],
-    label=["qutip", "julia"], legend=:topleft)
-    xticks!(p, (collect(0:50:250),[latexstring("$(i)") for i in collect(0:50:250)]))
-    xlabel!(p, L"d")
-    ylabel!(p, L"t")
-    savefig("$(filename_base)_$(l).pdf")
-    display(p)
+
+    fig, ax = pl.subplots(figsize=(4,3))
+    ax[:semilogy](data_qutip["dims"], data_qutip[l], "-o",
+    label="\$\\mathrm{QuTiP}\$")
+    ax[:semilogy](data_qutip["dims"], data_julia[l], "-^",
+    label="\$\\mathrm{QI.jl}\$")
+    fig[:legend](bbox_to_anchor = (0.9,0.6))
+    ax[:set_xticks]([4, 64, 256, 1024])
+    ax[:set_xlabel]("\$d\$")
+    ax[:set_ylabel]("\$t\$")
+    pl.savefig("$(filename_base)_$(l).pdf", bbox_inches="tight")
+    pl.close(fig)
 end
-# l = collect(labels)[3]
-# plot(data_qutip["dims"], results[l])
