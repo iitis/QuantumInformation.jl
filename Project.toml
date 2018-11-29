@@ -1,4 +1,4 @@
-name = "QI"
+name = "QuantumInformation"
 uuid = "cfb779d8-dc69-11e8-2b1e-47fdb385957e"
 authors = ["Dariusz Kurzyk <dkurzyk@iitis.pl>", "Łukasz Pawela <lpawela@iitis.pl>", "Piotr Gawron <gawron@iitis.pl>", "Marcin Przewięźlikowski <m.przewie@gmail.com>"]
 version = "0.4.0"

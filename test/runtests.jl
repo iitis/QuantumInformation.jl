@@ -1,4 +1,4 @@
-using QI
+using QuantumInformation
 using Random
 
 using LinearAlgebra

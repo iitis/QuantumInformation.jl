@@ -1,14 +1,9 @@
-using Documenter, QI
+using Documenter, QuantumInformation
 
-# Pusty makedocs generuje dokumentacje w domyslnym
-# formacie markdown.
-# makedocs(
-#
-# )
 makedocs(
     clean = true,
     format = :html,
-    sitename = "QI.jl",
+    sitename = "QuantumInformation.jl",
     authors = "Piotr Gawron, Dariusz Kurzyk, Łukasz Pawela",
     assets = ["assets/favicon.ico"],
     pages = [
@@ -20,9 +15,9 @@ makedocs(
             "man/functionals.md",
             "man/random.md"
         ],
-        "Library" => "lib/QI.md"
+        "Library" => "lib/QuantumInformation.md"
         # Any[
-        #     "lib/QI.md",
+        #     "lib/QuantumInformation.md",
         #     "lib/content/base.md",
         #     "lib/content/gates.md",
         #     "lib/content/randommatrix.md",
@@ -35,7 +30,7 @@ makedocs(
 deploydocs(
     deps = Deps.pip("pygments", "mkdocs", "python-markdown-math"),
     target = "build",
-    repo = "github.com/ZKSI/QI.jl.git",
-    julia = "0.6.3",
+    repo = "github.com/ZKSI/QuantumInformation.jl.git",
+    julia = "1.0",
     latest = "master"
 )

@@ -9,11 +9,11 @@ notifications:
   email: false
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia -e 'using Pkg; pkg"build QI"; pkg"add StatsBase"; pkg"add Test"; pkg"test QI --coverage"'
+  - julia -e 'using Pkg; pkg"build QuantumInformation"; pkg"add StatsBase"; pkg"add Test"; pkg"test QuantumInformation --coverage"'
   - julia -e 'using Pkg; pkg"add Distributions"';
   - julia --code-coverage randommatrices/test/runtests.jl
 
 after_success:
-  - julia -e 'cd(import QI; joinpath(dirname(pathof(QI)), ".."); using Pkg; pkg"add Coverage"; using Coverage; Coveralls.submit(vcat(process_folder(), process_folder("randommatrices/src")))'
+  - julia -e 'cd(import QuantumInformation; joinpath(dirname(pathof(QuantumInformation)), ".."); using Pkg; pkg"add Coverage"; using Coverage; Coveralls.submit(vcat(process_folder(), process_folder("randommatrices/src")))'
   - julia -e 'using Pkg; pkg"add Documenter"'
-  - julia -e 'cd(import QI; joinpath(dirname(pathof(QI)), ".."); include(joinpath("docs", "make.jl"))'
+  - julia -e 'cd(import QuantumInformation; joinpath(dirname(pathof(QuantumInformation)), ".."); include(joinpath("docs", "make.jl"))'

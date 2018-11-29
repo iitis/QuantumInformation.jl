@@ -23,7 +23,7 @@ for l in labels
     ax[:semilogy](data_qutip["dims"], data_qutip[l], "-o",
     label="\$\\mathrm{QuTiP}\$")
     ax[:semilogy](data_qutip["dims"], data_julia[l], "-^",
-    label="\$\\mathrm{QI.jl}\$")
+    label="\$\\mathrm{QuantumInformation.jl}\$")
     fig[:legend](bbox_to_anchor = (0.9,0.6))
     ax[:set_xticks]([4, 64, 256, 1024])
     ax[:set_xlabel]("\$d\$")

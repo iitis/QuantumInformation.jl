@@ -15,5 +15,5 @@ A list of all documentation sorted by module.
 
 
 ```@autodocs
-Modules = [QI]
+Modules = [QuantumInformation]
 ```

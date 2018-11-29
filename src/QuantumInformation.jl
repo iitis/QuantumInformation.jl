@@ -1,7 +1,7 @@
 """
-Main module for `QI.jl` -- a Julia package for numerical computation in quantum information theory.
+Main module for `QuantumInformation.jl` -- a Julia package for numerical computation in quantum information theory.
 """
-module QI
+module QuantumInformation
 using LinearAlgebra
 using SparseArrays
 using DocStringExtensions
