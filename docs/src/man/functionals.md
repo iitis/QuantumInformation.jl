@@ -1,4 +1,6 @@
-```@setup QuantumInformation
+# Functionals
+
+<!-- ```@setup QuantumInformation
 Pkg.add("QuantumInformation")
 importall QuantumInformation
 ```
@@ -125,4 +127,4 @@ log_negativity(ρ ⊗ σ, [2, 2], 2)
 ```@repl QuantumInformation
 ppt(ρ ⊗ σ, [2, 2], 2)
 ppt(proj((1/sqrt(2)*(ket(0,2)⊗ket(0,2)-ket(1,2)⊗ket(1,2)))), [2, 2], 2)
-```
+``` -->

@@ -13,7 +13,7 @@ Our goal while designing **QuantumInformation.jl** library was to follow princip
 [Julia](https://julialang.org/) [[2]](@ref refs).
 
 ## Package features
-The purpose of \texttt{QuantumInformation.jl} library is to provide
+The purpose of **QuantumInformation.jl** library is to provide
 functions to:
 * creating and analyzing quantum
 states,

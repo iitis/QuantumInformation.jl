@@ -1,4 +1,6 @@
-```@setup QuantumInformation
+# States
+
+<!-- ```@setup QuantumInformation
 Pkg.add("QuantumInformation")
 importall QuantumInformation
 ```
@@ -219,4 +221,4 @@ K1 = ComplexF64[1 0 0; 0 0 0; 0 0 sqrt(1 - α)]
 ρ=proj(1./sqrt(2)*(ket(0,3)+ket(2,3)))
 
 (PM∘Φ)(ρ)
-```
+``` -->

@@ -1,5 +1,7 @@
 # Vectors and matrices in Julia
 
+<!-- # Vectors and matrices in Julia
+
 A basic construction of vector in Julia creates a full one-index array containing elements of a number type as presented below.
 ```julia
 julia> x = [0.0, 1.0im]
@@ -29,4 +31,4 @@ product resulting in a two-index array.
 
 The linear algebra library in `Julia` provides standard operations on
 matrices and vectors that are designed to take in to the account the types of
-objects.
+objects. -->
