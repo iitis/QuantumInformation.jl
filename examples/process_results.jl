@@ -7,7 +7,7 @@ mpl.rc("text", usetex=true)
 @pyimport pylab as pl
 using LaTeXStrings
 ##
-filename_base = "examples/res/100_4,16,64,256,1024_random"
+filename_base = "res/100_4,16,64,256,1024_random"
 ##
 data_qutip = NPZ.npzread(filename_base*".npz")
 data_julia = load(filename_base*".jld2")
@@ -27,7 +27,7 @@ for l in labels
     fig[:legend](bbox_to_anchor = (0.9,0.6))
     ax[:set_xticks]([4, 64, 256, 1024])
     ax[:set_xlabel]("\$d\$")
-    ax[:set_ylabel]("\$t\$")
+    ax[:set_ylabel]("\$t\\ (s)\$")
     pl.savefig("$(filename_base)_$(l).pdf", bbox_inches="tight")
     pl.close(fig)
 end
