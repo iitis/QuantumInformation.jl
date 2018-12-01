@@ -1,35 +1,33 @@
-# States
-
-<!-- ```@setup QuantumInformation
-Pkg.add("QuantumInformation")
-importall QuantumInformation
-```
-
 # States and channels
+
 In this and the following sections we will denote complex Euclidean spaces
 $\mathbb{C}^d$ with $\mathcal{X}$, $\mathcal{Y}$, $\mathcal{Z}$ etc. When needed the dimension of a space $\mathcal{X}$
 will be denoted $\mathrm{dim}(\mathcal{X})$. The set of matrices transforming vectors
 from $\mathcal{X}$ to $\mathcal{Y}$ will be denoted $\mathrm{L}(\mathcal{X}, \mathcal{Y})$. For simplicity we will
 write $\mathrm{L}(\mathcal{X}) \equiv \mathrm{L}(\mathcal{X}, \mathcal{X})$.
 
-
 ## States
-By
-\$|\\psi\\rangle\in\\mathcal{X}\$ we denote a normed column vector. Notice that
-any \$|\\psi\\rangle\$ can be expressed as \$|\\psi\\rangle=\\sum_{i=0}^n \\alpha_i |i\\rangle\$, where \$\\sum_{i=0}^n |\\alpha_i|^2=1\$ and set \$\\{|i\\rangle\\}_{i=0}^n\$ is a computational basis.
+
+By $|\psi\rangle\in\mathcal{X}$ we denote a normed column
+vector. Notice that any $|\psi\rangle$ can be expressed as
+$|\psi\rangle=\sum_{i=1}^{n} \alpha_i |i\rangle$, where $\sum_{i=1}^{n}
+|\alpha_i|^2=1$ and the set $\{|i\rangle\}_{i=1}^{n}$ is the computational
+basis.
 ```@repl QuantumInformation
-ket(0,2)  
-(1/sqrt(2)) * (ket(0,2) + ket(1,2))
+ket(1,2)
+(1/sqrt(2)) * (ket(1,2) + ket(2,2))
 ```
-By \$\\langle\\psi|\$ the
-row vector dual to \$|\\psi\\rangle\$ is denoted. It means that \$|\\psi\\rangle=\\langle\\psi|^\\dagger\$, where the symbol \${}^\\dagger\$ denotes the
-Hermitian conjugation.
+According to common academic convention, we count the indices of states starting
+from~one. Following the standard Dirac notation the symbol $\langle\psi|$ denotes
+the row vector dual to $|\psi\rangle$. Therefore $|\psi\rangle=\langle\psi|^\dagger$,
+where the symbol ${}^\dagger$ denotes the Hermitian conjugation.
 ```@repl QuantumInformation
-bra(1,3)  
+bra(2,3)  
 ```
 
-Through the \$\\langle\\psi|\\phi\\rangle\$ is denoted a inner product and the
-norm defined as \$\\|\\phi\\rangle\\|=\\sqrt{\\langle\\psi|\\psi\\rangle}\$.
+The inner product of $|\phi\rangle, |\psi\rangle \in \mathcal{X}$ is denoted by
+$\langle\psi|\phi\rangle$ and the norm is defined as
+$\|\ket{\phi}\|=\sqrt{\langle\phi|\phi\rangle}$.
 ```@repl QuantumInformation
 ψ=(1/sqrt(2)) * (ket(0,2) + ket(1,2))
 ϕ=(1/2) * ket(0,2) + (sqrt(3)/2) * ket(1,2)
@@ -39,17 +37,20 @@ norm defined as \$\\|\\phi\\rangle\\|=\\sqrt{\\langle\\psi|\\psi\\rangle}\$.
 sqrt(ϕ'*ϕ)
 ```
 
-The form \$|{\\psi}\\rangle\\langle{\\phi}|\$
-denotes outer product of \$|{\\psi}\\rangle\$ and \$\\langle{\\phi}|\$ from \$\\mathrm{L}(\\mathcal{X})\$.
+The form $|{\psi}\rangle\langle{\phi}|$
+denotes outer product of $|{\psi}\rangle$ and $\langle{\phi}|$ from $\mathrm{L}(\mathcal{X})$.
 ```@repl QuantumInformation
-ketbra(1,3,4)
+ketbra(2,3,4)
 ```
-Specifically, \$|{\\psi}\\rangle\\langle{\\psi}|\$ is a rank-one projection operator called as *pure states*. Generally, any [*quantum state*](https://en.wikipedia.org/wiki/Qubit) \$\\rho\$ can be expressed as \$\\rho=\\sum_{i=0}^n q_i |i\\rangle\\langle i|\$, where \$\\sum_{i=0}^n q_i=1\$. Notice that \$\rho\$ is a trace-one positive semi-definite
-linear operator *i.e.*: \$\\rho=\\rho^\\dagger\$, \$\\rho\\geq 0\$
-and \$\\mathrm{tr}{\\rho}=1\$.
+Specifically, $|{\psi}\rangle\langle{\psi}|$ is a rank-one projection operator called as *pure state*. Generally, any [*quantum state*](https://en.wikipedia.org/wiki/Qubit) $\rho$ can be expressed as $\rho=\sum_{i=0}^n q_i |i\rangle\langle i|$, where $\sum_{i=0}^n q_i=1$. Notice that $\rho$ is a trace-one positive semi-definite
+linear operator *i.e.*: $\rho=\rho^\dagger$, $\rho\geq 0$
+and $\mathrm{tr}{\rho}=1$.
 ```@repl QuantumInformation
 proj(ψ)
 ```
+
+
+
 In the opposite to \$\\mathrm{vec}\$ transformation, we have reshaping map \$\\mathrm{res}:\\mathrm{L}(\\mathcal{X,Y})\\to\\mathcal{Y}\\otimes\\mathcal{X}\$, which transform matrix
 \$\\rho\$ into a vector row by row. More precisely, for dyadic operators \$|\\psi\\rangle\\langle\\phi|\$, where \$|\\psi\\rangle \\in \\mathcal{X}\$, \$|\\phi\\rangle
 \\in \\mathcal{Y}\$ operation \$\\mathrm{vec}\$ is defined as \$\\mathrm{vec}(|\\psi\\rangle\\langle\\phi|)=|\\psi\\rangle|\\overline{\\phi}\\rangle\$ and can be uniquely extend the definition to the whole space \$\\mathrm{L}(\\mathcal{X,Y})\$ by
@@ -221,4 +222,4 @@ K1 = ComplexF64[1 0 0; 0 0 0; 0 0 sqrt(1 - α)]
 ρ=proj(1./sqrt(2)*(ket(0,3)+ket(2,3)))
 
 (PM∘Φ)(ρ)
-``` -->
+```
