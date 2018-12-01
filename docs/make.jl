@@ -30,7 +30,5 @@ makedocs(
 deploydocs(
     deps = Deps.pip("pygments", "mkdocs", "python-markdown-math"),
     target = "build",
-    repo = "github.com/ZKSI/QuantumInformation.jl.git",
-    julia = "1.0",
-    latest = "master"
+    repo = "github.com/ZKSI/QuantumInformation.jl.git"
 )
