@@ -279,6 +279,7 @@ end
 
 """
 $(SIGNATURES)
+- ?: type.
 - `Φ`: list of Kraus operators.
 
 Transforms list of Kraus operators into super-operator matrix.
@@ -290,6 +291,7 @@ end
 
 """
 $(SIGNATURES)
+- ?: type.
 - `Φ`: list of Kraus operators.
 
 Transforms list of Kraus operators into Stinespring representation of quantum channel.
@@ -303,6 +305,7 @@ end
 
 """
 $(SIGNATURES)
+- ?: type.
 - `Φ`: list of Kraus operators.
 
 Transforms list of Kraus operators into dynamical matrix.
@@ -314,6 +317,7 @@ end
 
 """
 $(SIGNATURES)
+- ?: type.
 - `Φ`: super-operator matrix.
 
 Transforms super-operator matrix into list of Kraus operators.
@@ -324,6 +328,7 @@ end
 
 """
 $(SIGNATURES)
+- ?: type.
 - `Φ`: super-operator matrix.
 
 Transforms super-operator matrix into dynamical matrix.
@@ -335,6 +340,7 @@ end
 
 """
 $(SIGNATURES)
+- ?: type.
 - `Φ`: super-operator matrix.
 
 Transforms super-operator matrix into Stinespring representation of quantum channel.
@@ -345,6 +351,7 @@ end
 
 """
 $(SIGNATURES)
+- ?: type.
 - `Φ`: dynamical matrix.
 
 Transforms dynamical matrix into list of Kraus operators.
@@ -371,6 +378,7 @@ end
 
 """
 $(SIGNATURES)
+- ?: type.
 - `Φ`: dynamical matrix.
 
 Transforms dynamical matrix into Stinespring representation of quantum channel.
@@ -381,6 +389,7 @@ end
 
 """
 $(SIGNATURES)
+- ?: type.
 - `Φ`: dynamical matrix.
 
 Transforms dynamical matrix into super-operator matrix.
@@ -652,7 +661,7 @@ end
 ################################################################################
 # CPTP, CPTNI
 ################################################################################
-"""_
+"""
 $(SIGNATURES)
 - `Φ`: list of Kraus operators.
 - `atol`: tolerance of approximation.

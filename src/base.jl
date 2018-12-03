@@ -110,7 +110,9 @@ $(SIGNATURES)
 - `α`: real number from [0, 1].
 
 Returns [Werner state](http://en.wikipedia.org/wiki/Werner_state) given by
-\$ \\frac{\\alpha}{d}\\Big(\\sum_{i=0}^{\\sqrt{d}-1}|ii\\rangle\\Big) \\Big(\\sum_{i=0}^{\\sqrt{d}-1}\\langle ii|\\Big)+ \\frac{1-\\alpha}{d}\\sum_{i=0}^{d-1}|i\\rangle\\langle i |\$.
+\$\\frac{\\alpha}{d}\\left(\\sum_{i=0}^{\\sqrt{d}-1}|ii\\rangle\\right)
+\\left(\\sum_{i=0}^{\\sqrt{d}-1}\\langle ii|\\right)+
+\\frac{1-\\alpha}{d}\\sum_{i=0}^{d-1}|i\\rangle\\langle i|\$.
 """
 function werner_state(d::Int, α::Float64)
     α > 1 || α < 0 ? throw(ArgumentError("α must be in [0, 1]")) : ()
