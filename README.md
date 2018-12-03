@@ -1,4 +1,3 @@
-[![](https://img.shields.io/badge/docs-stable-green.svg)](https://zksi.github.io/QuantumInformation.jl/dev)
 [![](https://img.shields.io/badge/docs-latest-green.svg)](https://zksi.github.io/QuantumInformation.jl/latest)
 [![Build Status](https://travis-ci.org/ZKSI/QuantumInformation.jl.svg?branch=master)](https://travis-ci.org/ZKSI/QuantumInformation.jl)
 [![Coverage Status](https://coveralls.io/repos/github/ZKSI/QuantumInformation.jl/badge.svg?branch=master)](https://coveralls.io/github/ZKSI/QuantumInformation.jl?branch=master)
