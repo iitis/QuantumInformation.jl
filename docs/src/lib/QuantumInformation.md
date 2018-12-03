@@ -1,10 +1,5 @@
 # Documentation
 
-## Contents
-
-```@contents
-Pages = [joinpath("content", f) for f in readdir("content")]
-```
 
 ## Index
 
