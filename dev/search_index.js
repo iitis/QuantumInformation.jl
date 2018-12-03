@@ -565,7 +565,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Library",
     "title": "QuantumInformation.iscptp",
     "category": "method",
-    "text": "_\n\niscptp(Φ; atol)\n\n\nΦ: list of Kraus operators.\natol: tolerance of approximation.\n\nChecks if set of Kraus operators fulfill completness relation.\n\n\n\n\n\n"
+    "text": "iscptp(Φ; atol)\n\n\nΦ: list of Kraus operators.\natol: tolerance of approximation.\n\nChecks if set of Kraus operators fulfill completness relation.\n\n\n\n\n\n"
 },
 
 {
@@ -805,7 +805,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Library",
     "title": "QuantumInformation.werner_state",
     "category": "method",
-    "text": "werner_state(d, α)\n\n\nd: length of the vector.\nα: real number from [0, 1].\n\nReturns Werner state given by $ \\frac{\\alpha}{d}\\Big(\\sum{i=0}^{\\sqrt{d}-1}|ii\\rangle\\Big) \\Big(\\sum{i=0}^{\\sqrt{d}-1}\\langle ii|\\Big)+ \\frac{1-\\alpha}{d}\\sum_{i=0}^{d-1}|i\\rangle\\langle i |$.\n\n\n\n\n\n"
+    "text": "werner_state(d, α)\n\n\nd: length of the vector.\nα: real number from [0, 1].\n\nReturns Werner state given by fracalphadleft(sum_i=0^sqrtd-1iirangleright) left(sum_i=0^sqrtd-1langle iiright)+ frac1-alphadsum_i=0^d-1iranglelangle i.\n\n\n\n\n\n"
 },
 
 {
@@ -813,7 +813,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Library",
     "title": "Base.convert",
     "category": "method",
-    "text": "convert(?, Φ)\n\n\nΦ: list of Kraus operators.\n\nTransforms list of Kraus operators into dynamical matrix.\n\n\n\n\n\n"
+    "text": "convert(?, Φ)\n\n\n?: type.\nΦ: list of Kraus operators.\n\nTransforms list of Kraus operators into dynamical matrix.\n\n\n\n\n\n"
 },
 
 {
@@ -821,7 +821,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Library",
     "title": "Base.convert",
     "category": "method",
-    "text": "convert(?, Φ)\n\n\nΦ: super-operator matrix.\n\nTransforms super-operator matrix into dynamical matrix.\n\n\n\n\n\n"
+    "text": "convert(?, Φ)\n\n\n?: type.\nΦ: super-operator matrix.\n\nTransforms super-operator matrix into dynamical matrix.\n\n\n\n\n\n"
 },
 
 {
@@ -829,7 +829,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Library",
     "title": "Base.convert",
     "category": "method",
-    "text": "convert(?, Φ)\n\n\nΦ: dynamical matrix.\n\nTransforms dynamical matrix into list of Kraus operators.\n\n\n\n\n\n"
+    "text": "convert(?, Φ)\n\n\n?: type.\nΦ: dynamical matrix.\n\nTransforms dynamical matrix into list of Kraus operators.\n\n\n\n\n\n"
 },
 
 {
@@ -837,7 +837,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Library",
     "title": "Base.convert",
     "category": "method",
-    "text": "convert(?, Φ)\n\n\nΦ: super-operator matrix.\n\nTransforms super-operator matrix into list of Kraus operators.\n\n\n\n\n\n"
+    "text": "convert(?, Φ)\n\n\n?: type.\nΦ: super-operator matrix.\n\nTransforms super-operator matrix into list of Kraus operators.\n\n\n\n\n\n"
 },
 
 {
@@ -845,7 +845,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Library",
     "title": "Base.convert",
     "category": "method",
-    "text": "convert(?, Φ)\n\n\nΦ: dynamical matrix.\n\nTransforms dynamical matrix into Stinespring representation of quantum channel.\n\n\n\n\n\n"
+    "text": "convert(?, Φ)\n\n\n?: type.\nΦ: dynamical matrix.\n\nTransforms dynamical matrix into Stinespring representation of quantum channel.\n\n\n\n\n\n"
 },
 
 {
@@ -853,7 +853,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Library",
     "title": "Base.convert",
     "category": "method",
-    "text": "convert(?, Φ)\n\n\nΦ: list of Kraus operators.\n\nTransforms list of Kraus operators into Stinespring representation of quantum channel.\n\n\n\n\n\n"
+    "text": "convert(?, Φ)\n\n\n?: type.\nΦ: list of Kraus operators.\n\nTransforms list of Kraus operators into Stinespring representation of quantum channel.\n\n\n\n\n\n"
 },
 
 {
@@ -861,7 +861,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Library",
     "title": "Base.convert",
     "category": "method",
-    "text": "convert(?, Φ)\n\n\nΦ: super-operator matrix.\n\nTransforms super-operator matrix into Stinespring representation of quantum channel.\n\n\n\n\n\n"
+    "text": "convert(?, Φ)\n\n\n?: type.\nΦ: super-operator matrix.\n\nTransforms super-operator matrix into Stinespring representation of quantum channel.\n\n\n\n\n\n"
 },
 
 {
@@ -869,7 +869,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Library",
     "title": "Base.convert",
     "category": "method",
-    "text": "convert(?, Φ)\n\n\nΦ: dynamical matrix.\n\nTransforms dynamical matrix into super-operator matrix.\n\n\n\n\n\n"
+    "text": "convert(?, Φ)\n\n\n?: type.\nΦ: dynamical matrix.\n\nTransforms dynamical matrix into super-operator matrix.\n\n\n\n\n\n"
 },
 
 {
@@ -877,7 +877,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Library",
     "title": "Base.convert",
     "category": "method",
-    "text": "convert(?, Φ)\n\n\nΦ: list of Kraus operators.\n\nTransforms list of Kraus operators into super-operator matrix.\n\n\n\n\n\n"
+    "text": "convert(?, Φ)\n\n\n?: type.\nΦ: list of Kraus operators.\n\nTransforms list of Kraus operators into super-operator matrix.\n\n\n\n\n\n"
 },
 
 {
