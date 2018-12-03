@@ -13,7 +13,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Home",
     "title": "Home",
     "category": "section",
-    "text": "A Julia package for numerical computation in quantum information theory.Numerical investigations are prevalent in quantum information theory. Numerical experiments can be used to find counter examples for theorems, to test hypotheses or to gain insight about quantum objects and operations.Our goal while designing QuantumInformation.jl library was to follow principles presented in book \"Geometry of Quantum States\'\' [1]. We work with column vectors reprinting kets and row vectors representing bras. We fix our basis to the computational one. Density matrices and quantum channels are represented as two dimensional arrays in the same fixed basis. This approach allows us to obtain low level complexity of our code, high flexibility and good computational efficiency. The design choices where highly motivated by the properties of the language in which the our library was implemented, namely Julia [2]."
+    "text": "A Julia package for numerical computation in quantum information theory.Numerical investigations are prevalent in quantum information theory. Numerical experiments can be used to find counter examples for theorems, to test hypotheses or to gain insight about quantum objects and operations.Our goal while designing QuantumInformation.jl library was to follow principles presented in book \"Geometry of Quantum States\" [1]. We work with column vectors reprinting kets and row vectors representing bras. We fix our basis to the computational one. Density matrices and quantum channels are represented as two dimensional arrays in the same fixed basis. This approach allows us to obtain low level complexity of our code, high flexibility and good computational efficiency. The design choices where highly motivated by the properties of the language in which the our library was implemented, namely Julia [2]."
 },
 
 {
@@ -69,7 +69,7 @@ var documenterSearchIndex = {"docs": [
     "page": "States and channels",
     "title": "States and channels",
     "category": "page",
-    "text": ""
+    "text": "using QuantumInformation"
 },
 
 {
@@ -85,7 +85,15 @@ var documenterSearchIndex = {"docs": [
     "page": "States and channels",
     "title": "States",
     "category": "section",
-    "text": "By psirangleinmathcalX we denote a normed column vector. Notice that any psirangle can be expressed as psirangle=sum_i=1^n alpha_i irangle, where sum_i=1^n alpha_i^2=1 and the set irangle_i=1^n is the computational basis.ket(1,2)\n(1/sqrt(2)) * (ket(1,2) + ket(2,2))According to common academic convention, we count the indices of states starting from~one. Following the standard Dirac notation the symbol langlepsi denotes the row vector dual to psirangle. Therefore psirangle=langlepsi^dagger, where the symbol ^dagger denotes the Hermitian conjugation.bra(2,3)  The inner product of phirangle psirangle in mathcalX is denoted by langlepsiphirangle and the norm is defined as ketphi=sqrtlanglephiphirangle.ψ=(1/sqrt(2)) * (ket(0,2) + ket(1,2))\nϕ=(1/2) * ket(0,2) + (sqrt(3)/2) * ket(1,2)\n\nϕ\'*ψ\n\nsqrt(ϕ\'*ϕ)The form psiranglelanglephi denotes outer product of psirangle and langlephi from mathrmL(mathcalX).ketbra(2,3,4)Specifically, psiranglelanglepsi is a rank-one projection operator called as pure state. Generally, any quantum state rho can be expressed as rho=sum_i=0^n q_i iranglelangle i, where sum_i=0^n q_i=1. Notice that rho is a trace-one positive semi-definite linear operator i.e.: rho=rho^dagger, rhogeq 0 and mathrmtrrho=1.proj(ψ)In the opposite to $\\mathrm{vec}$ transformation, we have reshaping map $\\mathrm{res}:\\mathrm{L}(\\mathcal{X,Y})\\to\\mathcal{Y}\\otimes\\mathcal{X}$, which transform matrix $\\rho$ into a vector row by row. More precisely, for dyadic operators $|\\psi\\rangle\\langle\\phi|$, where $|\\psi\\rangle \\in \\mathcal{X}$, $|\\phi\\rangle \\in \\mathcal{Y}$ operation $\\mathrm{vec}$ is defined as $\\mathrm{vec}(|\\psi\\rangle\\langle\\phi|)=|\\psi\\rangle|\\overline{\\phi}\\rangle$ and can be uniquely extend the definition to the whole space $\\mathrm{L}(\\mathcal{X,Y})$ by linearity. It is easy to check that $\\mathrm{res}(\\rho)=\\mathrm{vec}(\\rho^T)$.res(ketbra(0,1,2))Inverse operation to $\\mathrm{res}$ is a $\\mathrm{unres}:\\mathcal{Y}\\otimes\\mathcal{X}\\to \\mathrm{L}(\\mathcal{X,Y}) $ map, which transforms the vector into a matrix. It means that $\\rho=\\mathrm{unres}(\\mathrm{res}(\\rho))$.unres(res(ketbra(0,1,2)))Let us recall that trace is a mapping $\\mathrm{Tr}:\\mathrm{L}(\\mathcal{X})\\ \\to \\mathbb{C},$ given by $\\mathrm{Tr}:\\rho\\mapsto\\sum{i=1}^{\\mathrm{dim}(\\mathcal{X})}\\langle ei|\\rho|ei\\rangle$, where $\\{|ei\\rangle \\}$ is an orthonormal basis of $\\mathcal{X}$. According this, partial trace is a mapping $\\mathrm{Tr}{\\mathcal{X}}: \\mathrm{L}(\\mathcal{X}\\otimes\\mathcal{Y}) \\to \\mathrm{L}(\\mathcal{Y})$ such that $\\mathrm{Tr}{\\mathcal{X}}: \\rhoA\\otimes \\rhoB \\mapsto \\rhoB \\mathrm{Tr}(\\rhoA)$, where $\\rhoA\\in \\mathrm{L}(\\mathcal{X})$, $\\rhoB\\in \\mathrm{L}(\\mathcal{Y})$. As this is a linear map, it may be uniquely extended to the case of operators which are not in a tensor product form.ρ = [0.25 0.25im; -0.25im 0.75]\nσ = [0.4 0.1im; -0.1im 0.6]\n\nptrace(ρ ⊗ σ, [2, 2], [2,])Matrix transposition is a mapping ${}^T:\\mathrm{L}(\\mathcal{X,Y}) \\to \\mathrm{L}(\\mathcal{Y,X})$ such that $\\rho{ij}^T = \\rho{ji}$, where $\\rho{ij}$ is a $i$-th row, $j$-th column element of matrix $\\rho$. Following this, we may introduce partial transposition ${}^{TB}:\\mathrm{L}(\\mathcal{XA,YA}\\otimes\\mathcal{XB,YB}) \\to \\mathrm{L}(\\mathcal{YA,XA}\\otimes\\mathcal{XB,YB})$, which for product state $\\rhoA\\otimes\\rhoB$ is given by ${}^{TA}: \\rhoA\\otimes\\rhoB\\mapsto\\rhoA^T\\otimes\\rho_B$. The definition of partial trace can be extended for all operators by trace linearity.ptranspose(ρ ⊗ σ, [2, 2], [1])For given multiindexed matrix $\\rho{(m,\\mu),(n,\\nu)}=\\langle m|\\langle\\mu|\\rho|n\\rangle\\nu\\rangle$, reshuffle operation is defined as $\\rho^R{(m,\\mu),(n,\\nu)}=\\rho_{(m,n),(\\mu,\\nu)}$.reshuffle(ρ ⊗ σ)"
+    "text": "By psirangleinmathcalX we denote a normed column vector. Notice that any psirangle can be expressed as psirangle=sum_i=1^n alpha_i irangle, where sum_i=1^n alpha_i^2=1 and the set irangle_i=1^n is the computational basis.ket(1,2)\n(1/sqrt(2)) * (ket(1,2) + ket(2,2))According to common academic convention, we count the indices of states starting from one. Following the standard Dirac notation the symbol langlepsi denotes the row vector dual to psirangle. Therefore psirangle=langlepsi^dagger, where the symbol ^dagger denotes the Hermitian conjugation.bra(2,3)  The inner product of phirangle psirangle in mathcalX is denoted by langlepsiphirangle and the norm is defined as phirangle=sqrtlanglephiphirangle.ψ=(1/sqrt(2)) * (ket(1,2) + ket(2,2))\nϕ=(1/2) * ket(1,2) + (sqrt(3)/2) * ket(2,2)\n\nϕ\'*ψ\n\nsqrt(ϕ\'*ϕ)The form psiranglelanglephi denotes outer product of psirangle and langlephi from mathrmL(mathcalX).ketbra(2,3,4)Specifically, psiranglelanglepsi is a rank-one projection operator called as pure state. Generally, any quantum state rho can be expressed as rho=sum_i=0^n q_i iranglelangle i, where sum_i=0^n q_i=1. Notice that rho is a trace-one positive semi-definite linear operator i.e.: rho=rho^dagger, rhogeq 0 and mathrmtrrho=1.proj(ψ)For convenience, the QuantumInformation.jl library provides the implementations of maximally mixed, maximally entangled and Werner states.max_entangled(4)\nmax_mixed(4)\nwerner_state(4, 0.4)"
+},
+
+{
+    "location": "man/states/#Non-standard-matrix-transformations-1",
+    "page": "States and channels",
+    "title": "Non-standard matrix transformations",
+    "category": "section",
+    "text": "We will now introduce reshaping operators, which map matrices to vectors and vice versa. We start with the mapping mathrmresmathrmL(mathcalXY)tomathcalYotimesmathcalX, which transforms the matrix rho into a vector row by row. More precisely, for dyadic operators psiranglelanglephi, where psirangle in mathcalY, phirangle in mathcalX the operation mathrmres is defined as mathrmres(psiranglelanglephi)=psirangleoverlinephirangle and can be uniquely extend to the whole space mathrmL(mathcalXY) by linearity.res(ketbra(1,2,2))The inverse operation to mathrmres is mathrmunresmathcalYotimesmathcalXto mathrmL(mathcalXY)  which transforms the vector into a matrix It is defined as the unique linear mapping satisfying rho=mathrmunres(mathrmres(rho)).unres(res(ketbra(1,2,2)))Let us recall that trace is a mapping mathrmTrmathrmL(mathcalX)to mathbbC given by mathrmTrrhomapstosum_i=1^mathrmdim(mathcalX)langle e_irhoe_irangle, where e_irangle  is an orthonormal basis of mathcalX. According to this, partial trace is a mapping mathrmTr_mathcalX mathrmL(mathcalXotimesmathcalY) to mathrmL(mathcalY) such that mathrmTr_mathcalX rho_Aotimes rho_B mapsto rho_B mathrmTr(rho_A), where rho_Ain mathrmL(mathcalX), rho_Bin mathrmL(mathcalY). As this is a linear map, it may be uniquely extended to the case of operators which are not in a tensor product form.ρ = [0.25 0.25im; -0.25im 0.75]\nσ = [0.4 0.1im; -0.1im 0.6]\n\nptrace(ρ ⊗ σ, [2, 2], [2])Matrix transposition is a mapping ^TmathrmL(mathcalXY) to mathrmL(mathcalYX) such that left(rho^T right)_ij = rho_ji, where rho_ij is a i-th row, j-th column element of matrix rho. Following this, we may introduce \\emph{partial transposition} ^Gamma_B mathrmL(mathcalX_A otimes mathcalX_B mathcalY_A otimes mathcalY_B) to mathrmL(mathcalX_A otimes mathcalY_B mathcalY_A otimes mathcalX_B), which for a product state rho_Aotimesrho_B is given by ^Gamma_B rho_Aotimesrho_Bmapstorho_Aotimesrho_B^T. The definition of partial transposition can be uniquely extended for all operators from linearity.ptranspose(ρ ⊗ σ, [2, 2], [1])For given multiindexed matrix rho_(mmu)(nnu)=langle m murhon nurangle, the reshuffle operation is defined as rho^R_(mmu)(nnu)=rho_(mn)(munu).reshuffle(ρ ⊗ σ)"
 },
 
 {
@@ -93,7 +101,7 @@ var documenterSearchIndex = {"docs": [
     "page": "States and channels",
     "title": "Channels",
     "category": "section",
-    "text": "In the most general case evolution of the quantum system can be described using the notion of a quantum channel. First, introduce a superoperator as a linear mapping acting on linear operators $\\mathrm{L}(\\mathcal{X})$ and transforming them into operators acting on $\\mathrm{L}(\\mathcal{Y})$. The set of all such mapping will be denoted by $\\mathrm{T}(\\mathcal{X},\\mathcal{Y})$ and $\\mathrm{T}(\\mathcal{X}):=\\mathrm{T}(\\mathcal{X},\\mathcal{X})$. In mathematical terms, a quantum channel is a superoperator $\\Phi:\\mathrm{L}(\\mathcal{X})\\to \\mathrm{L}(\\mathcal{Y})$ that is trace-preserving ($\\forall \\rho\\in \\mathrm{L}(\\mathcal{X})\\quad \\mathrm{Tr}(\\Phi(\\rho))=\\mathrm{Tr}(\\rho)$) and completely positive ($\\forall \\mathcal{Z} \\forall \\rho \\in \\mathrm{L}(\\mathcal{X\\otimes Z}), \\rho\\geq 0, \\quad \\Phi\\otimes\\mathbb{I}{\\mathrm{L}(\\mathcal{X})}(\\rho)\\geq 0$). The the product of the given super-operators $\\Phi1\\in \\mathrm{T}(\\mathcal{X1},\\mathcal{Y1})$, $\\Phi2\\in \\mathrm{T}(\\mathcal{X2},\\mathcal{Y2})$ is a mapping $\\Phi1\\otimes\\Phi2\\in T(\\mathcal{X}1\\otimes\\mathcal{X}2,\\mathcal{Y}1\\otimes\\mathcal{Y}2)$ that satisfies $(\\Phi1\\otimes\\Phi2)(\\rho1\\otimes\\rho2)=\\Phi1(\\rho1)\\otimes\\Phi2(\\rho_2)$.According to Kraus\' theorem, any completely positive trace-preserving (CPTP) map $\\Phi$ can always be written as $\\Phi(\\rho)=\\sum{i=0}^rKi \\rho Ki^\\dagger$ for some set of operators $\\{Ki\\}{i=0}^r$ satisfying $\\sumi Ki^\\dagger Ki = \\mathbb{I}$, where $r$ is the rank of super-operator $\\Phi$. Another way to represent the quantum channel is based on Choi-Jamiołkowski isomorphism. Consider mapping $J:\\mathrm{T}(\\mathcal{X,Y})\\to \\mathrm{L}(\\mathcal{Y}\\otimes\\mathcal{X})$ such that $J(\\Phi)=(\\Phi\\otimes\\mathbb{I}{\\mathrm{L}(\\mathcal{X})})(\\mathrm{res}(\\mathbb{I}{\\mathcal{X}})\\mathrm{res}(\\mathbb{I}{\\mathcal{X}})^\\dagger)$. Equivalently $J(\\Phi)=\\sum{i,j=0}^{\\mathrm{dim(\\mathcal{X})-1}}\\Phi(|i\\rangle\\langle j|)\\otimes|i\\rangle\\langle j|$. The action of a superoperator in the Choi representation,also called dynamical matrix of $\\Phi$, is given by $\\Phi(\\rho)=\\mathrm{Tr}\\mathcal{X}(J(\\Phi)(\\mathbb{I}\\mathcal{Y}\\otimes\\rho^T))$. Last representation of quantum channel implemented in QuantumInformation.jl is  Stinespring representation. Supoose that $A\\in \\mathrm{L}(\\mathcal{X},\\mathcal{Y}\\otimes\\mathcal{Z})$, then $\\Phi(\\rho)=\\mathrm{Tr}_\\mathcal{Z}(A\\rho A^\\dagger)$."
+    "text": "Physical transformations of quantum states into quantum states are called quantum channels i.e. linear Completely Positive Trace Preserving (CP-TP) transformations. Probabilistic transformations of quantum states are called quantum operations and mathematically they are defined as linear Completely Positive Trace Non-increasing (CP-TNI) maps. For the sake of simplicity we will refer to both CP-TP and CP-TNI maps as quantum channels when it will not cause confusion.There exists various representations of quantum channels such as:Kraus operators,\nnatural representation, also called superoperator representation,\nStinespring representation,\nChoi-Jamiołkowski matrices, sometimes called dynamical matrices.The product of superoperators Phi_1in mathrmT(mathcalX_1mathcalY_1), Phi_2in mathrmT(mathcalX_2mathcalY_2) is a mapping Phi_1otimesPhi_2in T(mathcalX_1otimesmathcalX_2mathcalY_1otimesmathcalY_2) that satisfies (Phi_1otimesPhi_2)(rho_1otimesrho_2)=Phi_1(rho_1)otimesPhi_2(rho_2). For the operators that are not in a tensor product form this notion can be uniquely extended from linearity.According to Kraus\' theorem, any completely positive trace-preserving (CP-TP) map Phi can always be written as Phi(rho)=sum_i=1^r K_i rho K_i^dagger for some set of operators K_i_i=1^r satisfying sum_i=1^r K_i^dagger K_i = mathbbI_mathcalX, where r is the rank of superoperator Phi.Another way to represent the quantum channel is based on Choi-Jamiołkowski isomorphism. Consider mapping JmathrmT(mathcalXY)to mathrmL(mathcalYotimesmathcalX) such that J(Phi)=(PhiotimesmathbbI_mathrmL(mathcalX)) (mathrmres(mathbbI_mathcalX) mathrmres(mathbbI_mathcalX)^dagger). Equivalently J(Phi)=sum_ij=1^mathrmdim(mathcalX)Phi(iranglelangle j)otimesiranglelangle j. The action of a superoperator in the Choi representation is given by Phi(rho)=mathrmTr_mathcalX(J(Phi)(mathbbI_mathcalYotimesrho^T)).The natural representation of a quantum channel mathrmT(mathcalX mathcalY) is a mapping mathrmres(rho) mapsto mathrmres(Phi(rho)). It is represented by a matrix K(Phi) in mathrmL(mathcalX otimes mathcalX mathcalY otimes mathcalY) for which the following holds \\begin{equation} K(\\Phi) \\mathrm{res}(\\rho) = \\mathrm{res}(\\Phi(\\rho)), \\end{equation} for all rho in mathrmL(mathcalX).Let mathcalX mathcalY and mathcalZ be a complex Euclidean spaces. The action of the Stinespring representation of a quantum channel Phiin mathrmT(mathcalXmathcalY) on a state rhoin mathrmL(mathcalX) is given by \\begin{equation} \\Phi(\\rho)=\\mathrm{Tr}_\\mathcal{Z}(A\\rho A^\\dagger), \\end{equation} where AinmathrmL(mathcalXmathcalYotimesmathcalZ).We now briefly describe the relationships among channel representations [1]. Let Phiin mathrmT(mathcalX mathcalY) be a quantum channel which can be written in the Kraus representation as Phi(rho)=sum_i=1^r K_i rho K_i^dagger, where K_i_i=1^r are Kraus operators satisfying sum_i=1^r K_i^dagger K_i = mathbbI_mathcalX. According to this assumption, Phi can be represented inChoi representation as J(Phi)=sum_i=1^r mathrmres(K_i)mathrmres(K_i^dagger),\nnatural representation as K(Phi)=sum_i=1^r K_iotimes K_i^*,\nStinespring representation as Phi(rho)=mathrmTr_mathcalZ(Arho A^dagger),where A=sum_i=1^r K_iotimes e_irangle and mathcalZ=mathbbC^r.In QuantumInformation.jl states and channels are always represented in the computational basis therefore channels are stored in the memory as either vectors of matrices in case of Kraus operators or matrices in other cases. In QuantumInformation.jl quantum channels are represented by a set of types deriving from an abstract type AbstractQuantumOperation{T} where type parameter T should inherit from AbstractMatrix{<:Number}. Every type inheriting from AbstractQuantumOperation{T} should contain fields idim and odim representing the dimension of input and output space of the quantum channel.Two special types of channels are implemented: UnitaryChannel and IdentityChannel that can transform ket vectors into ket vectors."
 },
 
 {
@@ -101,7 +109,7 @@ var documenterSearchIndex = {"docs": [
     "page": "States and channels",
     "title": "Constructors",
     "category": "section",
-    "text": "Channel objects can be constructed from matrices that represents them. As shown in the following listingγ=0.4\nK0 = Matrix([1 0; 0 sqrt(1-γ)])\nK1 = Matrix([0 sqrt(γ); 0 0])\n\nΦ = KrausOperators([K0,K1])\n\niscptp(Φ)"
+    "text": "Channel objects can be constructed from matrices that represent them, as shown in the following listingγ=0.4\nK0 = Matrix([1 0; 0 sqrt(1-γ)])\nK1 = Matrix([0 sqrt(γ); 0 0])\n\nΦ = KrausOperators([K0,K1])\n\niscptp(Φ)There are no checks whether a matrix represents a valid CP-TP or CP-TNI map, because this kind of verification is costly and requires potentially expensive numerical computation. Function such as iscptp(), and iscptni() are provided to test properties of supposed quantum channel or quantum operation."
 },
 
 {
@@ -109,7 +117,7 @@ var documenterSearchIndex = {"docs": [
     "page": "States and channels",
     "title": "Conversion",
     "category": "section",
-    "text": "Conversions between all quantum channel types are implemented. The user is not limited by any single channel representation and can transform between representations he finds the most efficient or suitable for his purpose.Ψ1 = convert(SuperOperator{Matrix{ComplexF64}}, Φ)\n\n# or\n\nSuperOperator{Matrix{ComplexF64}}(Φ)\n\nΨ2 = convert(DynamicalMatrix{Matrix{Float64}}, Φ)\n\n#or\n\nDynamicalMatrix{Matrix{Float64}}(Φ)\n\nΨ3 = convert(Stinespring{Matrix{Float64}}, Φ)\n\n#or\n\nStinespring{Matrix{Float64}}(Φ)"
+    "text": "Conversions between all quantum channel types, i.e. these that derive from AbstractQuantumOperation{T} are implemented. The users are not limited by any single channel representation and can transform between representations they find the most efficient or suitable for their purpose.Ψ1 = convert(SuperOperator{Matrix{ComplexF64}}, Φ)\nΨ2 = convert(DynamicalMatrix{Matrix{Float64}}, Φ)\nΨ3 = convert(Stinespring{Matrix{Float64}}, Φ)"
 },
 
 {
@@ -117,7 +125,7 @@ var documenterSearchIndex = {"docs": [
     "page": "States and channels",
     "title": "Application",
     "category": "section",
-    "text": "Channels can act on pure and mixed states as represented by vectors and matrices. Channels are callable and therefore mimic application of a~function on a~quantum state.ρ1=ψ * ψ\'\n\nΦ(ρ1)\nΨ1(ρ1)\nΦ(ψ)"
+    "text": "Channels can act on pure and mixed states represented by vectors and matrices respectively. Channels are callable and therefore mimic application of a function on a quantum state.ρ1=ψ * ψ\'\nΦ(ρ1)\nΨ1(ρ1)\nΦ(ψ)"
 },
 
 {
@@ -125,23 +133,15 @@ var documenterSearchIndex = {"docs": [
     "page": "States and channels",
     "title": "Composition",
     "category": "section",
-    "text": "Channels can be composed in parallel or in sequence. Composition in parallel is done using kron() function or overloaded $\\otimes$ operator. Composition in sequence can be done in two ways either by using Julia build in function composition operator $(f\\circ g)(\\cdot)=f(g)(\\cdot)$ or by using multiplication of objects inheriting from AbstractQuantumOperation{T} abstract type.ρ2=ϕ * ϕ\'\n\n(Φ⊗Φ)(ρ1⊗ρ2)\n(Ψ1∘Ψ2)(ρ1)"
+    "text": "Channels can be composed in parallel or in sequence. Composition in parallel is done using kron() function or the overloaded otimes operator. Composition in sequence can be done in two ways either by using Julia built-in function composition operator (fcirc g)(cdot)=f(g)(cdot) or by using multiplication of objects inheriting from AbstractQuantumOperation{T} abstract type.ρ2=ϕ * ϕ\'\n\n(Φ⊗Φ)(ρ1⊗ρ2)\n(Ψ1∘Ψ2)(ρ1)"
 },
 
 {
-    "location": "man/states/#Measurement-1",
+    "location": "man/states/#refs_sc-1",
     "page": "States and channels",
-    "title": "Measurement",
+    "title": "References",
     "category": "section",
-    "text": "Measurement is modeled in two ways:as Positive Operator Valued Measure (POVM) based,\nmeasurement with post-selection.In both cases a~measurement is treated as a special case of quantum channel (operation) respectively as defined below."
-},
-
-{
-    "location": "man/states/#Positive-Operator-Valued-Measure-measurement-1",
-    "page": "States and channels",
-    "title": "Positive Operator Valued Measure measurement",
-    "category": "section",
-    "text": "A POVM measurement is defined as follows, let a mapping from a finite alphabet of measurement outcomes to the set of linear positive operators $\\mu:\\Gamma\\rightarrow\\mathcal{P}(\\mathcal{X})$  be given, if $\\sum{\\xi\\in\\Gamma} {\\mu(\\xi)=\\mathbb{I}{\\mathcal{X}}}$ then $\\mu$ is a POVM measurement. POVM measurement models the situation where a quantum object is destroyed during the measurement process and quantum state after the measurement does not exists.We model POVM measurement as a channel $\\theta:\\mathcal{T}(\\mathcal{X})\\rightarrow \\mathcal{T}(\\mathcal{Y})$, where $\\mathcal{Y}=\\mathrm{span}\\{|\\xi\\rangle\\}{\\xi\\in\\Gamma}$ such that $\\theta(\\rho) = \\sum{\\xi\\in\\Gamma} \\mathrm{tr}(\\rho\\, \\mu(\\xi))\\|\\xi\\rangle\\langle \\xi|$. This channel transforms the measured quantum state into a~classical state (diagonal matrix) containing probabilities of reassuring given outcomes. Note that in QuantumInformation $\\Gamma=\\{1,2,\\ldots,|\\Gamma|\\}$ and POVM measurements are represented by the type POVMMeasurement{T} <: AbstractQuantumOperation{T} where T<:AbstractMatrix{<:Number}. Predicate function ispovm() verifies whether a~list of matrices is a proper POVM.ρ=proj(1./sqrt(2)*(ket(0,3)+ket(2,3)))\n\nE0 = proj(ket(0,3))\nE1 = proj(ket(1,3))+proj(ket(2,3))\n\nM = POVMMeasurement([E0,E1])\n\nispovm(M)\nM(ρ)When a quantum system after being measured is not destroyed one can be interested by its state after the measurement. This state depends on the measurement outcome. In this case the measurement process is defined in the following way.Let muGammarightarrowmathcalL(mathcalX mathcalY) be a mapping from a finite set of measurement outcomes to set of linear operators called effects, then if sum_xiinGamma mu(xi)^dagger mu(xi)=mathbbI_mathcalX then mu is a quantum measurement. Given outcome xi was obtained, the state before the measurement rho is transformed into sub-normalized quantum state rho_xi=mu(xi)rhomu(xi)^dagger. The outcome xi will be obtained with probability mathrmTr(rho_xi).PM = PostSelectionMeasurement(E1)\niseffect(PM)\nPM(ρ)In QuantumInformation this kind of measurement is modeled as CP-TNI map with single Kraus operator mu(xi) and represented as PostSelectionMeasurement{T} <: AbstractQuantumOperation{T} where T<:AbstractMatrix{<:Number}. Measurement types can be composed and converted to Kraus operators, superoperators, Stinespring representation operators, and dynamical matrices.α = 0.3\nK0 = ComplexF64[0 0 sqrt(α); 0 1 0; 0 0 0]\nK1 = ComplexF64[1 0 0; 0 0 0; 0 0 sqrt(1 - α)]\nΦ = KrausOperators([K0,K1])\n\nρ=proj(1./sqrt(2)*(ket(0,3)+ket(2,3)))\n\n(PM∘Φ)(ρ)"
+    "text": "[1] J. Watrous, The Theory of Quantum Information, Cambridge University Press (2018)."
 },
 
 {
@@ -149,7 +149,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Functionals",
     "title": "Functionals",
     "category": "page",
-    "text": ""
+    "text": "using QuantumInformation\nusing LinearAlgebra"
 },
 
 {
@@ -157,7 +157,103 @@ var documenterSearchIndex = {"docs": [
     "page": "Functionals",
     "title": "Functionals",
     "category": "section",
-    "text": "<!– ```@setup QuantumInformation Pkg.add(\"QuantumInformation\") importall QuantumInformation\n# Functionals\n\nLet us \\$\\\\rho, \\\\sigma \\\\in \\\\mathrm{L}(\\\\mathcal{X})\\$. [*Trace norm*](https://www.quantiki.org/wiki/trace-norm) is defined as \\$\\\\|\\\\rho\\\\|_1 = \\\\mathrm{Tr} \\\\sqrt{\\\\rho\\\\rho^\\\\dagger}\\$ and trace distance is defined based on the trace norm as \\$D_1(\\\\rho,\\\\sigma)=\\\\frac{1}{2}\\\\|\\\\rho-\\\\sigma\\\\|_1$.\n@repl QuantumInformation ψ=(1/sqrt(2)) * (ket(0,2) + ket(1,2)) ϕ=(1/2) * ket(0,2) + (sqrt(3)/2) * ket(1,2)ρ=proj(ψ) σ=proj(ϕ)normtrace(ρ) tracedistance(ρ, σ)Now introduce [*Hilbert–Schmidt norm*](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Schmidt_operator) and distance by \\$\\\\|\\\\rho\\\\|_{HS}=\\\\mathrm{Tr}\\\\rho^\\\\dagger \\\\rho\\$ and \\$D_{HS}(\\\\rho,\\\\sigma)=\\\\frac{1}{2}\\\\|\\\\rho-\\\\sigma\\\\|_{HS}$, respectively.@repl QuantumInformation normhs(ρ) hsdistance(ρ, σ)\n[*Fidelity*](https://en.wikipedia.org/wiki/Fidelity_of_quantum_states) is a measure of distance of quantum states. It is an example of a\ndistance measure which is not a metric on the space of quantum states. The\nfidelity of two quantum states \\$\\\\rho, \\\\sigma \\in \\\\mathrm{L}(\\\\mathcal{X})\\$ is given by\n\\$F(\\\\rho,\\\\sigma)=\\\\|\\\\sqrt{\\\\rho}\\\\sqrt{\\\\sigma}\\\\|_1\\$@repl QuantumInformation fidelity_sqrt(ρ, σ) fidelity(ρ, σ) fidelity(ψ, σ) fidelity(ρ, ϕ) fidelity(ψ, ϕ)\n[*Superfidelity*](https://www.quantiki.org/wiki/superfidelity) is an upper bound on the fidelity of two quantum states\nIt is defined by\n\\$G(\\\\rho, \\\\sigma) = \\mathrm{Tr}\\\\rho \\\\sigma + \\\\sqrt{1 - \\mathrm{Tr}\\\\rho^2} \\\\sqrt{1-\\mathrm{Tr} \\\\sigma^2}\\$.\n@repl QuantumInformation superfidelity(ρ, σ)\nIn order to introduce the diamond norm, we first introduce the notion of the\ninduced trace norm. Given \\$\\\\Phi \\\\in \\\\mathrm{T}(\\\\mathcal{X}, \\\\mathcal{Y})\\$ we define its induced trace\nnorm as \\$\\\\| \\\\Phi \\\\|_1 = \\\\mathrm{max} \\\\left\\\\{ \\\\| \\\\Phi(X) \\\\|_1: X \\\\in L(\\\\mathcal{X}), \\\\| X \\\\|_1 \\\\leq 1\n\\\\right\\\\}\\$.\nThe diamond norm of \\$\\\\Phi\\$ is defined as\n\\$\n\\\\| \\\\Phi \\\\|_\\\\diamond = \\\\| \\\\Phi \\\\otimes \\\\mathbb{I} \\\\|_1\n\\$\nOne important property of the diamond norm is that for Hermiticity-preserving\n\\$\\\\Phi \\\\in \\\\mathrm{T}(\\\\mathcal{X}, \\\\mathcal{Y})\\$ we obtain\n\\$\n\\\\| \\\\Phi \\\\|_\\\\diamond = \\\\max \\\\left\\\\{ \\\\left\\\\| (\\\\Phi \\\\otimes \\\\mathbb{I})\n\\\\left(|\\\\psi\\\\rangle\\\\langle\\\\psi| \\\\right )\\\\right\\\\|_1: |\\\\psi\\\\rangle \\\\in \\\\mathcal{X} \\\\otimes \\\\mathcal{Y},\n\\\\langle\\\\psi|\\\\psi\\\\rangle=1 \\\\right\\\\}\\$.\n@repl QuantumInformation K0 = Matrix([1 0; 0 sqrt(1-γ)]) K1 = Matrix([0 sqrt(γ); 0 0])Φ = KrausOperators([K0,K1])L0 = Matrix([1 0; 0 sqrt(1-γ)]) L1 = Matrix([0 0; 0 sqrt(γ)])Ψ = KrausOperators([K0,K1])normdiamond(Φ) diamonddistance(Φ, Ψ)\n[*Shannon entropy*](https://en.wikipedia.org/wiki/Entropy_(information_theory)) is defined as \\$H(\\\\mathrm{p})=-\\\\sum_{i=1}^n p_i\\\\log_2 p_i\\$, where\n\\$\\\\mathrm{p}=[p_1,...,p_n]\\$ is a vector of probabilities.\n@repl QuantumInformation p = vec([0.3 0.2 05])shannonentropy(p) shannonentropy(0.5)\nFor a quantum system described by a state \\$\\\\rho\\$, the [*von Neumann entropy*](https://en.wikipedia.org/wiki/Von_Neumann_entropy) is \\$S(\\\\rho)=-\\\\mathrm{tr} \\\\rho \\\\log \\\\rho\\$.\nLet \\$\\\\lambda_i\\$,  \\$0\\\\geq i < n\\$ be eigenvalues of \\$\\\\rho\\$, then \\$S(\\\\rho)\\$ can be written as \\$S(\\\\rho)=-\\\\sum_{i=0}^{n-1} \\\\lambda_i \\\\log \\\\lambda_i\\$.@repl QuantumInformation ρ = [0.25 0.25im; -0.25im 0.75] σ = [0.4 0.1im; -0.1im 0.6]quantum_entropy(0.4 * ρ + 0.6 * σ)\nOne of the measure of distinguishability between two quantum states is a [*qauntum relative entropy*](https://en.wikipedia.org/wiki/Quantum_relative_entropy), called also Kullback–Leibler divergence, defined as\n\\$S(\\\\rho\\\\|\\\\sigma)=-\\\\mathrm{Tr}\\\\rho\\\\log\\\\sigma + \\\\mathrm{Tr}\\\\rho\\\\log\\\\rho\\$@repl QuantumInformation relativeentropy(ρ, σ) kldivergence(ρ, σ)\nAnother type of measure of distinguishability between two quantum state is [*quantum Jensen–Shannon divergence*](https://en.wikipedia.org/wiki/Jensen%E2%80%93Shannon_divergence#Quantum_Jensen%E2%80%93Shannon_divergence) given by\n\\$QJS(\\\\rho,\\\\sigma)=S\\\\left(\\\\frac{1}{2}\\\\rho+\\\\frac{1}{2}\\\\sigma\\\\right)-\\\\left(\\\\frac{1}{2}S(\\\\rho)+\\\\frac{1}{2}S(\\\\sigma)\\\\right)\\$.@repl QuantumInformation js_divergence(ρ, σ)\n[*The Bures distance*](https://en.wikipedia.org/wiki/Bures_metric) defines an infinitesimal distance between quantum states, and it is defined as \\$D_B=\\\\sqrt{2(1-\\\\sqrt{F(\\\\rho,\\\\sigma)})}\\$. The value related with Bures distance is Bures angle \\$D_A(\\\\rho,\\\\sigma)=\\\\arccos(\\\\sqrt{F(\\\\rho,\\\\sigma)})\\$@repl QuantumInformation buresdistance(ρ, σ) buresangle(ρ, σ)\nOne of the entanglement measure is [*negativity*](https://en.wikipedia.org/wiki/Negativity_(quantum_mechanics)) defined as \\$\\\\mathcal{N}(\\\\rho)=\\\\frac{\\\\|\\\\rho^{T_A}\\\\|_1-1}{2}\\$.\ndistance is Bures angle \\$D_A(\\\\rho,\\\\sigma)=\\\\arccos(\\\\sqrt{F(\\\\rho,\\\\sigma)})\\$@repl QuantumInformation negativity(ρ ⊗ σ, [2, 2], 2) negativity(proj((1/sqrt(2)*(ket(0,2)⊗ket(0,2)-ket(1,2)⊗ket(1,2)))), [2, 2], 2)log_negativity(ρ ⊗ σ, [2, 2], 2)\n[*Positive partial transpose*](https://en.wikipedia.org/wiki/Peres%E2%80%93Horodecki_criterion) (the Peres–Horodecki criterion) is a necessary condition of separability of the joint state \\$\\\\rho_{AB}\\$. According PPT criterion, if \\$\\\\rho^{T_B}\\$ has non negative eigenvalues, then \\$\\\\rho_{AB}\\$ is separable.\n@repl QuantumInformation ppt(ρ ⊗ σ, [2, 2], 2) ppt(proj((1/sqrt(2)*(ket(0,2)⊗ket(0,2)-ket(1,2)⊗ket(1,2)))), [2, 2], 2) ``` –>"
+    "text": ""
+},
+
+{
+    "location": "man/functionals/#Trace-norm-and-distance-1",
+    "page": "Functionals",
+    "title": "Trace norm and distance",
+    "category": "section",
+    "text": "Let rho sigma in mathrmL(mathcalX). The trace norm is defined as rho_1 = mathrmTr sqrtrhorho^dagger and the trace distance is defined as D_1(rhosigma)=frac12rho-sigma_1.ψ=(1/sqrt(2)) * (ket(1,2) + ket(2,2))\nϕ=(1/2) * ket(1,2) + (sqrt(3)/2) * ket(2,2)\n\nρ=proj(ψ)\nσ=proj(ϕ)\n\nnorm_trace(ρ)\ntrace_distance(ρ, σ)"
+},
+
+{
+    "location": "man/functionals/#Hilbert–Schmidt-norm-and-distance-1",
+    "page": "Functionals",
+    "title": "Hilbert–Schmidt norm and distance",
+    "category": "section",
+    "text": "The Hilbert–Schmidt norm norm and distance defined by rho_HS=sqrtmathrmTrrho^dagger rho and D_HS(rhosigma)=frac12rho-sigma_HS, respectively, can be used as followsnorm_hs(ρ)\nhs_distance(ρ, σ)"
+},
+
+{
+    "location": "man/functionals/#Fidelity-and-superfidelity-1",
+    "page": "Functionals",
+    "title": "Fidelity and superfidelity",
+    "category": "section",
+    "text": "Fidelity is a measure of distance of quantum states. It is an example of a distance measure which is not a metric on the space of quantum states. The fidelity of two quantum states rho sigma in mathrmL(mathcalX) is given by F(rhosigma)=sqrtrhosqrtsigma_1fidelity_sqrt(ρ, σ)\nfidelity(ρ, σ)\nfidelity(ψ, σ)\nfidelity(ρ, ϕ)\nfidelity(ψ, ϕ)"
+},
+
+{
+    "location": "man/functionals/#Superfidelity-1",
+    "page": "Functionals",
+    "title": "Superfidelity",
+    "category": "section",
+    "text": "Superfidelity is an upper bound on the fidelity of two quantum states It is defined by G(rho sigma) = mathrmTrrho sigma + sqrt1 - mathrmTrrho^2 sqrt1-mathrmTr sigma^2.superfidelity(ρ, σ)"
+},
+
+{
+    "location": "man/functionals/#Diamond-norm-1",
+    "page": "Functionals",
+    "title": "Diamond norm",
+    "category": "section",
+    "text": "In order to introduce the \\emph{diamond norm}, we first introduce the notion of the induced trace norm. Given Phi in mathrmT(mathcalX mathcalY) we define its induced trace norm as  Phi _1 = mathrmmax left  Phi(X) _1 X in L(mathcalX)  X _1 leq 1 right. The diamond norm of Phi is defined as  Phi _diamond =  Phi otimes mathbbI_mathrmL(mathcalY) _1 One important property of the diamond norm is that for Hermiticity-preserving Phi in mathrmT(mathcalX mathcalY) we obtain  Phi _diamond = max left left (Phi otimes mathbbI_mathrmL(mathcalY)) 	left(psiranglelanglepsi right )right_1 psirangle in 	mathcalX otimes 	mathcalY 	langlepsipsirangle=1 right.γ = 0.3\nK0 = Matrix([1 0; 0 sqrt(1-γ)])\nK1 = Matrix([0 sqrt(γ); 0 0])\n\nΦ = convert(DynamicalMatrix{Array{Float64,2}}, KrausOperators([K0,K1]))\n\nL0 = Matrix([1 0; 0 sqrt(1-γ)])\nL1 = Matrix([0 0; 0 sqrt(γ)])\n\nΨ = convert(DynamicalMatrix{Array{Float64,2}}, KrausOperators([K0,K1]))\n\nnorm_diamond(Φ)\ndiamond_distance(Φ, Ψ)"
+},
+
+{
+    "location": "man/functionals/#Shannon-entropy-and-von-Neumann-entropy-1",
+    "page": "Functionals",
+    "title": "Shannon entropy and von Neumann entropy",
+    "category": "section",
+    "text": "Shannon entropy is defined for a probability vector p as H(mathrmp)=-sum_i=1^n p_ilog_2 p_i. We also provide an implementation for the point Shannon entropy. It is defined as h(a) = -a log a - (1-a)log(1-a).p = vec([0.3 0.2 05])\n\nshannon_entropy(p)\nshannon_entropy(0.5)For a quantum system described by a state $\\rho$, the von Neumann entropy is S(rho)=-mathrmTr rho log rho. Let lambda_i,  0leq i  n be the eigenvalues of rho, then S(rho) can be written as S(rho)=-sum_i=1^n lambda_i log lambda_i.ρ = [0.25 0.25im; -0.25im 0.75]\nσ = [0.4 0.1im; -0.1im 0.6]\n\nvonneumann_entropy(0.4 * ρ + 0.6 * σ)"
+},
+
+{
+    "location": "man/functionals/#Distinguishability-between-two-quantum-states-1",
+    "page": "Functionals",
+    "title": "Distinguishability between two quantum states",
+    "category": "section",
+    "text": "One of the measure of distinguishability between two quantum states is a qauntum relative entropy, called also Kullback–Leibler divergence, defined as S(rhosigma)=-mathrmTrrhologsigma + mathrmTrrhologrhorelative_entropy(ρ, σ)\nkl_divergence(ρ, σ)Another type of measure of distinguishability between two quantum state is quantum Jensen–Shannon divergence given by QJS(rhosigma)=Sleft(frac12rho+frac12sigmaright)- left(frac12S(rho)+frac12S(sigma)right).js_divergence(ρ, σ)The Bures distance defines an infinitesimal distance between quantum states, and it is defined as D_B=sqrt2(1-sqrtF(rhosigma)). The value related with Bures distance is the Bures angle D_A(rhosigma)=arccos(sqrtF(rhosigma))bures_distance(ρ, σ)\nbures_angle(ρ, σ)"
+},
+
+{
+    "location": "man/functionals/#Quantum-entanglement-1",
+    "page": "Functionals",
+    "title": "Quantum entanglement",
+    "category": "section",
+    "text": "One of the entanglement measure is negativity defined as mathrmN(rho)=fracrho^T_A_1-12.negativity(ρ ⊗ σ, [2, 2], 2)\nnegativity(proj((1/sqrt(2)*(ket(1,2) ⊗ ket(1,2)-ket(2,2) ⊗ ket(2,2)))), [2, 2], 2)\n\nlog_negativity(ρ ⊗ σ, [2, 2], 2)Positive partial transpose (the Peres–Horodecki criterion) is a necessary condition of separability of the joint state rho_AB. According PPT criterion, if rho^T_B has non negative eigenvalues, then rho_AB is separable.ppt(ρ ⊗ σ, [2, 2], 2)\nppt(proj((1/sqrt(2)*(ket(1,2) ⊗ ket(1,2)-ket(2,2) ⊗ ket(2,2)))), [2, 2], 2)Another way to quantification of quantum entanglement is Concurrence. Concurrence of quantum state rho is a strong separability criterion. For two-qubit systems it is defined as C(rho)=max(0lambda_1-lambda_2-lambda_3-lambda_4), where lambda_i are decreasing eigenvalues of sqrtsqrtrhotilderhosqrtrho with tilderho=(sigma_yotimessigma_y)rho^*(sigma_yotimessigma_y). If C(rho)=0, then rho is separable.ρ = [0.25 0.1im; -0.1im 0.75]\nσ = [0.4 0.1im; -0.1im 0.6]\nconcurrence(ρ ⊗ σ)\nconcurrence(proj(max_entangled(4)))"
+},
+
+{
+    "location": "man/measurement/#",
+    "page": "Measurement",
+    "title": "Measurement",
+    "category": "page",
+    "text": "using QuantumInformation"
+},
+
+{
+    "location": "man/measurement/#Measurement-1",
+    "page": "Measurement",
+    "title": "Measurement",
+    "category": "section",
+    "text": "Measurement is modeled in two ways:as Positive Operator Valued Measures (POVMs),\nmeasurements with post-selection.In both cases a measurement is treated as a special case of a quantum channel (operation)."
+},
+
+{
+    "location": "man/measurement/#Positive-Operator-Valued-Measure-measurement-1",
+    "page": "Measurement",
+    "title": "Positive Operator Valued Measure measurement",
+    "category": "section",
+    "text": "A POVM measurement is defined as follows. Let muGammatomathrmP(mathcalX) be a mapping from a finite alphabet of measurement outcomes to the set of linear positive operators. If sum_xiinGamma mu(xi)=mathbbI_mathcalX then mu is a POVM measurement. The set of positive semi-definite linear operators is defined as mathrmP(mathcalX)=Xin mathrmL(mathcalX) langlepsiXpsiranglegeq 0 text for all  psirangleinmathcalX. POVM measurement models the situation where a quantum object is destroyed during the measurement process and quantum state after the measurement does not exists.We model POVM measurement as a channel thetamathrmL(mathcalX)to mathrmL(mathcalY), where mathcalY=mathrmspanxirangle_xiinGamma such that theta(rho) = sum_xiinGamma mathrmTr(rho mu(xi))xiranglelanglexi. This channel transforms the measured quantum state into a classical state (diagonal matrix) containing probabilities of measuring given outcomes. Note that in QuantumInformation.jl Gamma=12ldotsGamma and POVM measurements are represented by the type POVMMeasurement{T} <: AbstractQuantumOperation{T} where T<:AbstractMatrix{<:Number}. Predicate function ispovm() verifies whether a list of matrices is a proper POVM.ρ=proj(1.0/sqrt(2)*(ket(1,3)+ket(3,3)))\nE0 = proj(ket(1,3))\nE1 = proj(ket(2,3))+proj(ket(3,3))\n\nM = POVMMeasurement([E0,E1])\n\nispovm(M)\nM(ρ)"
+},
+
+{
+    "location": "man/measurement/#Measurement-with-post-selection-1",
+    "page": "Measurement",
+    "title": "Measurement with post-selection",
+    "category": "section",
+    "text": "When a quantum system after being measured is not destroyed one can be interested in its state after the measurement. This state depends on the measurement outcome. In this case the measurement process is defined in the following way.Let muGammato mathrmL(mathcalX mathcalY) be a mapping from a finite set of measurement outcomes to set of linear operators called effects. If sum_xiinGamma mu(xi)^dagger mu(xi)=mathbbI_mathcalX then mu is a quantum measurement. Given outcome xi was obtained, the state before the measurement, rho, is transformed into sub-normalized quantum state rho_xi=mu(xi)rhomu(xi)^dagger. The outcome xi will be obtained with probability mathrmTr(rho_xi).PM = PostSelectionMeasurement(E1)\niseffect(PM)\nPM(ρ)In QuantumInformation this kind of measurement is modeled as CP-TNI map with single Kraus operator mu(xi) and represented as PostSelectionMeasurement{T} <: AbstractQuantumOperation{T} where T<:AbstractMatrix{<:Number}. Measurement types can be composed and converted to Kraus operators, superoperators, Stinespring representation operators, and dynamical matrices.α = 0.3\nK0 = ComplexF64[0 0 sqrt(α); 0 1 0; 0 0 0]\nK1 = ComplexF64[1 0 0; 0 0 0; 0 0 sqrt(1 - α)]\nΦ = KrausOperators([K0,K1])\n\nρ=proj(1.0/sqrt(2)*(ket(1,3)+ket(3,3)))\n\n(PM∘Φ)(ρ)"
 },
 
 {
@@ -165,7 +261,7 @@ var documenterSearchIndex = {"docs": [
     "page": "Random quantum objects",
     "title": "Random quantum objects",
     "category": "page",
-    "text": ""
+    "text": "using QuantumInformation\nusing LinearAlgebra"
 },
 
 {
@@ -173,7 +269,71 @@ var documenterSearchIndex = {"docs": [
     "page": "Random quantum objects",
     "title": "Random quantum objects",
     "category": "section",
+    "text": "In this section we present the implementation of the sub-package RandomMatrices. The justification for including these functionalities in our package is twofold. First, the application of random matrix theory (RMT) in quantum information is a blooming field of research with a plethora of interesting results [1], [2], [3], [4], [5], [6], [7], [8], [9], [10]. Hence, it is useful to have readily available implementations of known algorithms of generating random matrices. Secondly, when performing numerical investigations, we often need \'\'generic\'\' inputs. Generating random matrices with a known distribution is one of the ways to obtain such generic inputs."
+},
+
+{
+    "location": "man/random/#Ginibre-matrices-1",
+    "page": "Random quantum objects",
+    "title": "Ginibre matrices",
+    "category": "section",
+    "text": "In this section we introduce the Ginibre random matrices ensemble [11]. This ensemble is at the core of a vast majority of algorithms for generating random matrices presented in later subsections. Let (G_ij)_1 leq i leq m 1 leq j leq n be a mtimes n table of independent identically distributed (i.i.d.) random variable on mathbbK. The field mathbbK can be either of mathbbR, mathbbC or mathbbQ. With each of the fields we associate a Dyson index beta equal to 1, 2, or 4 respectively. Let G_ij be i.i.d random variables with the real and imaginary parts sampled independently from the distribution mathcalN(0 frac1beta). Hence, G in mathrmL(mathcalX mathcalY), where matrix G is \\begin{equation} P(G) \\propto \\exp(-\\mathrm{Tr} G G^\\dagger). \\end{equation} This law is unitarily invariant, meaning that for any unitary matrices U and V, G and UGV are equally distributed. It can be shown that for beta=2 the eigenvalues of G are uniformly distributed over the unit disk on the complex plane.In our library the ensemble Ginibre matrices is implemented in the GinibreEnsemble{β} parametric type. The parameter determines the Dyson index. The following constructors are provided GinibreEnsemble{β}(m::Int, n::Int), GinibreEnsemble{β}(m::Int), GinibreEnsemble(m::Int, n::Int), GinibreEnsemble(m::Int). The parameters n and m determine the dimensions of output and input spaces. The versions with one argument assume m=n. When the Dyson index is omitted it assumed that beta=2. Sampling from these distributions can be performed as followsg = GinibreEnsemble{2}(2,3)\n\nrand(g)The function rand has specialized methods for each possible value of the Dyson index beta."
+},
+
+{
+    "location": "man/random/#Wishart-matrices-1",
+    "page": "Random quantum objects",
+    "title": "Wishart matrices",
+    "category": "section",
+    "text": "Wishart matrices form an ensemble of random positive semidefinite matrices. They are parametrized by two factors. First is the Dyson index beta which is equal to one for real matrices, two for complex matrices and four for symplectic matrices. The second parameter, K, is responsible for the rank of the matrices. They are sampled as followsChoose beta and K.\nSample a Ginibre matrix Gin mathrmL(mathrmX mathrmY) with the Dyson index betaand mathrmdim(mathrmX) = d and mathrmdim(mathrmY)=Kd.Return GG^dagger.In QuantumInformation.jl this is implemented using the type WishartEnsemble{β, K}. We also provide additional constructors for convenience WishartEnsemble{β}(d::Int) where β = WishartEnsemble{β, 1}(d), WishartEnsemble(d::Int) = WishartEnsemble{2}(d).These can be used in the following wayw = WishartEnsemble{1,0.2}(5)\n\nz = rand(w)\n\neigvals(z)\n\nw = WishartEnsemble(3)\n\nz = rand(w)\n\neigvals(z)"
+},
+
+{
+    "location": "man/random/#Circular-ensembles-1",
+    "page": "Random quantum objects",
+    "title": "Circular ensembles",
+    "category": "section",
+    "text": "Circular ensembles are measures on the space of unitary matrices. There are three main circular ensembles. Each of this ensembles has an associated Dyson index beta [12]Circular orthogonal ensemble (COE), beta=1.\nCircular unitary ensemble (CUE), beta=2.\nCircular symplectic ensemble (CSE), beta=4.They can be characterized as follows. The CUE is simply the Haar measure on the unitary group. Now, if U is an element of CUE then U^TU is an element of COE and U_R U is an element CSE. As can be seen the sampling of Haar unitaries is at the core of sampling these ensembles. Hence, we will focus on them in the remainder of this section.There are several possible approaches to generating random unitary matrices according to the Haar measure. One way is to consider known parametrizations of unitary matrices, such as the Euler [13] or Jarlskog [14] ones. Sampling these parameters from appropriate distributions yields a Haar random unitary. The downside is the long computation time, especially for large matrices, as this involves a lot of matrix multiplications. We will not go into this further, we refer the interested reader to the papers on these parametrizations.Another approach is to consider a Ginibre matrix G in mathrmL(mathrmX) and its polar decomposition G=U P, where U in mathrmL(mathrmX) is unitary and P is a positive matrix. The matrix P is unique and given by sqrtG^dagger G. Hence, assuming P is invertible, we could recover U as \\begin{equation} U = G (G^\\dagger G) ^{-\\frac{1}{2}}. \\end{equation} As this involves the inverse square root of a matrix, this approach can be potentially numerically unstable.The optimal approach is to utilize the QR decomposition of G, G=QR, where Q in mathrmL(mathrmX) is unitary and R in mathrmL(mathrmX) is upper triangular. This procedure is unique if G is invertible and we require the diagonal elements of R to be positive. As typical implementations of the QR algorithm do not consider this restriction, we must enforce it ourselves. The algorithm is as followsGenerate a Ginibre matrix G in mathrmL(mathrmX), mathrmdim(mathrmX) = d withDyson index beta=2.Perform the QR decomposition obtaining Q and R.\nMultiply the i\\textsuperscript{th} column of Q by r_iir_ii.This gives us a Haar distributed random unitary. This procedure can be generalized in order to obtain a random isometry. The only required changed is the dimension of G. We simply start with G in mathrmL(mathrmX mathrmY), where dim(mathrmX)geq dim(mathrmY).Furthermore, we may introduce two additional circular ensembles corresponding to the Haar measure on the orthogonal and symplectic groups. These are the circular real ensemble (CRE) and circular quaternion ensemble (CQE). Their sampling is similar to sampling from CUE. The only difference is the initial Dyson index of the Ginibre matrix. This is set to beta=1 for CRE and beta=4 for CQE.In QuantumInformation.jl these distributions can be sampled asc = CircularEnsemble{2}(3)\n\nu = rand(c)\n\nu*u\'Sampling from the Haar measure on the orthogonal group can be achieved asc = CircularRealEnsemble(3)\n\no = rand(c)\n\no*o\'For convenience we provide the following type aliases const COE = CircularEnsemble{1}, const CUE = CircularEnsemble{2}, const CSE = CircularEnsemble{4}."
+},
+
+{
+    "location": "man/random/#Random-quantum-states-1",
+    "page": "Random quantum objects",
+    "title": "Random quantum states",
+    "category": "section",
     "text": ""
+},
+
+{
+    "location": "man/random/#Pure-states-1",
+    "page": "Random quantum objects",
+    "title": "Pure states",
+    "category": "section",
+    "text": "Pure states are elements of the unit sphere in mathrmX. Thus it is straightforward to generate them randomly. We start with a vector of dim(mathrmX) independent complex numbers sampled from the standard normal distribution. What remains is to normalize the length of this vector to unity.This is implemented using the HaarKet{β} type. The value beta=1 corresponds to the Haar measure on the unit sphere in mathbbR^d, while beta=2 corresponds to the Haar measure on the unit sphere in mathbbC^d. The usage is as followsh = HaarKet{2}(3)\n\nψ = rand(h)\n\nnorm(ψ)For convenience we provide the following constructor HaarKet(d::Int) = HaarKet{2}(d) as the majority of uses cases require sampling complex states."
+},
+
+{
+    "location": "man/random/#Mixed-states-1",
+    "page": "Random quantum objects",
+    "title": "Mixed states",
+    "category": "section",
+    "text": "Random mixed states can be generated in one of two equivalent ways. The first one comes from the partial trace of random pure states. Suppose we have a pure state psirangle in mathrmX otimes mathrmY. Then we can obtain a random mixed as \\begin{equation} \\rho = \\mathrm{Tr}_\\mathrm{Y} |\\psi\\rangle\\langle\\psi|. \\end{equation} Note that in the case dim(mathrmX)=dim(mathrmY) we recover the (flat) Hilbert-Schmidt distribution on the set of quantum states.An alternative approach is to start with a Ginibre matrix G in mathrmL(mathrmX mathrmY). We obtain a random quantum state rho as \\begin{equation} \\rho = GG^\\dagger/\\mathrm{Tr}(GG^\\dagger). \\end{equation} It can be easily verified that this approach is equivalent to the one utilizing random pure states. First, note that in both cases we start with dim(mathrmX) dim(mathrmY) complex random numbers sampled from the standard normal distribution. Next, we only need to note that taking the partial trace of a pure state psirangle is equivalent to calculating AA^dagger where A is a matrix obtained from reshaping psirangle.Sampling random mixed states is implemented using the HilbertSchmidtStates{β, K} type. The meaning of the type parameters is the same as in the Wishart matrices case. We provide additional constructors which set the default values of the parameters HilbertSchmidtStates{β}(d::Int) where β = HilbertSchmidtStates{β, 1}(d), HilbertSchmidtStates(d::Int) = HilbertSchmidtStates{2, 1}(d). The latter one is the most frequent use case. Here is an exampleh = HilbertSchmidtStates(3)\n\nρ = rand(h)\n\ntr(ρ)\n\neigvals(ρ)"
+},
+
+{
+    "location": "man/random/#Random-quantum-channels-1",
+    "page": "Random quantum objects",
+    "title": "Random quantum channels",
+    "category": "section",
+    "text": "Quantum channels are a special subclass of quantum states with constraints imposed on their partial trace as well as trace. Formally, we start with a Ginibre matrix G in mathrmL (mathrmX otimes mathrmY mathrmZ). We obtain a random Choi-Jamiołkowski matrix J_Phi corresponding to a channel Phi as J_Phi = left( mathbbI_mathrmX otimes (mathrmTr_mathrmX GG^dagger)^-12 right) GG^dagger left( mathbbI_mathrmX otimes (mathrmTr_mathrmX GG^dagger)^-12 right)When dim(mathrmZ)=dim(mathrmX) dim(mathrmY) this is known to generate a uniform distribution over the set of quantum channels.The implementation uses the type ChoiJamiolkowskiMatrices{β, K}. The parameters beta and K have the same meaning as in the Wishart matrix case. Additionally here, the constructor ChoiJamiolkowskiMatrices{β, K}(idim::Int, odim::Int)  where {β, K} takes two parameters–the input and output dimension of the channel. As in the previous cases we provide some additional constructors for conveniencefunction ChoiJamiolkowskiMatrices{β}(idim::Int, odim::Int) where β     ChoiJamiolkowskiMatrices{β, 1}(idim, odim) end,function ChoiJamiolkowskiMatrices{β}(d::Int) where β     ChoiJamiolkowskiMatrices{β}(d, d) end,function ChoiJamiolkowskiMatrices(idim::Int, odim::Int)     ChoiJamiolkowskiMatrices{2}(idim, odim) end,function ChoiJamiolkowskiMatrices(d::Int)     ChoiJamiolkowskiMatrices(d, d) end.Here is an example of usagec = ChoiJamiolkowskiMatrices(2, 3)\n\nΦ = rand(c)\n\nptrace(Φ.matrix, [3, 2],[1])Note that the resulting sample is of type DynamicalMatrix."
+},
+
+{
+    "location": "man/random/#refs_rand-1",
+    "page": "Random quantum objects",
+    "title": "References",
+    "category": "section",
+    "text": "[1] B. Collins, I. Nechita, Random matrix techniques in quantum information theory, Journal of Mathematical Physics, 2016;57(1):015215.[2] W. K. Wootters, Random quantum statesy, Foundations of Physics, 1990;20(11):1365–1378.[3] K. Życzkowski, H. J. Sommers, Induced measures in the space of mixed quantum states, Journal of Physics A: Mathematical and General, 2001;34(35):7111.[4] H. J. Sommers, K. Życzkowski, Statistical properties of random density matrices, Journal of Physics A: Mathematical and General, 2004;37(35):8457.[5] Z. Puchała, Ł. Pawela, K. Życzkowski, Distinguishability of generic quantum states, Physical Review A, 2016;93(6):062112.[6] L. Zhang, U. Singh, A. K. Pati, Average subentropy, coherence and entanglement of random mixed   quantum states, Annals of Physics, 2017;377:125–146.[7] L. Zhang, Average coherence and its typicality for random mixed quantum states, Journal of Physics A: Mathematical and Theoretical,   2017;50(15):155303.[8] W. Bruzda, V. Cappellini, H. J. Sommers, K. Życzkowski, Random quantum operations, Physics Letters A,   2009;373(3):320–324.[9] I. Nechita, Z. Puchała, L. Pawela, K. Życzkowski, Almost all quantum channels are equidistant, Journal of Mathematical Physics,   2018;59(5):052201.[10] L. Zhang, J. Wang, Z. Chen, Spectral density of mixtures of random density matrices for qubits, Physics Letters A,   2018;382(23):1516–1523.[11] J. Ginibre, Statistical ensembles of complex, quaternion, and real matrices, Journal of Mathematical Physics, 1965;6(3):440–449.[12] M. L. Mehta, Random matrices. vol. 142., Elsevier; 2004.[13] K. Życzkowski, M. Kuś, Random unitary matrices, Journal of Physics A: Mathematical and General, 1994;27(12):4235.[14] C. Jarlskog, A recursive parametrization of unitary matrices, Journal of Mathematical Physics, 2005;46(10):103508."
 },
 
 {

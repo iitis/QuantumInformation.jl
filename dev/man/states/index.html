@@ -1,24 +1,64 @@
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>States and channels · QuantumInformation.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="QuantumInformation.jl logo"/></a><h1>QuantumInformation.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../">Home</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../quickstart/">Quickstart</a></li><li><a class="toctext" href="../vectors/">Linear algebra in Julia</a></li><li class="current"><a class="toctext" href>States and channels</a><ul class="internal"><li><a class="toctext" href="#States-1">States</a></li><li><a class="toctext" href="#Channels-1">Channels</a></li><li><a class="toctext" href="#Measurement-1">Measurement</a></li></ul></li><li><a class="toctext" href="../functionals/">Functionals</a></li><li><a class="toctext" href="../random/">Random quantum objects</a></li></ul></li><li><a class="toctext" href="../../lib/QuantumInformation/">Library</a></li></ul></nav><article id="docs"><header><nav><ul><li>Manual</li><li><a href>States and channels</a></li></ul><a class="edit-page" href="https://github.com/ZKSI/QuantumInformation.jl/blob/master/docs/src/man/states.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>States and channels</span><a class="fa fa-bars" href="#"></a></div></header><h1><a class="nav-anchor" id="States-and-channels-1" href="#States-and-channels-1">States and channels</a></h1><p>In this and the following sections we will denote complex Euclidean spaces <span>$\mathbb{C}^d$</span> with <span>$\mathcal{X}$</span>, <span>$\mathcal{Y}$</span>, <span>$\mathcal{Z}$</span> etc. When needed the dimension of a space <span>$\mathcal{X}$</span> will be denoted <span>$\mathrm{dim}(\mathcal{X})$</span>. The set of matrices transforming vectors from <span>$\mathcal{X}$</span> to <span>$\mathcal{Y}$</span> will be denoted <span>$\mathrm{L}(\mathcal{X}, \mathcal{Y})$</span>. For simplicity we will write <span>$\mathrm{L}(\mathcal{X}) \equiv \mathrm{L}(\mathcal{X}, \mathcal{X})$</span>.</p><h2><a class="nav-anchor" id="States-1" href="#States-1">States</a></h2><p>By <span>$|\psi\rangle\in\mathcal{X}$</span> we denote a normed column vector. Notice that any <span>$|\psi\rangle$</span> can be expressed as <span>$|\psi\rangle=\sum_{i=1}^{n} \alpha_i |i\rangle$</span>, where <span>$\sum_{i=1}^{n} |\alpha_i|^2=1$</span> and the set <span>$\{|i\rangle\}_{i=1}^{n}$</span> is the computational basis.</p><pre><code class="language-julia-repl">julia&gt; ket(1,2)
-ERROR: UndefVarError: ket not defined
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>States and channels · QuantumInformation.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="QuantumInformation.jl logo"/></a><h1>QuantumInformation.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../">Home</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../quickstart/">Quickstart</a></li><li><a class="toctext" href="../vectors/">Linear algebra in Julia</a></li><li class="current"><a class="toctext" href>States and channels</a><ul class="internal"><li><a class="toctext" href="#States-1">States</a></li><li><a class="toctext" href="#Non-standard-matrix-transformations-1">Non-standard matrix transformations</a></li><li><a class="toctext" href="#Channels-1">Channels</a></li><li><a class="toctext" href="#refs_sc-1">References</a></li></ul></li><li><a class="toctext" href="../functionals/">Functionals</a></li><li><a class="toctext" href="../measurement/">Measurement</a></li><li><a class="toctext" href="../random/">Random quantum objects</a></li></ul></li><li><a class="toctext" href="../../lib/QuantumInformation/">Library</a></li></ul></nav><article id="docs"><header><nav><ul><li>Manual</li><li><a href>States and channels</a></li></ul><a class="edit-page" href="https://github.com/ZKSI/QuantumInformation.jl/blob/master/docs/src/man/states.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>States and channels</span><a class="fa fa-bars" href="#"></a></div></header><div></div><h1><a class="nav-anchor" id="States-and-channels-1" href="#States-and-channels-1">States and channels</a></h1><p>In this and the following sections we will denote complex Euclidean spaces <span>$\mathbb{C}^d$</span> with <span>$\mathcal{X}$</span>, <span>$\mathcal{Y}$</span>, <span>$\mathcal{Z}$</span> etc. When needed the dimension of a space <span>$\mathcal{X}$</span> will be denoted <span>$\mathrm{dim}(\mathcal{X})$</span>. The set of matrices transforming vectors from <span>$\mathcal{X}$</span> to <span>$\mathcal{Y}$</span> will be denoted <span>$\mathrm{L}(\mathcal{X}, \mathcal{Y})$</span>. For simplicity we will write <span>$\mathrm{L}(\mathcal{X}) \equiv \mathrm{L}(\mathcal{X}, \mathcal{X})$</span>.</p><h2><a class="nav-anchor" id="States-1" href="#States-1">States</a></h2><p>By <span>$|\psi\rangle\in\mathcal{X}$</span> we denote a normed column vector. Notice that any <span>$|\psi\rangle$</span> can be expressed as <span>$|\psi\rangle=\sum_{i=1}^{n} \alpha_i |i\rangle$</span>, where <span>$\sum_{i=1}^{n} |\alpha_i|^2=1$</span> and the set <span>$\{|i\rangle\}_{i=1}^{n}$</span> is the computational basis.</p><pre><code class="language-julia-repl">julia&gt; ket(1,2)
+2-element Array{Complex{Float64},1}:
+ 1.0 + 0.0im
+ 0.0 + 0.0im
 
 julia&gt; (1/sqrt(2)) * (ket(1,2) + ket(2,2))
-ERROR: UndefVarError: ket not defined</code></pre><p>According to common academic convention, we count the indices of states starting from~one. Following the standard Dirac notation the symbol <span>$\langle\psi|$</span> denotes the row vector dual to <span>$|\psi\rangle$</span>. Therefore <span>$|\psi\rangle=\langle\psi|^\dagger$</span>, where the symbol <span>${}^\dagger$</span> denotes the Hermitian conjugation.</p><pre><code class="language-julia-repl">julia&gt; bra(2,3)
-ERROR: UndefVarError: bra not defined</code></pre><p>The inner product of <span>$|\phi\rangle, |\psi\rangle \in \mathcal{X}$</span> is denoted by <span>$\langle\psi|\phi\rangle$</span> and the norm is defined as <span>$\|\ket{\phi}\|=\sqrt{\langle\phi|\phi\rangle}$</span>.</p><pre><code class="language-julia-repl">julia&gt; ψ=(1/sqrt(2)) * (ket(0,2) + ket(1,2))
-ERROR: UndefVarError: ket not defined
+2-element Array{Complex{Float64},1}:
+ 0.7071067811865475 + 0.0im
+ 0.7071067811865475 + 0.0im</code></pre><p>According to common academic convention, we count the indices of states starting from one. Following the standard Dirac notation the symbol <span>$\langle\psi|$</span> denotes the row vector dual to <span>$|\psi\rangle$</span>. Therefore <span>$|\psi\rangle=\langle\psi|^\dagger$</span>, where the symbol <span>${}^\dagger$</span> denotes the Hermitian conjugation.</p><pre><code class="language-julia-repl">julia&gt; bra(2,3)
+1×3 LinearAlgebra.Adjoint{Complex{Float64},Array{Complex{Float64},1}}:
+ 0.0-0.0im  1.0-0.0im  0.0-0.0im</code></pre><p>The inner product of <span>$|\phi\rangle, |\psi\rangle \in \mathcal{X}$</span> is denoted by <span>$\langle\psi|\phi\rangle$</span> and the norm is defined as <span>$\||\phi\rangle\|=\sqrt{\langle\phi|\phi\rangle}$</span>.</p><pre><code class="language-julia-repl">julia&gt; ψ=(1/sqrt(2)) * (ket(1,2) + ket(2,2))
+2-element Array{Complex{Float64},1}:
+ 0.7071067811865475 + 0.0im
+ 0.7071067811865475 + 0.0im
 
-julia&gt; ϕ=(1/2) * ket(0,2) + (sqrt(3)/2) * ket(1,2)
-ERROR: UndefVarError: ket not defined
+julia&gt; ϕ=(1/2) * ket(1,2) + (sqrt(3)/2) * ket(2,2)
+2-element Array{Complex{Float64},1}:
+                0.5 + 0.0im
+ 0.8660254037844386 + 0.0im
 
 julia&gt; ϕ&#39;*ψ
-ERROR: UndefVarError: ϕ not defined
+0.9659258262890682 + 0.0im
 
 julia&gt; sqrt(ϕ&#39;*ϕ)
-ERROR: UndefVarError: ϕ not defined</code></pre><p>The form <span>$|{\psi}\rangle\langle{\phi}|$</span> denotes outer product of <span>$|{\psi}\rangle$</span> and <span>$\langle{\phi}|$</span> from <span>$\mathrm{L}(\mathcal{X})$</span>.</p><pre><code class="language-julia-repl">julia&gt; ketbra(2,3,4)
-ERROR: UndefVarError: ketbra not defined</code></pre><p>Specifically, <span>$|{\psi}\rangle\langle{\psi}|$</span> is a rank-one projection operator called as <em>pure state</em>. Generally, any <a href="https://en.wikipedia.org/wiki/Qubit"><em>quantum state</em></a> <span>$\rho$</span> can be expressed as <span>$\rho=\sum_{i=0}^n q_i |i\rangle\langle i|$</span>, where <span>$\sum_{i=0}^n q_i=1$</span>. Notice that <span>$\rho$</span> is a trace-one positive semi-definite linear operator <em>i.e.</em>: <span>$\rho=\rho^\dagger$</span>, <span>$\rho\geq 0$</span> and <span>$\mathrm{tr}{\rho}=1$</span>.</p><pre><code class="language-julia-repl">julia&gt; proj(ψ)
-ERROR: UndefVarError: proj not defined</code></pre><p>In the opposite to $\mathrm{vec}$ transformation, we have reshaping map $\mathrm{res}:\mathrm{L}(\mathcal{X,Y})\to\mathcal{Y}\otimes\mathcal{X}$, which transform matrix $\rho$ into a vector row by row. More precisely, for dyadic operators $|\psi\rangle\langle\phi|$, where $|\psi\rangle \in \mathcal{X}$, $|\phi\rangle \in \mathcal{Y}$ operation $\mathrm{vec}$ is defined as $\mathrm{vec}(|\psi\rangle\langle\phi|)=|\psi\rangle|\overline{\phi}\rangle$ and can be uniquely extend the definition to the whole space $\mathrm{L}(\mathcal{X,Y})$ by linearity. It is easy to check that $\mathrm{res}(\rho)=\mathrm{vec}(\rho^T)$.</p><pre><code class="language-julia-repl">julia&gt; res(ketbra(0,1,2))
-ERROR: UndefVarError: ketbra not defined</code></pre><p>Inverse operation to $\mathrm{res}$ is a $\mathrm{unres}:\mathcal{Y}\otimes\mathcal{X}\to \mathrm{L}(\mathcal{X,Y}) $ map, which transforms the vector into a matrix. It means that $\rho=\mathrm{unres}(\mathrm{res}(\rho))$.</p><pre><code class="language-julia-repl">julia&gt; unres(res(ketbra(0,1,2)))
-ERROR: UndefVarError: ketbra not defined</code></pre><p>Let us recall that trace is a mapping $\mathrm{Tr}:\mathrm{L}(\mathcal{X})\ \to \mathbb{C},$ given by $\mathrm{Tr}:\rho\mapsto\sum<em>{i=1}^{\mathrm{dim}(\mathcal{X})}\langle e</em>i|\rho|e<em>i\rangle$, where $\{|e</em>i\rangle \}$ is an orthonormal basis of $\mathcal{X}$. According this, <a href="https://en.wikipedia.org/wiki/Partial_trace"><em>partial trace</em></a> is a mapping $\mathrm{Tr}<em>{\mathcal{X}}: \mathrm{L}(\mathcal{X}\otimes\mathcal{Y}) \to \mathrm{L}(\mathcal{Y})$ such that $\mathrm{Tr}</em>{\mathcal{X}}: \rho<em>A\otimes \rho</em>B \mapsto \rho<em>B \mathrm{Tr}(\rho</em>A)$, where $\rho<em>A\in \mathrm{L}(\mathcal{X})$, $\rho</em>B\in \mathrm{L}(\mathcal{Y})$. As this is a linear map, it may be uniquely extended to the case of operators which are not in a tensor product form.</p><pre><code class="language-julia-repl">julia&gt; ρ = [0.25 0.25im; -0.25im 0.75]
+0.9999999999999999 + 0.0im</code></pre><p>The form <span>$|{\psi}\rangle\langle{\phi}|$</span> denotes outer product of <span>$|{\psi}\rangle$</span> and <span>$\langle{\phi}|$</span> from <span>$\mathrm{L}(\mathcal{X})$</span>.</p><pre><code class="language-julia-repl">julia&gt; ketbra(2,3,4)
+4×4 Array{Complex{Float64},2}:
+ 0.0+0.0im  0.0+0.0im  0.0+0.0im  0.0+0.0im
+ 0.0+0.0im  0.0+0.0im  1.0+0.0im  0.0+0.0im
+ 0.0+0.0im  0.0+0.0im  0.0+0.0im  0.0+0.0im
+ 0.0+0.0im  0.0+0.0im  0.0+0.0im  0.0+0.0im</code></pre><p>Specifically, <span>$|{\psi}\rangle\langle{\psi}|$</span> is a rank-one projection operator called as <em>pure state</em>. Generally, any <a href="https://en.wikipedia.org/wiki/Qubit"><em>quantum state</em></a> <span>$\rho$</span> can be expressed as <span>$\rho=\sum_{i=0}^n q_i |i\rangle\langle i|$</span>, where <span>$\sum_{i=0}^n q_i=1$</span>. Notice that <span>$\rho$</span> is a trace-one positive semi-definite linear operator <em>i.e.</em>: <span>$\rho=\rho^\dagger$</span>, <span>$\rho\geq 0$</span> and <span>$\mathrm{tr}{\rho}=1$</span>.</p><pre><code class="language-julia-repl">julia&gt; proj(ψ)
+2×2 Array{Complex{Float64},2}:
+ 0.5+0.0im  0.5+0.0im
+ 0.5+0.0im  0.5+0.0im</code></pre><p>For convenience, the <strong>QuantumInformation.jl</strong> library provides the implementations of maximally mixed, maximally entangled and Werner states.</p><pre><code class="language-julia-repl">julia&gt; max_entangled(4)
+4-element reshape(::LinearAlgebra.Diagonal{Complex{Float64},Array{Complex{Float64},1}}, 4) with eltype Complex{Float64}:
+ 0.7071067811865475 + 0.0im
+                0.0 + 0.0im
+                0.0 + 0.0im
+ 0.7071067811865475 + 0.0im
+
+julia&gt; max_mixed(4)
+4×4 Array{Float64,2}:
+ 0.25  0.0   0.0   0.0
+ 0.0   0.25  0.0   0.0
+ 0.0   0.0   0.25  0.0
+ 0.0   0.0   0.0   0.25
+
+julia&gt; werner_state(4, 0.4)
+4×4 Array{Complex{Float64},2}:
+ 0.35+0.0im   0.0+0.0im   0.0+0.0im   0.2+0.0im
+  0.0+0.0im  0.15+0.0im   0.0+0.0im   0.0+0.0im
+  0.0+0.0im   0.0+0.0im  0.15+0.0im   0.0+0.0im
+  0.2+0.0im   0.0+0.0im   0.0+0.0im  0.35+0.0im</code></pre><h2><a class="nav-anchor" id="Non-standard-matrix-transformations-1" href="#Non-standard-matrix-transformations-1">Non-standard matrix transformations</a></h2><p>We will now introduce reshaping operators, which map matrices to vectors and vice versa. We start with the mapping <span>$\mathrm{res}:\mathrm{L}(\mathcal{X,Y})\to\mathcal{Y}\otimes\mathcal{X}$</span>, which transforms the matrix <span>$\rho$</span> into a vector row by row. More precisely, for dyadic operators <span>$|\psi\rangle\langle\phi|$</span>, where <span>$|\psi\rangle \in \mathcal{Y}$</span>, <span>$|\phi\rangle \in \mathcal{X}$</span> the operation <span>$\mathrm{res}$</span> is defined as <span>$\mathrm{res}(|\psi\rangle\langle\phi|)=|\psi\rangle|\overline{\phi}\rangle$</span> and can be uniquely extend to the whole space <span>$\mathrm{L}(\mathcal{X,Y})$</span> by linearity.</p><pre><code class="language-julia-repl">julia&gt; res(ketbra(1,2,2))
+4-element reshape(::LinearAlgebra.Transpose{Complex{Float64},Array{Complex{Float64},2}}, 4) with eltype Complex{Float64}:
+ 0.0 + 0.0im
+ 1.0 + 0.0im
+ 0.0 + 0.0im
+ 0.0 + 0.0im</code></pre><p>The inverse operation to <span>$\mathrm{res}$</span> is <span>$\mathrm{unres}:\mathcal{Y}\otimes\mathcal{X}\to \mathrm{L}(\mathcal{X,Y}) $, which transforms the vector into a matrix. It is defined as the unique linear mapping satisfying $\rho=\mathrm{unres}(\mathrm{res}(\rho))$</span>.</p><pre><code class="language-julia-repl">julia&gt; unres(res(ketbra(1,2,2)))
+2×2 LinearAlgebra.Transpose{Complex{Float64},Base.ReshapedArray{Complex{Float64},2,LinearAlgebra.Transpose{Complex{Float64},Array{Complex{Float64},2}},Tuple{Base.MultiplicativeInverses.SignedMultiplicativeInverse{Int64}}}}:
+ 0.0+0.0im  1.0+0.0im
+ 0.0+0.0im  0.0+0.0im</code></pre><p>Let us recall that trace is a mapping <span>$\mathrm{Tr}:\mathrm{L}(\mathcal{X})\to \mathbb{C},$</span> given by <span>$\mathrm{Tr}:\rho\mapsto\sum_{i=1}^{\mathrm{dim}(\mathcal{X})}\langle e_i|\rho|e_i\rangle$</span>, where <span>$\{|e_i\rangle \}$</span> is an orthonormal basis of <span>$\mathcal{X}$</span>. According to this, <em>partial trace</em> is a mapping <span>$\mathrm{Tr}_{\mathcal{X}}: \mathrm{L}(\mathcal{X}\otimes\mathcal{Y}) \to \mathrm{L}(\mathcal{Y})$</span> such that <span>$\mathrm{Tr}_{\mathcal{X}}: \rho_A\otimes \rho_B \mapsto \rho_B \mathrm{Tr}(\rho_A)$</span>, where <span>$\rho_A\in \mathrm{L}(\mathcal{X})$</span>, <span>$\rho_B\in \mathrm{L}(\mathcal{Y})$</span>. As this is a linear map, it may be uniquely extended to the case of operators which are not in a tensor product form.</p><pre><code class="language-julia-repl">julia&gt; ρ = [0.25 0.25im; -0.25im 0.75]
 2×2 Array{Complex{Float64},2}:
  0.25+0.0im    0.0+0.25im
  -0.0-0.25im  0.75+0.0im
@@ -28,10 +68,20 @@ julia&gt; σ = [0.4 0.1im; -0.1im 0.6]
   0.4+0.0im  0.0+0.1im
  -0.0-0.1im  0.6+0.0im
 
-julia&gt; ptrace(ρ ⊗ σ, [2, 2], [2,])
-ERROR: UndefVarError: ⊗ not defined</code></pre><p>Matrix transposition is a mapping ${}^T:\mathrm{L}(\mathcal{X,Y}) \to \mathrm{L}(\mathcal{Y,X})$ such that $\rho<em>{ij}^T = \rho</em>{ji}$, where $\rho<em>{ij}$ is a $i$-th row, $j$-th column element of matrix $\rho$. Following this, we may introduce <em>partial transposition</em> ${}^{T</em>B}:\mathrm{L}(\mathcal{X<em>A,Y</em>A}\otimes\mathcal{X<em>B,Y</em>B}) \to \mathrm{L}(\mathcal{Y<em>A,X</em>A}\otimes\mathcal{X<em>B,Y</em>B})$, which for product state $\rho<em>A\otimes\rho</em>B$ is given by ${}^{T<em>A}: \rho</em>A\otimes\rho<em>B\mapsto\rho</em>A^T\otimes\rho_B$. The definition of partial trace can be extended for all operators by trace linearity.</p><pre><code class="language-julia-repl">julia&gt; ptranspose(ρ ⊗ σ, [2, 2], [1])
-ERROR: UndefVarError: ⊗ not defined</code></pre><p>For given multiindexed matrix $\rho<em>{(m,\mu),(n,\nu)}=\langle m|\langle\mu|\rho|n\rangle\nu\rangle$, reshuffle operation is defined as $\rho^R</em>{(m,\mu),(n,\nu)}=\rho_{(m,n),(\mu,\nu)}$.</p><pre><code class="language-julia-repl">julia&gt; reshuffle(ρ ⊗ σ)
-ERROR: UndefVarError: ⊗ not defined</code></pre><h2><a class="nav-anchor" id="Channels-1" href="#Channels-1">Channels</a></h2><p>In the most general case evolution of the quantum system can be described using the notion of a <a href="https://en.wikipedia.org/wiki/Quantum_channel"><em>quantum channel</em></a>. First, introduce a <em>superoperator</em> as a linear mapping acting on linear operators $\mathrm{L}(\mathcal{X})$ and transforming them into operators acting on $\mathrm{L}(\mathcal{Y})$. The set of all such mapping will be denoted by $\mathrm{T}(\mathcal{X},\mathcal{Y})$ and $\mathrm{T}(\mathcal{X}):=\mathrm{T}(\mathcal{X},\mathcal{X})$. In mathematical terms, a quantum channel is a superoperator $\Phi:\mathrm{L}(\mathcal{X})\to \mathrm{L}(\mathcal{Y})$ that is <em>trace-preserving</em> ($\forall \rho\in \mathrm{L}(\mathcal{X})\quad \mathrm{Tr}(\Phi(\rho))=\mathrm{Tr}(\rho)$) and <em>completely positive</em> ($\forall \mathcal{Z} \forall \rho \in \mathrm{L}(\mathcal{X\otimes Z}), \rho\geq 0, \quad \Phi\otimes\mathbb{I}<em>{\mathrm{L}(\mathcal{X})}(\rho)\geq 0$). The the product of the given super-operators $\Phi</em>1\in \mathrm{T}(\mathcal{X<em>1},\mathcal{Y</em>1})$, $\Phi<em>2\in \mathrm{T}(\mathcal{X</em>2},\mathcal{Y<em>2})$ is a mapping $\Phi</em>1\otimes\Phi<em>2\in T(\mathcal{X}</em>1\otimes\mathcal{X}<em>2,\mathcal{Y}</em>1\otimes\mathcal{Y}<em>2)$ that satisfies $(\Phi</em>1\otimes\Phi<em>2)(\rho</em>1\otimes\rho<em>2)=\Phi</em>1(\rho<em>1)\otimes\Phi</em>2(\rho_2)$.</p><p>According to Kraus&#39; theorem, any completely positive trace-preserving (CPTP) map $\Phi$ can always be written as $\Phi(\rho)=\sum<em>{i=0}^rK</em>i \rho K<em>i^\dagger$ for some set of operators $\{K</em>i\}<em>{i=0}^r$ satisfying $\sum</em>i K<em>i^\dagger K</em>i = \mathbb{I}$, where $r$ is the rank of super-operator $\Phi$. Another way to represent the quantum channel is based on Choi-Jamiołkowski isomorphism. Consider mapping $J:\mathrm{T}(\mathcal{X,Y})\to \mathrm{L}(\mathcal{Y}\otimes\mathcal{X})$ such that $J(\Phi)=(\Phi\otimes\mathbb{I}<em>{\mathrm{L}(\mathcal{X})})(\mathrm{res}(\mathbb{I}</em>{\mathcal{X}})\mathrm{res}(\mathbb{I}<em>{\mathcal{X}})^\dagger)$. Equivalently $J(\Phi)=\sum</em>{i,j=0}^{\mathrm{dim(\mathcal{X})-1}}\Phi(|i\rangle\langle j|)\otimes|i\rangle\langle j|$. The action of a superoperator in the Choi representation,also called dynamical matrix of $\Phi$, is given by $\Phi(\rho)=\mathrm{Tr}<em>\mathcal{X}(J(\Phi)(\mathbb{I}</em>\mathcal{Y}\otimes\rho^T))$. Last representation of quantum channel implemented in <code>QuantumInformation.jl</code> is  Stinespring representation. Supoose that $A\in \mathrm{L}(\mathcal{X},\mathcal{Y}\otimes\mathcal{Z})$, then $\Phi(\rho)=\mathrm{Tr}_\mathcal{Z}(A\rho A^\dagger)$.</p><h3><a class="nav-anchor" id="Constructors-1" href="#Constructors-1">Constructors</a></h3><p>Channel objects can be constructed from matrices that represents them. As shown in the following listing</p><pre><code class="language-julia-repl">julia&gt; γ=0.4
+julia&gt; ptrace(ρ ⊗ σ, [2, 2], [2])
+2×2 Array{Complex{Float64},2}:
+ 0.25+0.0im    0.0+0.25im
+  0.0-0.25im  0.75+0.0im</code></pre><p>Matrix transposition is a mapping <span>${}^T:\mathrm{L}(\mathcal{X,Y}) \to \mathrm{L}(\mathcal{Y,X})$</span> such that <span>$\left(\rho^T \right)_{ij} = \rho_{ji}$</span>, where <span>$\rho_{ij}$</span> is a <span>$i$</span>-th row, <span>$j$</span>-th column element of matrix <span>$\rho$</span>. Following this, we may introduce \emph{partial transposition} <span>${}^{\Gamma_B}: \mathrm{L}(\mathcal{X}_A \otimes \mathcal{X}_B, \mathcal{Y}_A \otimes \mathcal{Y}_B) \to \mathrm{L}(\mathcal{X}_A \otimes \mathcal{Y}_B, \mathcal{Y}_A \otimes \mathcal{X}_B)$</span>, which for a product state <span>$\rho_A\otimes\rho_B$</span> is given by <span>${}^{\Gamma_B}: \rho_A\otimes\rho_B\mapsto\rho_A\otimes\rho_B^T$</span>. The definition of partial transposition can be uniquely extended for all operators from linearity.</p><pre><code class="language-julia-repl">julia&gt; ptranspose(ρ ⊗ σ, [2, 2], [1])
+4×4 Array{Complex{Float64},2}:
+   0.1+0.0im       0.0+0.025im     0.0-0.1im    0.025-0.0im
+   0.0-0.025im    0.15+0.0im    -0.025+0.0im      0.0-0.15im
+   0.0+0.1im    -0.025+0.0im       0.3+0.0im      0.0+0.075im
+ 0.025-0.0im       0.0+0.15im      0.0-0.075im   0.45+0.0im</code></pre><p>For given multiindexed matrix <span>$\rho_{(m,\mu),(n,\nu)}=\langle m \mu|\rho|n \nu\rangle$</span>, the reshuffle operation is defined as <span>$\rho^R_{(m,\mu),(n,\nu)}=\rho_{(m,n),(\mu,\nu)}$</span>.</p><pre><code class="language-julia-repl">julia&gt; reshuffle(ρ ⊗ σ)
+4×4 Array{Complex{Float64},2}:
+ 0.1+0.0im     0.0+0.025im     0.0-0.025im  0.15+0.0im
+ 0.0+0.1im  -0.025+0.0im     0.025-0.0im     0.0+0.15im
+ 0.0-0.1im   0.025-0.0im    -0.025+0.0im     0.0-0.15im
+ 0.3+0.0im     0.0+0.075im     0.0-0.075im  0.45+0.0im</code></pre><h2><a class="nav-anchor" id="Channels-1" href="#Channels-1">Channels</a></h2><p>Physical transformations of quantum states into quantum states are called quantum channels <em>i.e.</em> linear Completely Positive Trace Preserving (CP-TP) transformations. Probabilistic transformations of quantum states are called quantum operations and mathematically they are defined as linear Completely Positive Trace Non-increasing (CP-TNI) maps. For the sake of simplicity we will refer to both CP-TP and CP-TNI maps as quantum channels when it will not cause confusion.</p><p>There exists various representations of quantum channels such as:</p><ul><li>Kraus operators,</li><li>natural representation, also called superoperator representation,</li><li>Stinespring representation,</li><li>Choi-Jamiołkowski matrices, sometimes called dynamical matrices.</li></ul><p>The product of superoperators <span>$\Phi_1\in \mathrm{T}(\mathcal{X}_1,\mathcal{Y}_1)$</span>, <span>$\Phi_2\in \mathrm{T}(\mathcal{X}_2,\mathcal{Y}_2)$</span> is a mapping <span>$\Phi_1\otimes\Phi_2\in T(\mathcal{X}_1\otimes\mathcal{X}_2,\mathcal{Y}_1\otimes\mathcal{Y}_2)$</span> that satisfies <span>$(\Phi_1\otimes\Phi_2)(\rho_1\otimes\rho_2)=\Phi_1(\rho_1)\otimes\Phi_2(\rho_2)$</span>. For the operators that are not in a tensor product form this notion can be uniquely extended from linearity.</p><p>According to Kraus&#39; theorem, any completely positive trace-preserving (CP-TP) map <span>$\Phi$</span> can always be written as <span>$\Phi(\rho)=\sum_{i=1}^r K_i \rho K_i^\dagger$</span> for some set of operators <span>$\{K_i\}_{i=1}^r$</span> satisfying <span>$\sum_{i=1}^r K_i^\dagger K_i = \mathbb{I}_\mathcal{X}$</span>, where <span>$r$</span> is the rank of superoperator <span>$\Phi$</span>.</p><p>Another way to represent the quantum channel is based on Choi-Jamiołkowski isomorphism. Consider mapping <span>$J:\mathrm{T}(\mathcal{X,Y})\to \mathrm{L}(\mathcal{Y}\otimes\mathcal{X})$</span> such that <span>$J(\Phi)=(\Phi\otimes\mathbb{I}_{\mathrm{L}(\mathcal{X})}) (\mathrm{res}(\mathbb{I}_{\mathcal{X}}) \mathrm{res}(\mathbb{I}_{\mathcal{X}})^\dagger)$</span>. Equivalently <span>$J(\Phi)=\sum_{i,j=1}^{\mathrm{dim(\mathcal{X})}}\Phi(|i\rangle\langle j|)\otimes|i\rangle\langle j|$</span>. The action of a superoperator in the Choi representation is given by <span>$\Phi(\rho)=\mathrm{Tr}_\mathcal{X}(J(\Phi)(\mathbb{I}_\mathcal{Y}\otimes\rho^T))$</span>.</p><p>The natural representation of a quantum channel <span>$\mathrm{T}(\mathcal{X}, \mathcal{Y})$</span> is a mapping <span>$\mathrm{res}(\rho) \mapsto \mathrm{res}(\Phi(\rho))$</span>. It is represented by a matrix <span>$K(\Phi) \in \mathrm{L}(\mathcal{X} \otimes \mathcal{X}, \mathcal{Y} \otimes \mathcal{Y})$</span> for which the following holds \begin{equation} K(\Phi) \mathrm{res}(\rho) = \mathrm{res}(\Phi(\rho)), \end{equation} for all <span>$\rho \in \mathrm{L}(\mathcal{X})$</span>.</p><p>Let <span>$\mathcal{X}, \mathcal{Y}$</span> and <span>$\mathcal{Z}$</span> be a complex Euclidean spaces. The action of the Stinespring representation of a quantum channel <span>$\Phi\in \mathrm{T}(\mathcal{X},\mathcal{Y})$</span> on a state <span>$\rho\in \mathrm{L}(\mathcal{X})$</span> is given by \begin{equation} \Phi(\rho)=\mathrm{Tr}_\mathcal{Z}(A\rho A^\dagger), \end{equation} where <span>$A\in\mathrm{L}(\mathcal{X},\mathcal{Y}\otimes\mathcal{Z})$</span>.</p><p>We now briefly describe the relationships among channel representations <a href="#refs_sc-1">[1]</a>. Let <span>$\Phi\in \mathrm{T}(\mathcal{X}, \mathcal{Y})$</span> be a quantum channel which can be written in the Kraus representation as <span>$\Phi(\rho)=\sum_{i=1}^r K_i \rho K_i^\dagger$</span>, where <span>$\{K_i\}_{i=1}^r$</span> are Kraus operators satisfying <span>$\sum_{i=1}^r K_i^\dagger K_i = \mathbb{I}_\mathcal{X}$</span>. According to this assumption, <span>$\Phi$</span> can be represented in</p><ul><li>Choi representation as <span>$J(\Phi)=\sum_{i=1}^r \mathrm{res}(K_i)\mathrm{res}(K_i^\dagger)$</span>,</li><li>natural representation as <span>$K(\Phi)=\sum_{i=1}^r K_i\otimes K_i^{*}$</span>,</li><li>Stinespring representation as <span>$\Phi(\rho)=\mathrm{Tr}_\mathcal{Z}(A\rho A^\dagger)$</span>,</li></ul><p>where <span>$A=\sum_{i=1}^r K_i\otimes |e_i\rangle$</span> and <span>$\mathcal{Z}=\mathbb{C}^r$</span>.</p><p>In <strong>QuantumInformation.jl</strong> states and channels are always represented in the computational basis therefore channels are stored in the memory as either vectors of matrices in case of Kraus operators or matrices in other cases. In <strong>QuantumInformation.jl</strong> quantum channels are represented by a set of types deriving from an abstract type <code>AbstractQuantumOperation{T}</code> where type parameter <code>T</code> should inherit from <code>AbstractMatrix{&lt;:Number}</code>. Every type inheriting from <code>AbstractQuantumOperation{T}</code> should contain fields <code>idim</code> and <code>odim</code> representing the dimension of input and output space of the quantum channel.</p><p>Two special types of channels are implemented: <code>UnitaryChannel</code> and <code>IdentityChannel</code> that can transform ket vectors into ket vectors.</p><h3><a class="nav-anchor" id="Constructors-1" href="#Constructors-1">Constructors</a></h3><p>Channel objects can be constructed from matrices that represent them, as shown in the following listing</p><pre><code class="language-julia-repl">julia&gt; γ=0.4
 0.4
 
 julia&gt; K0 = Matrix([1 0; 0 sqrt(1-γ)])
@@ -45,69 +95,56 @@ julia&gt; K1 = Matrix([0 sqrt(γ); 0 0])
  0.0  0.0
 
 julia&gt; Φ = KrausOperators([K0,K1])
-ERROR: UndefVarError: KrausOperators not defined
+KrausOperators{Array{Float64,2}}
+    dimensions: (2, 2)
+    [1.0 0.0; 0.0 0.774597]
+    [0.0 0.632456; 0.0 0.0]
 
 julia&gt; iscptp(Φ)
-ERROR: UndefVarError: iscptp not defined</code></pre><h3><a class="nav-anchor" id="Conversion-1" href="#Conversion-1">Conversion</a></h3><p>Conversions between all quantum channel types are implemented. The user is not limited by any single channel representation and can transform between representations he finds the most efficient or suitable for his purpose.</p><pre><code class="language-julia-repl">julia&gt; Ψ1 = convert(SuperOperator{Matrix{ComplexF64}}, Φ)
-ERROR: UndefVarError: SuperOperator not defined
-
-julia&gt; # or
-       
-       SuperOperator{Matrix{ComplexF64}}(Φ)
-ERROR: UndefVarError: SuperOperator not defined
+true</code></pre><p>There are no checks whether a matrix represents a valid CP-TP or CP-TNI map, because this kind of verification is costly and requires potentially expensive numerical computation. Function such as <code>iscptp()</code>, and <code>iscptni()</code> are provided to test properties of supposed quantum channel or quantum operation.</p><h3><a class="nav-anchor" id="Conversion-1" href="#Conversion-1">Conversion</a></h3><p>Conversions between all quantum channel types, <em>i.e.</em> these that derive from <code>AbstractQuantumOperation{T}</code> are implemented. The users are not limited by any single channel representation and can transform between representations they find the most efficient or suitable for their purpose.</p><pre><code class="language-julia-repl">julia&gt; Ψ1 = convert(SuperOperator{Matrix{ComplexF64}}, Φ)
+SuperOperator{Array{Complex{Float64},2}}
+    dimensions: (2, 2)
+    Complex{Float64}[1.0+0.0im 0.0+0.0im 0.0+0.0im 0.4+0.0im; 0.0+0.0im 0.774597+0.0im 0.0+0.0im 0.0+0.0im; 0.0+0.0im 0.0+0.0im 0.774597+0.0im 0.0+0.0im; 0.0+0.0im 0.0+0.0im 0.0+0.0im 0.6+0.0im]
 
 julia&gt; Ψ2 = convert(DynamicalMatrix{Matrix{Float64}}, Φ)
-ERROR: UndefVarError: DynamicalMatrix not defined
-
-julia&gt; #or
-       
-       DynamicalMatrix{Matrix{Float64}}(Φ)
-ERROR: UndefVarError: DynamicalMatrix not defined
+DynamicalMatrix{Array{Float64,2}}
+    dimensions: (2, 2)
+    [1.0 0.0 0.0 0.774597; 0.0 0.4 0.0 0.0; 0.0 0.0 0.0 0.0; 0.774597 0.0 0.0 0.6]
 
 julia&gt; Ψ3 = convert(Stinespring{Matrix{Float64}}, Φ)
-ERROR: UndefVarError: Stinespring not defined
-
-julia&gt; #or
-       
-       Stinespring{Matrix{Float64}}(Φ)
-ERROR: UndefVarError: Stinespring not defined</code></pre><h3><a class="nav-anchor" id="Application-1" href="#Application-1">Application</a></h3><p>Channels can act on pure and mixed states as represented by vectors and matrices. Channels are callable and therefore mimic application of a~function on a~quantum state.</p><pre><code class="language-julia-repl">julia&gt; ρ1=ψ * ψ&#39;
-ERROR: UndefVarError: ψ not defined
+Stinespring{Array{Float64,2}}
+    dimensions: (2, 2)
+    [0.0 0.0; -1.82501e-8 0.0; … ; 0.0 0.0; 0.0 -0.774597]</code></pre><h3><a class="nav-anchor" id="Application-1" href="#Application-1">Application</a></h3><p>Channels can act on pure and mixed states represented by vectors and matrices respectively. Channels are callable and therefore mimic application of a function on a quantum state.</p><pre><code class="language-julia-repl">julia&gt; ρ1=ψ * ψ&#39;
+2×2 Array{Complex{Float64},2}:
+ 0.5+0.0im  0.5+0.0im
+ 0.5+0.0im  0.5+0.0im
 
 julia&gt; Φ(ρ1)
-ERROR: UndefVarError: Φ not defined
+2×2 Array{Complex{Float64},2}:
+      0.7+0.0im  0.387298+0.0im
+ 0.387298+0.0im       0.3+0.0im
 
 julia&gt; Ψ1(ρ1)
-ERROR: UndefVarError: Ψ1 not defined
+2×2 LinearAlgebra.Transpose{Complex{Float64},Array{Complex{Float64},2}}:
+      0.7+0.0im  0.387298+0.0im
+ 0.387298+0.0im       0.3+0.0im
 
 julia&gt; Φ(ψ)
-ERROR: UndefVarError: Φ not defined</code></pre><h3><a class="nav-anchor" id="Composition-1" href="#Composition-1">Composition</a></h3><p>Channels can be composed in parallel or in sequence. Composition in parallel is done using <code>kron()</code> function or overloaded $\otimes$ operator. Composition in sequence can be done in two ways either by using <code>Julia</code> build in function composition operator $(f\circ g)(\cdot)=f(g)(\cdot)$ or by using multiplication of objects inheriting from <code>AbstractQuantumOperation{T}</code> abstract type.</p><pre><code class="language-julia-repl">julia&gt; ρ2=ϕ * ϕ&#39;
-ERROR: UndefVarError: ϕ not defined
+2×2 Array{Complex{Float64},2}:
+      0.7+0.0im  0.387298+0.0im
+ 0.387298+0.0im       0.3+0.0im</code></pre><h3><a class="nav-anchor" id="Composition-1" href="#Composition-1">Composition</a></h3><p>Channels can be composed in parallel or in sequence. Composition in parallel is done using <code>kron()</code> function or the overloaded <span>$\otimes$</span> operator. Composition in sequence can be done in two ways either by using Julia built-in function composition operator <span>$(f\circ g)(\cdot)=f(g)(\cdot)$</span> or by using multiplication of objects inheriting from <code>AbstractQuantumOperation{T}</code> abstract type.</p><pre><code class="language-julia-repl">julia&gt; ρ2=ϕ * ϕ&#39;
+2×2 Array{Complex{Float64},2}:
+     0.25+0.0im  0.433013+0.0im
+ 0.433013+0.0im      0.75+0.0im
 
 julia&gt; (Φ⊗Φ)(ρ1⊗ρ2)
-ERROR: UndefVarError: ⊗ not defined
+4×4 Array{Complex{Float64},2}:
+    0.385+0.0im  0.234787+0.0im  0.213014+0.0im  0.129904+0.0im
+ 0.234787+0.0im     0.315+0.0im  0.129904+0.0im  0.174284+0.0im
+ 0.213014+0.0im  0.129904+0.0im     0.165+0.0im  0.100623+0.0im
+ 0.129904+0.0im  0.174284+0.0im  0.100623+0.0im     0.135+0.0im
 
 julia&gt; (Ψ1∘Ψ2)(ρ1)
-ERROR: UndefVarError: Ψ1 not defined</code></pre><h2><a class="nav-anchor" id="Measurement-1" href="#Measurement-1">Measurement</a></h2><p>Measurement is modeled in two ways:</p><ul><li>as Positive Operator Valued Measure (POVM) based,</li><li>measurement with post-selection.</li></ul><p>In both cases a~measurement is treated as a special case of quantum channel (operation) respectively as defined below.</p><h3><a class="nav-anchor" id="Positive-Operator-Valued-Measure-measurement-1" href="#Positive-Operator-Valued-Measure-measurement-1">Positive Operator Valued Measure measurement</a></h3><p>A POVM measurement is defined as follows, let a mapping from a finite alphabet of measurement outcomes to the set of linear positive operators $\mu:\Gamma\rightarrow\mathcal{P}(\mathcal{X})$  be given, if $\sum<em>{\xi\in\Gamma} {\mu(\xi)=\mathbb{I}</em>{\mathcal{X}}}$ then $\mu$ is a POVM measurement. POVM measurement models the situation where a quantum object is destroyed during the measurement process and quantum state after the measurement does not exists.</p><p>We model POVM measurement as a channel $\theta:\mathcal{T}(\mathcal{X})\rightarrow \mathcal{T}(\mathcal{Y})$, where $\mathcal{Y}=\mathrm{span}\{|\xi\rangle\}<em>{\xi\in\Gamma}$ such that $\theta(\rho) = \sum</em>{\xi\in\Gamma} \mathrm{tr}(\rho\, \mu(\xi))\|\xi\rangle\langle \xi|$. This channel transforms the measured quantum state into a~classical state (diagonal matrix) containing probabilities of reassuring given outcomes. Note that in <code>QuantumInformation</code> $\Gamma=\{1,2,\ldots,|\Gamma|\}$ and POVM measurements are represented by the type <code>POVMMeasurement{T} &lt;: AbstractQuantumOperation{T}</code> where <code>T&lt;:AbstractMatrix{&lt;:Number}</code>. Predicate function <code>ispovm()</code> verifies whether a~list of matrices is a proper POVM.</p><pre><code class="language-julia-repl"></code></pre><p>When a quantum system after being measured is not destroyed one can be interested by its state after the measurement. This state depends on the measurement outcome. In this case the measurement process is defined in the following way.</p><p>Let <span>$\mu:\Gamma\rightarrow\mathcal{L}(\mathcal{X}, \mathcal{Y})$</span> be a mapping from a finite set of measurement outcomes to set of linear operators called effects, then if <span>$\sum_{\xi\in\Gamma} {\mu(\xi)^\dagger \mu(\xi)=\mathbb{I}_{\mathcal{X}}}$</span> then <span>$\mu$</span> is a quantum measurement. Given outcome <span>$\xi$</span> was obtained, the state before the measurement <span>$\rho$</span> is transformed into sub-normalized quantum state <span>$\rho_\xi=\mu(\xi)\rho\mu(\xi)^\dagger$</span>. The outcome <span>$\xi$</span> will be obtained with probability <span>$\mathrm{Tr}(\rho_\xi)$</span>.</p><pre><code class="language-julia-repl">julia&gt; PM = PostSelectionMeasurement(E1)
-ERROR: UndefVarError: PostSelectionMeasurement not defined
-
-julia&gt; iseffect(PM)
-ERROR: UndefVarError: iseffect not defined
-
-julia&gt; PM(ρ)
-ERROR: UndefVarError: PM not defined</code></pre><p>In <code>QuantumInformation</code> this kind of measurement is modeled as CP-TNI map with single Kraus operator <span>$\mu(\xi)$</span> and represented as <code>PostSelectionMeasurement{T} &lt;: AbstractQuantumOperation{T}</code> where <code>T&lt;:AbstractMatrix{&lt;:Number}</code>. Measurement types can be composed and converted to Kraus operators, superoperators, Stinespring representation operators, and dynamical matrices.</p><pre><code class="language-julia-repl">julia&gt; α = 0.3
-0.3
-
-julia&gt; K0 = ComplexF64[0 0 sqrt(α); 0 1 0; 0 0 0]
-3×3 Array{Complex{Float64},2}:
- 0.0+0.0im  0.0+0.0im  0.547723+0.0im
- 0.0+0.0im  1.0+0.0im       0.0+0.0im
- 0.0+0.0im  0.0+0.0im       0.0+0.0im
-
-julia&gt; K1 = ComplexF64[1 0 0; 0 0 0; 0 0 sqrt(1 - α)]
-3×3 Array{Complex{Float64},2}:
- 1.0+0.0im  0.0+0.0im      0.0+0.0im
- 0.0+0.0im  0.0+0.0im      0.0+0.0im
- 0.0+0.0im  0.0+0.0im  0.83666+0.0im
-
-julia&gt; Φ = KrausOperators([K0,K1])
-ERROR: UndefVarError: KrausOperators not defined</code></pre><footer><hr/><a class="previous" href="../vectors/"><span class="direction">Previous</span><span class="title">Linear algebra in Julia</span></a><a class="next" href="../functionals/"><span class="direction">Next</span><span class="title">Functionals</span></a></footer></article></body></html>
+2×2 LinearAlgebra.Transpose{Complex{Float64},Array{Complex{Float64},2}}:
+ 0.82+0.0im   0.3+0.0im
+  0.3+0.0im  0.18+0.0im</code></pre><h2><a class="nav-anchor" id="refs_sc-1" href="#refs_sc-1">References</a></h2><p>[1] J. Watrous, <em>The Theory of Quantum Information</em>, Cambridge University Press (2018).</p><footer><hr/><a class="previous" href="../vectors/"><span class="direction">Previous</span><span class="title">Linear algebra in Julia</span></a><a class="next" href="../functionals/"><span class="direction">Next</span><span class="title">Functionals</span></a></footer></article></body></html>
