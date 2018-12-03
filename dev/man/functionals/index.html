@@ -75,10 +75,10 @@ DynamicalMatrix{Array{Float64,2}}
     [1.0 0.0 0.0 0.83666; 0.0 0.3 0.0 0.0; 0.0 0.0 0.0 0.0; 0.83666 0.0 0.0 0.7]
 
 julia&gt; norm_diamond(Φ)
-0.9999996438718654
+0.999999883153866
 
 julia&gt; diamond_distance(Φ, Ψ)
-2.4839742760080495e-17</code></pre><h3><a class="nav-anchor" id="Shannon-entropy-and-von-Neumann-entropy-1" href="#Shannon-entropy-and-von-Neumann-entropy-1">Shannon entropy and von Neumann entropy</a></h3><p><a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)"><em>Shannon entropy</em></a> is defined for a probability vector <span>$p$</span> as <span>$H(\mathrm{p})=-\sum_{i=1}^n p_i\log_2 p_i$</span>. We also provide an implementation for the point Shannon entropy. It is defined as <span>$h(a) = -a \log a - (1-a)\log(1-a)$</span>.</p><pre><code class="language-julia-repl">julia&gt; p = vec([0.3 0.2 05])
+7.816721159070321e-18</code></pre><h3><a class="nav-anchor" id="Shannon-entropy-and-von-Neumann-entropy-1" href="#Shannon-entropy-and-von-Neumann-entropy-1">Shannon entropy and von Neumann entropy</a></h3><p><a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)"><em>Shannon entropy</em></a> is defined for a probability vector <span>$p$</span> as <span>$H(\mathrm{p})=-\sum_{i=1}^n p_i\log_2 p_i$</span>. We also provide an implementation for the point Shannon entropy. It is defined as <span>$h(a) = -a \log a - (1-a)\log(1-a)$</span>.</p><pre><code class="language-julia-repl">julia&gt; p = vec([0.3 0.2 05])
 3-element Array{Float64,1}:
  0.3
  0.2

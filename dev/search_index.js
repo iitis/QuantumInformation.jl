@@ -353,14 +353,6 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#Contents-1",
-    "page": "Library",
-    "title": "Contents",
-    "category": "section",
-    "text": "Pages = [joinpath(\"content\", f) for f in readdir(\"content\")]"
-},
-
-{
     "location": "lib/QuantumInformation/#QuantumInformation.QuantumInformation",
     "page": "Library",
     "title": "QuantumInformation.QuantumInformation",
