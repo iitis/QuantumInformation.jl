@@ -4,3 +4,4 @@ StatsBase 0.25.0
 DocStringExtensions 0.4.6
 TensorOperations 0.6.1
 Convex 0.8.0
+SCS 0.4.1
