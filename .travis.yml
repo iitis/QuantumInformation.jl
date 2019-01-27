@@ -11,7 +11,8 @@ notifications:
   email: false
 script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia -e 'using Pkg; pkg"build QuantumInformation"; pkg"add StatsBase"; pkg"add Test"; pkg"test QuantumInformation --code-coverage=user"'
+  - julia -e 'using Pkg; pkg"build QuantumInformation"; pkg"add StatsBase"; pkg"add Test"'
+  - julia --code-coverage test/runtests.jl 
   - julia -e 'using Pkg; pkg"add Distributions"';
   - julia --code-coverage randommatrices/test/runtests.jl
 
