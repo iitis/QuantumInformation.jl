@@ -417,7 +417,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.SuperOperator-Union{Tuple{T}, Tuple{Function,Int64,Int64}} where T<:(AbstractArray{#s3,2} where #s3<:Number)",
+    "location": "lib/QuantumInformation/#QuantumInformation.SuperOperator-Union{Tuple{T}, Tuple{Function,Int64,Int64}} where T<:(AbstractArray{#s14,2} where #s14<:Number)",
     "page": "Library",
     "title": "QuantumInformation.SuperOperator",
     "category": "method",
@@ -433,7 +433,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.applychannel-Tuple{KrausOperators{#s3} where #s3<:(AbstractArray{#s2,2} where #s2<:Number),AbstractArray{#s1,2} where #s1<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.applychannel-Tuple{KrausOperators{#s14} where #s14<:(AbstractArray{#s13,2} where #s13<:Number),AbstractArray{#s12,2} where #s12<:Number}",
     "page": "Library",
     "title": "QuantumInformation.applychannel",
     "category": "method",
@@ -441,7 +441,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.applychannel-Tuple{Stinespring{#s3} where #s3<:(AbstractArray{#s2,2} where #s2<:Number),AbstractArray{#s1,2} where #s1<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.applychannel-Tuple{Stinespring{#s14} where #s14<:(AbstractArray{#s13,2} where #s13<:Number),AbstractArray{#s12,2} where #s12<:Number}",
     "page": "Library",
     "title": "QuantumInformation.applychannel",
     "category": "method",
@@ -449,7 +449,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.applychannel-Tuple{SuperOperator{#s3} where #s3<:(AbstractArray{#s2,2} where #s2<:Number),AbstractArray{#s1,2} where #s1<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.applychannel-Tuple{SuperOperator{#s14} where #s14<:(AbstractArray{#s13,2} where #s13<:Number),AbstractArray{#s12,2} where #s12<:Number}",
     "page": "Library",
     "title": "QuantumInformation.applychannel",
     "category": "method",
@@ -457,7 +457,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.applychannel-Union{Tuple{T}, Tuple{DynamicalMatrix{#s5} where #s5<:(AbstractArray{#s3,2} where #s3<:Number),AbstractArray{T,2}}} where T<:Number",
+    "location": "lib/QuantumInformation/#QuantumInformation.applychannel-Union{Tuple{T}, Tuple{DynamicalMatrix{#s16} where #s16<:(AbstractArray{#s14,2} where #s14<:Number),AbstractArray{T,2}}} where T<:Number",
     "page": "Library",
     "title": "QuantumInformation.applychannel",
     "category": "method",
@@ -473,7 +473,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.bures_angle-Tuple{AbstractArray{#s11,2} where #s11<:Number,AbstractArray{#s10,2} where #s10<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.bures_angle-Tuple{AbstractArray{#s22,2} where #s22<:Number,AbstractArray{#s21,2} where #s21<:Number}",
     "page": "Library",
     "title": "QuantumInformation.bures_angle",
     "category": "method",
@@ -481,7 +481,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.bures_distance-Tuple{AbstractArray{#s11,2} where #s11<:Number,AbstractArray{#s10,2} where #s10<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.bures_distance-Tuple{AbstractArray{#s22,2} where #s22<:Number,AbstractArray{#s21,2} where #s21<:Number}",
     "page": "Library",
     "title": "QuantumInformation.bures_distance",
     "category": "method",
@@ -489,7 +489,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.concurrence-Tuple{AbstractArray{#s12,2} where #s12<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.concurrence-Tuple{AbstractArray{#s23,2} where #s23<:Number}",
     "page": "Library",
     "title": "QuantumInformation.concurrence",
     "category": "method",
@@ -497,7 +497,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.diamond_distance-Union{Tuple{T}, Tuple{DynamicalMatrix{T},DynamicalMatrix{T}}} where T<:(AbstractArray{#s12,2} where #s12<:Number)",
+    "location": "lib/QuantumInformation/#QuantumInformation.diamond_distance-Union{Tuple{T}, Tuple{DynamicalMatrix{T},DynamicalMatrix{T}}} where T<:(AbstractArray{#s23,2} where #s23<:Number)",
     "page": "Library",
     "title": "QuantumInformation.diamond_distance",
     "category": "method",
@@ -505,7 +505,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.fidelity-Tuple{AbstractArray{#s11,2} where #s11<:Number,AbstractArray{#s10,2} where #s10<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.fidelity-Tuple{AbstractArray{#s22,2} where #s22<:Number,AbstractArray{#s21,2} where #s21<:Number}",
     "page": "Library",
     "title": "QuantumInformation.fidelity",
     "category": "method",
@@ -513,7 +513,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.fidelity_sqrt-Tuple{AbstractArray{#s11,2} where #s11<:Number,AbstractArray{#s10,2} where #s10<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.fidelity_sqrt-Tuple{AbstractArray{#s22,2} where #s22<:Number,AbstractArray{#s21,2} where #s21<:Number}",
     "page": "Library",
     "title": "QuantumInformation.fidelity_sqrt",
     "category": "method",
@@ -521,7 +521,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.gate_fidelity-Tuple{AbstractArray{#s11,2} where #s11<:Number,AbstractArray{#s10,2} where #s10<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.gate_fidelity-Tuple{AbstractArray{#s22,2} where #s22<:Number,AbstractArray{#s21,2} where #s21<:Number}",
     "page": "Library",
     "title": "QuantumInformation.gate_fidelity",
     "category": "method",
@@ -545,7 +545,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.hs_distance-Tuple{AbstractArray{#s11,2} where #s11<:Number,AbstractArray{#s10,2} where #s10<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.hs_distance-Tuple{AbstractArray{#s22,2} where #s22<:Number,AbstractArray{#s21,2} where #s21<:Number}",
     "page": "Library",
     "title": "QuantumInformation.hs_distance",
     "category": "method",
@@ -553,7 +553,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.iscptp-Tuple{KrausOperators{#s11} where #s11<:(AbstractArray{#s12,2} where #s12<:Number)}",
+    "location": "lib/QuantumInformation/#QuantumInformation.iscptp-Tuple{KrausOperators{#s22} where #s22<:(AbstractArray{#s23,2} where #s23<:Number)}",
     "page": "Library",
     "title": "QuantumInformation.iscptp",
     "category": "method",
@@ -561,7 +561,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.js_divergence-Tuple{AbstractArray{#s11,2} where #s11<:Number,AbstractArray{#s10,2} where #s10<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.js_divergence-Tuple{AbstractArray{#s22,2} where #s22<:Number,AbstractArray{#s21,2} where #s21<:Number}",
     "page": "Library",
     "title": "QuantumInformation.js_divergence",
     "category": "method",
@@ -585,7 +585,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.kl_divergence-Tuple{AbstractArray{#s11,2} where #s11<:Number,AbstractArray{#s10,2} where #s10<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.kl_divergence-Tuple{AbstractArray{#s22,2} where #s22<:Number,AbstractArray{#s21,2} where #s21<:Number}",
     "page": "Library",
     "title": "QuantumInformation.kl_divergence",
     "category": "method",
@@ -593,7 +593,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.log_negativity-Tuple{AbstractArray{#s12,2} where #s12<:Number,Array{Int64,1},Int64}",
+    "location": "lib/QuantumInformation/#QuantumInformation.log_negativity-Tuple{AbstractArray{#s23,2} where #s23<:Number,Array{Int64,1},Int64}",
     "page": "Library",
     "title": "QuantumInformation.log_negativity",
     "category": "method",
@@ -617,7 +617,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.negativity-Tuple{AbstractArray{#s12,2} where #s12<:Number,Array{Int64,1},Int64}",
+    "location": "lib/QuantumInformation/#QuantumInformation.negativity-Tuple{AbstractArray{#s23,2} where #s23<:Number,Array{Int64,1},Int64}",
     "page": "Library",
     "title": "QuantumInformation.negativity",
     "category": "method",
@@ -625,7 +625,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.norm_diamond-Union{Tuple{DynamicalMatrix{T}}, Tuple{T}} where T<:(AbstractArray{#s12,2} where #s12<:Number)",
+    "location": "lib/QuantumInformation/#QuantumInformation.norm_diamond-Union{Tuple{DynamicalMatrix{T}}, Tuple{T}} where T<:(AbstractArray{#s23,2} where #s23<:Number)",
     "page": "Library",
     "title": "QuantumInformation.norm_diamond",
     "category": "method",
@@ -633,7 +633,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.norm_hs-Tuple{AbstractArray{#s12,2} where #s12<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.norm_hs-Tuple{AbstractArray{#s23,2} where #s23<:Number}",
     "page": "Library",
     "title": "QuantumInformation.norm_hs",
     "category": "method",
@@ -641,7 +641,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.norm_trace-Tuple{AbstractArray{#s12,2} where #s12<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.norm_trace-Tuple{AbstractArray{#s23,2} where #s23<:Number}",
     "page": "Library",
     "title": "QuantumInformation.norm_trace",
     "category": "method",
@@ -657,7 +657,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.ppt-Tuple{AbstractArray{#s12,2} where #s12<:Number,Array{Int64,1},Int64}",
+    "location": "lib/QuantumInformation/#QuantumInformation.ppt-Tuple{AbstractArray{#s23,2} where #s23<:Number,Array{Int64,1},Int64}",
     "page": "Library",
     "title": "QuantumInformation.ppt",
     "category": "method",
@@ -665,7 +665,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.proj-Tuple{AbstractArray{#s2,1} where #s2<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.proj-Tuple{AbstractArray{#s13,1} where #s13<:Number}",
     "page": "Library",
     "title": "QuantumInformation.proj",
     "category": "method",
@@ -673,7 +673,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.ptrace-Tuple{AbstractArray{#s11,1} where #s11<:Number,Array{Int64,1},Int64}",
+    "location": "lib/QuantumInformation/#QuantumInformation.ptrace-Tuple{AbstractArray{#s22,1} where #s22<:Number,Array{Int64,1},Int64}",
     "page": "Library",
     "title": "QuantumInformation.ptrace",
     "category": "method",
@@ -681,7 +681,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.ptrace-Tuple{AbstractArray{#s12,2} where #s12<:Number,Array{Int64,1},Array{Int64,1}}",
+    "location": "lib/QuantumInformation/#QuantumInformation.ptrace-Tuple{AbstractArray{#s23,2} where #s23<:Number,Array{Int64,1},Array{Int64,1}}",
     "page": "Library",
     "title": "QuantumInformation.ptrace",
     "category": "method",
@@ -689,7 +689,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.ptrace-Tuple{AbstractArray{#s12,2} where #s12<:Number,Array{Int64,1},Int64}",
+    "location": "lib/QuantumInformation/#QuantumInformation.ptrace-Tuple{AbstractArray{#s23,2} where #s23<:Number,Array{Int64,1},Int64}",
     "page": "Library",
     "title": "QuantumInformation.ptrace",
     "category": "method",
@@ -697,7 +697,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.ptranspose-Tuple{AbstractArray{#s11,2} where #s11<:Number,Array{Int64,1},Array{Int64,1}}",
+    "location": "lib/QuantumInformation/#QuantumInformation.ptranspose-Tuple{AbstractArray{#s22,2} where #s22<:Number,Array{Int64,1},Array{Int64,1}}",
     "page": "Library",
     "title": "QuantumInformation.ptranspose",
     "category": "method",
@@ -705,7 +705,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.ptranspose-Tuple{AbstractArray{#s12,2} where #s12<:Number,Array{Int64,1},Int64}",
+    "location": "lib/QuantumInformation/#QuantumInformation.ptranspose-Tuple{AbstractArray{#s23,2} where #s23<:Number,Array{Int64,1},Int64}",
     "page": "Library",
     "title": "QuantumInformation.ptranspose",
     "category": "method",
@@ -721,7 +721,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.relative_entropy-Tuple{AbstractArray{#s11,2} where #s11<:Number,AbstractArray{#s10,2} where #s10<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.relative_entropy-Tuple{AbstractArray{#s22,2} where #s22<:Number,AbstractArray{#s21,2} where #s21<:Number}",
     "page": "Library",
     "title": "QuantumInformation.relative_entropy",
     "category": "method",
@@ -729,7 +729,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.res-Tuple{AbstractArray{#s2,2} where #s2<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.res-Tuple{AbstractArray{#s13,2} where #s13<:Number}",
     "page": "Library",
     "title": "QuantumInformation.res",
     "category": "method",
@@ -737,7 +737,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.reshuffle-Tuple{AbstractArray{#s11,2} where #s11<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.reshuffle-Tuple{AbstractArray{#s22,2} where #s22<:Number}",
     "page": "Library",
     "title": "QuantumInformation.reshuffle",
     "category": "method",
@@ -745,7 +745,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.shannon_entropy-Tuple{AbstractArray{#s12,1} where #s12<:Real}",
+    "location": "lib/QuantumInformation/#QuantumInformation.shannon_entropy-Tuple{AbstractArray{#s23,1} where #s23<:Real}",
     "page": "Library",
     "title": "QuantumInformation.shannon_entropy",
     "category": "method",
@@ -761,7 +761,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.superfidelity-Tuple{AbstractArray{#s11,2} where #s11<:Number,AbstractArray{#s10,2} where #s10<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.superfidelity-Tuple{AbstractArray{#s22,2} where #s22<:Number,AbstractArray{#s21,2} where #s21<:Number}",
     "page": "Library",
     "title": "QuantumInformation.superfidelity",
     "category": "method",
@@ -777,7 +777,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.unres-Tuple{AbstractArray{#s2,1} where #s2<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.unres-Tuple{AbstractArray{#s13,1} where #s13<:Number}",
     "page": "Library",
     "title": "QuantumInformation.unres",
     "category": "method",
@@ -785,7 +785,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.vonneumann_entropy-Tuple{LinearAlgebra.Hermitian{#s12,S} where S<:(AbstractArray{#s571,2} where #s571<:#s12) where #s12<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.vonneumann_entropy-Tuple{LinearAlgebra.Hermitian{#s23,S} where S<:(AbstractArray{#s576,2} where #s576<:#s23) where #s23<:Number}",
     "page": "Library",
     "title": "QuantumInformation.vonneumann_entropy",
     "category": "method",
@@ -801,7 +801,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#Base.convert-Union{Tuple{T2}, Tuple{T1}, Tuple{Type{DynamicalMatrix{T1}},KrausOperators{T2}}} where T2<:(AbstractArray{#s3,2} where #s3<:Number) where T1<:(AbstractArray{#s5,2} where #s5<:Number)",
+    "location": "lib/QuantumInformation/#Base.convert-Union{Tuple{T2}, Tuple{T1}, Tuple{Type{DynamicalMatrix{T1}},KrausOperators{T2}}} where T2<:(AbstractArray{#s14,2} where #s14<:Number) where T1<:(AbstractArray{#s16,2} where #s16<:Number)",
     "page": "Library",
     "title": "Base.convert",
     "category": "method",
@@ -809,7 +809,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#Base.convert-Union{Tuple{T2}, Tuple{T1}, Tuple{Type{DynamicalMatrix{T1}},SuperOperator{T2}}} where T2<:(AbstractArray{#s3,2} where #s3<:Number) where T1<:(AbstractArray{#s5,2} where #s5<:Number)",
+    "location": "lib/QuantumInformation/#Base.convert-Union{Tuple{T2}, Tuple{T1}, Tuple{Type{DynamicalMatrix{T1}},SuperOperator{T2}}} where T2<:(AbstractArray{#s14,2} where #s14<:Number) where T1<:(AbstractArray{#s16,2} where #s16<:Number)",
     "page": "Library",
     "title": "Base.convert",
     "category": "method",
@@ -817,7 +817,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#Base.convert-Union{Tuple{T2}, Tuple{T1}, Tuple{Type{KrausOperators{T1}},DynamicalMatrix{T2}}} where T2<:(AbstractArray{#s1,2} where #s1<:Number) where T1<:(AbstractArray{#s2,2} where #s2<:Number)",
+    "location": "lib/QuantumInformation/#Base.convert-Union{Tuple{T2}, Tuple{T1}, Tuple{Type{KrausOperators{T1}},DynamicalMatrix{T2}}} where T2<:(AbstractArray{#s12,2} where #s12<:Number) where T1<:(AbstractArray{#s13,2} where #s13<:Number)",
     "page": "Library",
     "title": "Base.convert",
     "category": "method",
@@ -825,7 +825,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#Base.convert-Union{Tuple{T2}, Tuple{T1}, Tuple{Type{KrausOperators{T1}},SuperOperator{T2}}} where T2<:(AbstractArray{#s3,2} where #s3<:Number) where T1<:(AbstractArray{#s5,2} where #s5<:Number)",
+    "location": "lib/QuantumInformation/#Base.convert-Union{Tuple{T2}, Tuple{T1}, Tuple{Type{KrausOperators{T1}},SuperOperator{T2}}} where T2<:(AbstractArray{#s14,2} where #s14<:Number) where T1<:(AbstractArray{#s16,2} where #s16<:Number)",
     "page": "Library",
     "title": "Base.convert",
     "category": "method",
@@ -833,7 +833,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#Base.convert-Union{Tuple{T2}, Tuple{T1}, Tuple{Type{Stinespring{T1}},DynamicalMatrix{T2}}} where T2<:(AbstractArray{#s3,2} where #s3<:Number) where T1<:(AbstractArray{#s5,2} where #s5<:Number)",
+    "location": "lib/QuantumInformation/#Base.convert-Union{Tuple{T2}, Tuple{T1}, Tuple{Type{Stinespring{T1}},DynamicalMatrix{T2}}} where T2<:(AbstractArray{#s14,2} where #s14<:Number) where T1<:(AbstractArray{#s16,2} where #s16<:Number)",
     "page": "Library",
     "title": "Base.convert",
     "category": "method",
@@ -841,7 +841,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#Base.convert-Union{Tuple{T2}, Tuple{T1}, Tuple{Type{Stinespring{T1}},KrausOperators{T2}}} where T2<:(AbstractArray{#s1,2} where #s1<:Number) where T1<:(AbstractArray{#s2,2} where #s2<:Number)",
+    "location": "lib/QuantumInformation/#Base.convert-Union{Tuple{T2}, Tuple{T1}, Tuple{Type{Stinespring{T1}},KrausOperators{T2}}} where T2<:(AbstractArray{#s12,2} where #s12<:Number) where T1<:(AbstractArray{#s13,2} where #s13<:Number)",
     "page": "Library",
     "title": "Base.convert",
     "category": "method",
@@ -849,7 +849,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#Base.convert-Union{Tuple{T2}, Tuple{T1}, Tuple{Type{Stinespring{T1}},SuperOperator{T2}}} where T2<:(AbstractArray{#s3,2} where #s3<:Number) where T1<:(AbstractArray{#s5,2} where #s5<:Number)",
+    "location": "lib/QuantumInformation/#Base.convert-Union{Tuple{T2}, Tuple{T1}, Tuple{Type{Stinespring{T1}},SuperOperator{T2}}} where T2<:(AbstractArray{#s14,2} where #s14<:Number) where T1<:(AbstractArray{#s16,2} where #s16<:Number)",
     "page": "Library",
     "title": "Base.convert",
     "category": "method",
@@ -857,7 +857,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#Base.convert-Union{Tuple{T2}, Tuple{T1}, Tuple{Type{SuperOperator{T1}},DynamicalMatrix{T2}}} where T2<:(AbstractArray{#s3,2} where #s3<:Number) where T1<:(AbstractArray{#s5,2} where #s5<:Number)",
+    "location": "lib/QuantumInformation/#Base.convert-Union{Tuple{T2}, Tuple{T1}, Tuple{Type{SuperOperator{T1}},DynamicalMatrix{T2}}} where T2<:(AbstractArray{#s14,2} where #s14<:Number) where T1<:(AbstractArray{#s16,2} where #s16<:Number)",
     "page": "Library",
     "title": "Base.convert",
     "category": "method",
@@ -865,7 +865,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#Base.convert-Union{Tuple{T2}, Tuple{T1}, Tuple{Type{SuperOperator{T1}},KrausOperators{T2}}} where T2<:(AbstractArray{#s3,2} where #s3<:Number) where T1<:(AbstractArray{#s5,2} where #s5<:Number)",
+    "location": "lib/QuantumInformation/#Base.convert-Union{Tuple{T2}, Tuple{T1}, Tuple{Type{SuperOperator{T1}},KrausOperators{T2}}} where T2<:(AbstractArray{#s14,2} where #s14<:Number) where T1<:(AbstractArray{#s16,2} where #s16<:Number)",
     "page": "Library",
     "title": "Base.convert",
     "category": "method",
@@ -873,7 +873,7 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.purity-Tuple{AbstractArray{#s12,2} where #s12<:Number}",
+    "location": "lib/QuantumInformation/#QuantumInformation.purity-Tuple{AbstractArray{#s23,2} where #s23<:Number}",
     "page": "Library",
     "title": "QuantumInformation.purity",
     "category": "method",
