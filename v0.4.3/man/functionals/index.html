@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Functionals · QuantumInformation.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><nav class="toc"><a href="../../index.html"><img class="logo" src="../../assets/logo.png" alt="QuantumInformation.jl logo"/></a><h1>QuantumInformation.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../">Home</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../quickstart/">Quickstart</a></li><li><a class="toctext" href="../vectors/">Linear algebra in Julia</a></li><li><a class="toctext" href="../states/">States and channels</a></li><li class="current"><a class="toctext" href>Functionals</a><ul class="internal"></ul></li><li><a class="toctext" href="../measurement/">Measurement</a></li><li><a class="toctext" href="../random/">Random quantum objects</a></li></ul></li><li><a class="toctext" href="../../lib/QuantumInformation/">Library</a></li></ul></nav><article id="docs"><header><nav><ul><li>Manual</li><li><a href>Functionals</a></li></ul><a class="edit-page" href="https://github.com/ZKSI/QuantumInformation.jl/blob/master/docs/src/man/functionals.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Functionals</span><a class="fa fa-bars" href="#"></a></div></header><div></div><h1><a class="nav-anchor" id="Functionals-1" href="#Functionals-1">Functionals</a></h1><h3><a class="nav-anchor" id="Trace-norm-and-distance-1" href="#Trace-norm-and-distance-1">Trace norm and distance</a></h3><p>Let <span>$\rho, \sigma \in \mathrm{L}(\mathcal{X})$</span>. The <em>trace norm</em> is defined as <span>$\|\rho\|_1 = \mathrm{Tr} \sqrt{\rho\rho^\dagger}$</span> and the trace distance is defined as <span>$D_1(\rho,\sigma)=\frac{1}{2}\|\rho-\sigma\|_1$</span>.</p><pre><code class="language-julia-repl">julia&gt; ψ=(1/sqrt(2)) * (ket(1,2) + ket(2,2))
+2-element Array{Complex{Float64},1}:
+ 0.7071067811865475 + 0.0im
+ 0.7071067811865475 + 0.0im
+
+julia&gt; ϕ=(1/2) * ket(1,2) + (sqrt(3)/2) * ket(2,2)
+2-element Array{Complex{Float64},1}:
+                0.5 + 0.0im
+ 0.8660254037844386 + 0.0im
+
+julia&gt; ρ=proj(ψ)
+2×2 Array{Complex{Float64},2}:
+ 0.5+0.0im  0.5+0.0im
+ 0.5+0.0im  0.5+0.0im
+
+julia&gt; σ=proj(ϕ)
+2×2 Array{Complex{Float64},2}:
+     0.25+0.0im  0.433013+0.0im
+ 0.433013+0.0im      0.75+0.0im
+
+julia&gt; norm_trace(ρ)
+1.0
+
+julia&gt; trace_distance(ρ, σ)
+0.2588190451025207</code></pre><h3><a class="nav-anchor" id="Hilbert–Schmidt-norm-and-distance-1" href="#Hilbert–Schmidt-norm-and-distance-1">Hilbert–Schmidt norm and distance</a></h3><p>The <a href="https://en.wikipedia.org/wiki/Hilbert%E2%80%93Schmidt_operator"><em>Hilbert–Schmidt norm</em></a> norm and distance defined by <span>$\|\rho\|_{HS}=\sqrt{\mathrm{Tr}\rho^\dagger \rho}$</span> and <span>$D_{HS}(\rho,\sigma)=\frac{1}{2}\|\rho-\sigma\|_{HS}$</span>, respectively, can be used as follows</p><pre><code class="language-julia-repl">julia&gt; norm_hs(ρ)
+0.9999999999999998
+
+julia&gt; hs_distance(ρ, σ)
+0.36602540378443854</code></pre><h3><a class="nav-anchor" id="Fidelity-and-superfidelity-1" href="#Fidelity-and-superfidelity-1">Fidelity and superfidelity</a></h3><p><a href="https://en.wikipedia.org/wiki/Fidelity_of_quantum_states"><em>Fidelity</em></a> is a measure of distance of quantum states. It is an example of a distance measure which is not a metric on the space of quantum states. The fidelity of two quantum states <span>$\rho, \sigma \in \mathrm{L}(\mathcal{X})$</span> is given by <span>$F(\rho,\sigma)=\|\sqrt{\rho}\sqrt{\sigma}\|_1$</span></p><pre><code class="language-julia-repl">julia&gt; fidelity_sqrt(ρ, σ)
+0.9659258262890682
+
+julia&gt; fidelity(ρ, σ)
+0.9330127018922192
+
+julia&gt; fidelity(ψ, σ)
+0.9330127018922191
+
+julia&gt; fidelity(ρ, ϕ)
+0.9330127018922191
+
+julia&gt; fidelity(ψ, ϕ)
+0.9330127018922192</code></pre><h3><a class="nav-anchor" id="Superfidelity-1" href="#Superfidelity-1">Superfidelity</a></h3><p><a href="https://www.quantiki.org/wiki/superfidelity"><em>Superfidelity</em></a> is an upper bound on the fidelity of two quantum states It is defined by <span>$G(\rho, \sigma) = \mathrm{Tr}\rho \sigma + \sqrt{1 - \mathrm{Tr}\rho^2} \sqrt{1-\mathrm{Tr} \sigma^2}$</span>.</p><pre><code class="language-julia-repl">julia&gt; superfidelity(ρ, σ)
+0.9330127018922193</code></pre><h3><a class="nav-anchor" id="Diamond-norm-1" href="#Diamond-norm-1">Diamond norm</a></h3><p>In order to introduce the \emph{diamond norm}, we first introduce the notion of the induced trace norm. Given <span>$\Phi \in \mathrm{T}(\mathcal{X}, \mathcal{Y})$</span> we define its induced trace norm as <span>$\| \Phi \|_1 = \mathrm{max} \left\{ \| \Phi(X) \|_1: X \in L(\mathcal{X}), \| X \|_1 \leq 1 \right\}$</span>. The diamond norm of <span>$\Phi$</span> is defined as <span>$\| \Phi \|_\diamond = \| \Phi \otimes \mathbb{I}_{\mathrm{L}(\mathcal{Y})} \|_1$</span> One important property of the diamond norm is that for Hermiticity-preserving <span>$\Phi \in \mathrm{T}(\mathcal{X}, \mathcal{Y})$</span> we obtain <span>$\| \Phi \|_\diamond = \max \left\{ \left\| (\Phi \otimes \mathbb{I}_{\mathrm{L}(\mathcal{Y})}) 	\left(|\psi\rangle\langle\psi| \right )\right\|_1: |\psi\rangle \in 	\mathcal{X} \otimes 	\mathcal{Y}, 	\langle\psi|\psi\rangle=1 \right\}$</span>.</p><pre><code class="language-julia-repl">julia&gt; γ = 0.3
+0.3
+
+julia&gt; K0 = Matrix([1 0; 0 sqrt(1-γ)])
+2×2 Array{Float64,2}:
+ 1.0  0.0
+ 0.0  0.83666
+
+julia&gt; K1 = Matrix([0 sqrt(γ); 0 0])
+2×2 Array{Float64,2}:
+ 0.0  0.547723
+ 0.0  0.0
+
+julia&gt; Φ = convert(DynamicalMatrix{Array{Float64,2}}, KrausOperators([K0,K1]))
+DynamicalMatrix{Array{Float64,2}}
+    dimensions: (2, 2)
+    [1.0 0.0 0.0 0.83666; 0.0 0.3 0.0 0.0; 0.0 0.0 0.0 0.0; 0.83666 0.0 0.0 0.7]
+
+julia&gt; L0 = Matrix([1 0; 0 sqrt(1-γ)])
+2×2 Array{Float64,2}:
+ 1.0  0.0
+ 0.0  0.83666
+
+julia&gt; L1 = Matrix([0 0; 0 sqrt(γ)])
+2×2 Array{Float64,2}:
+ 0.0  0.0
+ 0.0  0.547723
+
+julia&gt; Ψ = convert(DynamicalMatrix{Array{Float64,2}}, KrausOperators([K0,K1]))
+DynamicalMatrix{Array{Float64,2}}
+    dimensions: (2, 2)
+    [1.0 0.0 0.0 0.83666; 0.0 0.3 0.0 0.0; 0.0 0.0 0.0 0.0; 0.83666 0.0 0.0 0.7]
+
+julia&gt; norm_diamond(Φ)
+0.999999883153866
+
+julia&gt; diamond_distance(Φ, Ψ)
+7.816721159070321e-18</code></pre><h3><a class="nav-anchor" id="Shannon-entropy-and-von-Neumann-entropy-1" href="#Shannon-entropy-and-von-Neumann-entropy-1">Shannon entropy and von Neumann entropy</a></h3><p><a href="https://en.wikipedia.org/wiki/Entropy_(information_theory)"><em>Shannon entropy</em></a> is defined for a probability vector <span>$p$</span> as <span>$H(\mathrm{p})=-\sum_{i=1}^n p_i\log_2 p_i$</span>. We also provide an implementation for the point Shannon entropy. It is defined as <span>$h(a) = -a \log a - (1-a)\log(1-a)$</span>.</p><pre><code class="language-julia-repl">julia&gt; p = vec([0.3 0.2 05])
+3-element Array{Float64,1}:
+ 0.3
+ 0.2
+ 5.0
+
+julia&gt; shannon_entropy(p)
+-7.3641101383859
+
+julia&gt; shannon_entropy(0.5)
+0.6931471805599453</code></pre><p>For a quantum system described by a state $\rho$, the <a href="https://en.wikipedia.org/wiki/Von_Neumann_entropy"><em>von Neumann entropy</em></a> is <span>$S(\rho)=-\mathrm{Tr} \rho \log \rho$</span>. Let <span>$\lambda_i$</span>,  <span>$0\leq i &lt; n$</span> be the eigenvalues of <span>$\rho$</span>, then <span>$S(\rho)$</span> can be written as <span>$S(\rho)=-\sum_{i=1}^{n} \lambda_i \log \lambda_i$</span>.</p><pre><code class="language-julia-repl">julia&gt; ρ = [0.25 0.25im; -0.25im 0.75]
+2×2 Array{Complex{Float64},2}:
+ 0.25+0.0im    0.0+0.25im
+ -0.0-0.25im  0.75+0.0im
+
+julia&gt; σ = [0.4 0.1im; -0.1im 0.6]
+2×2 Array{Complex{Float64},2}:
+  0.4+0.0im  0.0+0.1im
+ -0.0-0.1im  0.6+0.0im
+
+julia&gt; vonneumann_entropy(0.4 * ρ + 0.6 * σ)
+0.5869295208554555</code></pre><h3><a class="nav-anchor" id="Distinguishability-between-two-quantum-states-1" href="#Distinguishability-between-two-quantum-states-1">Distinguishability between two quantum states</a></h3><p>One of the measure of distinguishability between two quantum states is a <a href="https://en.wikipedia.org/wiki/Quantum_relative_entropy"><em>qauntum relative entropy</em></a>, called also Kullback–Leibler divergence, defined as <span>$S(\rho\|\sigma)=-\mathrm{Tr}\rho\log\sigma + \mathrm{Tr}\rho\log\rho$</span></p><pre><code class="language-julia-repl">julia&gt; relative_entropy(ρ, σ)
+0.11273751829075163
+
+julia&gt; kl_divergence(ρ, σ)
+0.11273751829075163</code></pre><p>Another type of measure of distinguishability between two quantum state is <a href="https://en.wikipedia.org/wiki/Jensen%E2%80%93Shannon_divergence#Quantum_Jensen%E2%80%93Shannon_divergence"><em>quantum Jensen–Shannon divergence</em></a> given by <span>$QJS(\rho,\sigma)=S\left(\frac{1}{2}\rho+\frac{1}{2}\sigma\right)- \left(\frac{1}{2}S(\rho)+\frac{1}{2}S(\sigma)\right)$</span>.</p><pre><code class="language-julia-repl">julia&gt; js_divergence(ρ, σ)
+0.1252860912303596</code></pre><p><a href="https://en.wikipedia.org/wiki/Bures_metric"><em>The Bures distance</em></a> defines an infinitesimal distance between quantum states, and it is defined as <span>$D_B=\sqrt{2(1-\sqrt{F(\rho,\sigma)})}$</span>. The value related with Bures distance is the Bures angle <span>$D_A(\rho,\sigma)=\arccos(\sqrt{F(\rho,\sigma)})$</span></p><pre><code class="language-julia-repl">julia&gt; bures_distance(ρ, σ)
+0.24867555729886728
+
+julia&gt; bures_angle(ρ, σ)
+0.2493208055929498</code></pre><h3><a class="nav-anchor" id="Quantum-entanglement-1" href="#Quantum-entanglement-1">Quantum entanglement</a></h3><p>One of the entanglement measure is <a href="https://en.wikipedia.org/wiki/Negativity_(quantum_mechanics)"><em>negativity</em></a> defined as <span>$\mathrm{N}(\rho)=\frac{\|\rho^{T_A}\|_1-1}{2}$</span>.</p><pre><code class="language-julia-repl">julia&gt; negativity(ρ ⊗ σ, [2, 2], 2)
+-0.0
+
+julia&gt; negativity(proj((1/sqrt(2)*(ket(1,2) ⊗ ket(1,2)-ket(2,2) ⊗ ket(2,2)))), [2, 2], 2)
+0.4999999999999999
+
+julia&gt; log_negativity(ρ ⊗ σ, [2, 2], 2)
+-1.1102230246251565e-16</code></pre><p><a href="https://en.wikipedia.org/wiki/Peres%E2%80%93Horodecki_criterion"><em>Positive partial transpose</em></a> (the Peres–Horodecki criterion) is a necessary condition of separability of the joint state <span>$\rho_{AB}$</span>. According PPT criterion, if <span>$\rho^{T_B}$</span> has non negative eigenvalues, then <span>$\rho_{AB}$</span> is separable.</p><pre><code class="language-julia-repl">julia&gt; ppt(ρ ⊗ σ, [2, 2], 2)
+0.052512626584708365
+
+julia&gt; ppt(proj((1/sqrt(2)*(ket(1,2) ⊗ ket(1,2)-ket(2,2) ⊗ ket(2,2)))), [2, 2], 2)
+-0.4999999999999999</code></pre><p>Another way to quantification of quantum entanglement is <a href="https://en.wikipedia.org/wiki/Concurrence_(quantum_computing)"><em>Concurrence</em></a>. Concurrence of quantum state <span>$\rho$</span> is a strong separability criterion. For two-qubit systems it is defined as <span>$C(\rho)=\max(0,\lambda_1-\lambda_2-\lambda_3-\lambda_4)$</span>, where <span>$\lambda_i$</span> are decreasing eigenvalues of <span>$\sqrt{\sqrt{\rho}\tilde{\rho}\sqrt{\rho}}$</span> with <span>$\tilde{\rho}=(\sigma_y\otimes\sigma_y)\rho^*(\sigma_y\otimes\sigma_y)$</span>. If <span>$C(\rho)=0$</span>, then <span>$\rho$</span> is separable.</p><pre><code class="language-julia-repl">julia&gt; ρ = [0.25 0.1im; -0.1im 0.75]
+2×2 Array{Complex{Float64},2}:
+ 0.25+0.0im   0.0+0.1im
+ -0.0-0.1im  0.75+0.0im
+
+julia&gt; σ = [0.4 0.1im; -0.1im 0.6]
+2×2 Array{Complex{Float64},2}:
+  0.4+0.0im  0.0+0.1im
+ -0.0-0.1im  0.6+0.0im
+
+julia&gt; concurrence(ρ ⊗ σ)
+0.0
+
+julia&gt; concurrence(proj(max_entangled(4)))
+0.9999999999999998</code></pre><footer><hr/><a class="previous" href="../states/"><span class="direction">Previous</span><span class="title">States and channels</span></a><a class="next" href="../measurement/"><span class="direction">Next</span><span class="title">Measurement</span></a></footer></article></body></html>
