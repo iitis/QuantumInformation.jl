@@ -127,6 +127,23 @@ end
             @test s1.matrix ≈ s2.matrix
         end
     end
+    @test_throws ArgumentError DynamicalMatrix(rand(4,5), 4, 5)
+end
+
+@testset "UnitaryChannel" begin
+    @test_throws ArgumentError UnitaryChannel(ones(4, 5))
+    @test_throws ArgumentError UnitaryChannel(ones(4, 4), 4, 5)
+end
+
+@testset "POVMMeasurement" begin
+    @testset "convert from KrausOperators" begin
+        for kraus_list in kraus_set
+            ko = KrausOperators(kraus_list)
+            T = typeof(ko.matrices[1])
+            p = POVMMeasurement{T}(ko.matrices)
+            @test !ispovm(p)
+        end
+    end
 end
 
 @testset "Channels applications" begin

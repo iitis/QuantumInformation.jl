@@ -411,11 +411,11 @@ end
 
 function Base.convert(::Type{KrausOperators{T1}}, Φ::POVMMeasurement{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
     # TODO : Verify!
-    # v = T1[ket(i-1, Φ.odim)*bra(j-1, Φ.idim)*sqrtm(p) for (i, p) in enumerate(Φ.matrices) for j in 1:Φ.idim]
+    # v = T1[ket(i-1, Φ.odim)*bra(j-1, Φ.idim)*sqrt(p) for (i, p) in enumerate(Φ.matrices) for j in 1:Φ.idim]
     isnumbernotint(eltype(T1)) ? () : throw(ArgumentError("Kraus operators element type must be subtype of Real or Complex"))
     v = T1[]
     for (i, p) in enumerate(Φ.matrices)
-        sqrtp = sqrtm(p)
+        sqrtp = sqrt(p)
         k = ket(i, Φ.odim)*sum(bra(j, Φ.idim)*sqrtp for j in 1:Φ.idim)
         push!(v, T1(k))
     end
