@@ -21,6 +21,23 @@ states,
 * application of random matrix theory in quantum
 information processing.
 
+## How to cite
+
+    @article{Gawron2018,
+      doi = {10.1371/journal.pone.0209358},
+      url = {https://doi.org/10.1371/journal.pone.0209358},
+      year  = {2018},
+      month = {dec},
+      publisher = {Public Library of Science ({PLoS})},
+      volume = {13},
+      number = {12},
+      pages = {e0209358},
+      author = {Piotr Gawron and Dariusz Kurzyk and {\L}ukasz Pawela},
+      editor = {Nicholas Chancellor},
+      title = {{QuantumInformation}.jl{\textemdash}A Julia package for numerical computation in quantum information theory},
+      journal = {{PLOS} {ONE}}
+    }
+
 ## [References](@id refs)
 
 [1] I. Bengtsson, K. Życzkowski, *Geometry of Quantum States: An Introduction to Quantum Entanglement*, Cambridge University Press (2008).
