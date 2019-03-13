@@ -2,9 +2,37 @@
 $(SIGNATURES)
 - `Φ`: DynamicalMatrix
 
-Return [diamond norm](https://arxiv.org/pdf/1004.4110.pdf) of dynamical matrix `Φ`.
+Return [diamond norm](https://arxiv.org/pdf/1207.5726.pdf) of dynamical matrix `Φ`.
 """
 function norm_diamond(Φ::DynamicalMatrix{T}) where T<:AbstractMatrix{<:Number}
+    J = Φ.matrix
+    # TODO: compare d1, d2 with idim, odim
+    d1 = Φ.idim
+    d2 = Φ.odim
+    Y₀ = ComplexVariable(d1*d2, d1*d2)
+    Y₁ = ComplexVariable(d1*d2, d1*d2)
+
+	t = 0.5*sigmamax(partialtrace(Y₀, 1, [d2,d1])) + 
+		0.5*sigmamax(partialtrace(Y₁, 1, [d2,d1]))
+	Z = [Y₀ -J; -J' Y₁ ]
+
+    constraints = [Y₀ in :SDP, Y₁ in :SDP]
+    constraints += Z+Z' in :SDP
+
+    problem = minimize(t, constraints)
+    solve!(problem, SCSSolver(verbose=0))
+    problem.optval
+end
+
+
+
+"""
+$(SIGNATURES)
+- `Φ`: DynamicalMatrix
+
+Return [diamond norm](https://arxiv.org/pdf/1004.4110.pdf) of dynamical matrix `Φ`.
+"""
+function old_norm_diamond(Φ::DynamicalMatrix{T}) where T<:AbstractMatrix{<:Number}
     J = Φ.matrix
     # TODO: compare d1, d2 with idim, odim
     d1 = Φ.idim
