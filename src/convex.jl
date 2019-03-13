@@ -45,5 +45,5 @@ function diamond_distance(Φ1::DynamicalMatrix{T}, Φ2::DynamicalMatrix{T}) wher
 end
 
 function diamond_distance(Φ1::AbstractQuantumOperation{T}, Φ2::AbstractQuantumOperation{T}) where T<:AbstractMatrix{<:Number}
-    diamond_distance(DynamicalMatrix{T}(Φ1), DynamicalMatrix{T}(Φ2))
+    diamond_distance(convert(DynamicalMatrix{T},Φ1), convert(DynamicalMatrix{T},Φ2))
 end
