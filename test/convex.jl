@@ -17,4 +17,11 @@ end
     @test diamond_distance(DynamicalMatrix(J1, d, d), DynamicalMatrix(J2, d, d)) ≈ 2 atol=1e-5
 end
 
+@testset "diamond distance symmetry" begin
+    p=0.2
+    AD=KrausOperators([[1 0; 0 sqrt(p)], [0 sqrt(1-p); 0 0]])
+    AD2=KrausOperators([[1 0; 0 sqrt(2p)], [0 sqrt(1-2p); 0 0]])
+    @test diamond_distance(AD,AD2) ≈ diamond_distance(AD2,AD) atol=1e-5
+end
+
 end
