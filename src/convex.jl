@@ -21,7 +21,7 @@ function norm_diamond(Φ::DynamicalMatrix{T}) where T<:AbstractMatrix{<:Number}
     constraints += [𝕀(d2) ⊗ ρ₀ X; X' 𝕀(d2) ⊗ ρ₁] in :SDP
 
     problem = maximize(t, constraints)
-    solve!(problem, SCSSolver(verbose=0))
+    solve!(problem, SCSSolver(verbose=0, eps=1e-7))
     problem.optval
 end
 
