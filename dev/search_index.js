@@ -497,11 +497,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.diamond_distance-Union{Tuple{T}, Tuple{DynamicalMatrix{T},DynamicalMatrix{T}}} where T<:(AbstractArray{#s23,2} where #s23<:Number)",
+    "location": "lib/QuantumInformation/#QuantumInformation.diamond_distance-Union{Tuple{T}, Tuple{DynamicalMatrix{T},DynamicalMatrix{T},Vararg{Any,N} where N}} where T<:(AbstractArray{#s23,2} where #s23<:Number)",
     "page": "Library",
     "title": "QuantumInformation.diamond_distance",
     "category": "method",
-    "text": "diamond_distance(Φ1, Φ2)\n\n\nΦ1: DynamicalMatrix\nΦ2: DynamicalMatrix\n\nReturn diamond distance between dynamical matrices Φ1 and Φ2.\n\n\n\n\n\n"
+    "text": "diamond_distance(Φ1, Φ2, args)\n\n\nΦ1: DynamicalMatrix\nΦ2: DynamicalMatrix\n\nReturn diamond distance between dynamical matrices Φ1 and Φ2.\n\n\n\n\n\n"
 },
 
 {
@@ -625,11 +625,11 @@ var documenterSearchIndex = {"docs": [
 },
 
 {
-    "location": "lib/QuantumInformation/#QuantumInformation.norm_diamond-Union{Tuple{DynamicalMatrix{T}}, Tuple{T}} where T<:(AbstractArray{#s23,2} where #s23<:Number)",
+    "location": "lib/QuantumInformation/#QuantumInformation.norm_diamond-Union{Tuple{DynamicalMatrix{T}}, Tuple{T}, Tuple{DynamicalMatrix{T},Any}, Tuple{DynamicalMatrix{T},Any,Any}} where T<:(AbstractArray{#s21,2} where #s21<:Number)",
     "page": "Library",
     "title": "QuantumInformation.norm_diamond",
     "category": "method",
-    "text": "norm_diamond(Φ)\n\n\nΦ: DynamicalMatrix\n\nReturn diamond norm of dynamical matrix Φ.\n\n\n\n\n\n"
+    "text": "norm_diamond(Φ)\nnorm_diamond(Φ, method)\nnorm_diamond(Φ, method, eps)\n\n\nΦ: DynamicalMatrix\n\nReturn diamond norm of dynamical matrix Φ.\n\n\n\n\n\n"
 },
 
 {
