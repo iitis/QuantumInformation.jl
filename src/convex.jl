@@ -4,8 +4,10 @@ $(SIGNATURES)
 
 Return [diamond norm](https://arxiv.org/pdf/1207.5726.pdf) of dynamical matrix `Φ`.
 """
-function norm_diamond(Φ::DynamicalMatrix{T}, dual::Bool=false, eps=1e-7) where T<:AbstractMatrix{<:Number}
-	dual ? norm_diamond_dual(Φ,eps) : norm_diamond_primal(Φ,eps)
+function norm_diamond(Φ::DynamicalMatrix{T}, method=:primal, eps=1e-7) where T<:AbstractMatrix{<:Number}
+	(method == :primal || method == :dual) || throw(ArgumentError("method must be either :primal or :dual"))
+
+	method == :dual ? norm_diamond_dual(Φ,eps) : norm_diamond_primal(Φ,eps)
 end
 
 
