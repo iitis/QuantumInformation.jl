@@ -563,7 +563,7 @@ function Base.kron(Φ1::UnitaryChannel{M1}, Φ2::UnitaryChannel{M2}) where {M1<:
 end
 
 function Base.kron(::Type{T}, Φ1::IdentityChannel, Φ2::UnitaryChannel) where {T<:AbstractQuantumOperation{M}} where  {M<:AbstractMatrix{<:Number}}
-    matrix = convert(M, Matrix(I, Φ1.idim, Φ1.odim) ⊗ Φ2.matrix)
+    matrix = convert(M, Matrix(I, Φ1.odim, Φ1.idim) ⊗ Φ2.matrix)
     uc = UnitaryChannel(matrix, Φ1.idim * Φ2.idim, Φ1.odim * Φ2.odim)
     convert(T, uc)
 end
@@ -574,7 +574,7 @@ function Base.kron(Φ1::IdentityChannel{M1}, Φ2::UnitaryChannel{M2}) where {M1<
 end
 
 function Base.kron(::Type{T}, Φ1::UnitaryChannel, Φ2::IdentityChannel) where {T<:AbstractQuantumOperation{M}} where  {M<:AbstractMatrix{<:Number}}
-    matrix = convert(M, Φ1.matrix ⊗ Matrix(I, Φ2.idim, Φ2.odim))
+    matrix = convert(M, Φ1.matrix ⊗ Matrix(I, Φ2.odim, Φ2.idim))
     uc = UnitaryChannel(matrix, Φ1.idim * Φ2.idim, Φ1.odim * Φ2.odim)
     convert(T, uc)
 end
