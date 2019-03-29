@@ -100,9 +100,9 @@ function ispositive(ρ::AbstractMatrix{<:Number}; atol=1e-13)
     if rows!=cols
         return false
     end
-    if !ishermitian(ρ)
-        return false
-    end
+    # if !ishermitian(ρ) # TODO: ishermitian function has no tolerance
+    #     return false
+    # end
     h = Hermitian(ρ)
     fact = eigen(h)
     all(fact.values .> -atol)
