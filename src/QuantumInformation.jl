@@ -55,6 +55,6 @@ include("reshuffle.jl")
 include("ptrace.jl")
 include("ptranspose.jl")
 include("convex.jl")
-# include("matrixbases.jl") # unfinished
+include("matrixbases.jl")
 
 end # module
