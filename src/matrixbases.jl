@@ -3,7 +3,7 @@ struct HermitianBasisIterator{T} <: AbstractMatrixBasisIterator{T}
     dim::Int
 end
 import .Base: length, iterate
-export hermitianbasis
+export hermitianbasis, matrixtocoeffs, coeffstomatrix
 
 hermitianbasis(dim::Int) = hermitianbasis(Matrix{ComplexF64}, dim)
 
@@ -32,10 +32,10 @@ end
 
 length(itr::HermitianBasisIterator) = itr.dim^2
 
-function in_matrix_basis(basis::T, m::Matrix{<:Number}) where T<:AbstractMatrixBasisIterator
+function matrixtocoeffs(basis::T, m::Matrix{<:Number}) where T<:AbstractMatrixBasisIterator
     tr.([m] .* basis) 
 end
 
-function from_matrix_basis(basis::T, v::Vector{<:Number}) where T<:AbstractMatrixBasisIterator
+function coeffstomatrix(basis::T, v::Vector{<:Number}) where T<:AbstractMatrixBasisIterator
     sum(basis .* v)
 end
