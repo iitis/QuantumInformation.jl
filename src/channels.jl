@@ -112,8 +112,13 @@ struct Stinespring{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     matrix::T
     idim::Int
     odim::Int
-    # TODO: write inner constructor
-    # where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+    function Stinespring{T1}(m, idim, odim) where {T1<:AbstractMatrix{<:Number}}
+        r, c = size(m)
+        if r!=idim * (odim^2) || c!=idim
+            throw(ArgumentError("Stinespring matrix has invalid dimensions"))
+        end
+        new(T1(m), idim, odim)
+    end
 end
 
 """
