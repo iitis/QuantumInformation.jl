@@ -1,4 +1,6 @@
 
+export 𝕀, sx, sy, sz, qft, hadamard, grover
+
 """
 $(SIGNATURES)
 - `d`: dimension of operator.

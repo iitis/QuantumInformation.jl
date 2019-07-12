@@ -1,3 +1,7 @@
+export number2mixedradix, mixedradix2number,
+    funcmh, funcmh!, renormalize!
+    # realdiag, realdiag!
+
 function number2mixedradix(n::Int, radices::Vector{Int})
     n >= prod(radices) ? throw(ArgumentError("number to big to transform")) : ()
 

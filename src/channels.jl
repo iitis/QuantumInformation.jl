@@ -1,3 +1,8 @@
+export AbstractQuantumOperation, KrausOperators, SuperOperator, DynamicalMatrix,
+    Stinespring, UnitaryChannel, IdentityChannel, POVMMeasurement,
+    PostSelectionMeasurement, ispovm, iseffect, iscptp, iscptni, applychannel, 
+    compose, isidentity, ispositive
+
 ################################################################################
 # Channels definitions and constructors
 ################################################################################

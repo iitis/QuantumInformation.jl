@@ -1,3 +1,9 @@
+export norm_trace, trace_distance, norm_hs, hs_distance,
+    purity, fidelity_sqrt, fidelity, gate_fidelity, shannon_entropy,
+    vonneumann_entropy, renyi_entropy, relative_entropy, kl_divergence,
+    js_divergence, bures_distance, bures_angle, superfidelity, negativity,
+    log_negativity, ppt, concurrence
+
 """
 $(SIGNATURES)
 - `A`: matrix.
