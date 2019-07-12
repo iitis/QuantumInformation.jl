@@ -3,7 +3,6 @@ Main module for `QuantumInformation.jl` -- a Julia package for numerical computa
 """
 module QuantumInformation
 using LinearAlgebra
-using SparseArrays
 using DocStringExtensions
 using TensorOperations
 using Convex, SCS
