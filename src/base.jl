@@ -1,8 +1,3 @@
-export ket, bra, ketbra, proj, base_matrices,
-    res, unres,
-    ptrace, ptranspose, reshuffle, permutesystems,
-    max_mixed, max_entangled, werner_state
-
 function ket(::Type{T}, val::Int, dim::Int) where T<:Number
     dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
     1 <= val <= dim ? () : throw(ArgumentError("Label have to be smaller than vector dimension"))
