@@ -133,6 +133,9 @@ end
 @testset "UnitaryChannel" begin
     @test_throws ArgumentError UnitaryChannel(ones(4, 5))
     @test_throws ArgumentError UnitaryChannel(ones(4, 4), 4, 5)
+
+    c = UnitaryChannel(Diagonal(ComplexF64[1 -1.0im]))
+    @test c isa UnitaryChannel{<:Diagonal}
 end
 
 @testset "POVMMeasurement" begin

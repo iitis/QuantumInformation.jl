@@ -56,7 +56,7 @@ struct SuperOperator{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
             throw(ArgumentError("Superoperator matrix has bad dimensions"))
         end
         odim, idim = sr, sc
-        new{T1}(T1(m), idim, odim)
+        new{T1}(convert(T1, m), idim, odim)
     end
 end
 
@@ -98,7 +98,7 @@ struct DynamicalMatrix{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{
         if r!=c || r!=idim*odim
             throw(ArgumentError("DynamicalMatrix matrix has bad dimensions"))
         end
-        new(T1(m), idim, odim)
+        new(convert(T1, m), idim, odim)
     end
 end
 
@@ -129,13 +129,13 @@ struct UnitaryChannel{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T
     function UnitaryChannel{T1}(m::T2) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
         odim, idim = size(m)
         idim == odim ? () : throw(ArgumentError("UnitaryChannel matrix has to be square"))
-        new{T1}(T1(m), idim, odim)
+        new{T1}(convert(T1,m), idim, odim)
     end
 end
 
 function UnitaryChannel{T1}(m::T2, idim::Int, odim::Int) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
     (odim, idim) == size(m) ? () : throw(ArgumentError("Matrix size and operator dimensions mismatch"))
-    UnitaryChannel{T1}(T1(m))
+    UnitaryChannel{T1}(convert(T1,m))
 end
 
 """
@@ -191,7 +191,7 @@ struct PostSelectionMeasurement{T<:AbstractMatrix{<:Number}} <: AbstractQuantumO
     odim::Int
     function PostSelectionMeasurement{T1}(m::T2) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
         odim, idim = size(m)
-        new{T1}(T1(m), idim, odim)
+        new{T1}(convert(T1,m), idim, odim)
     end
 end
 
@@ -286,7 +286,7 @@ Transforms list of Kraus operators into super-operator matrix.
 """
 function Base.convert(::Type{SuperOperator{T1}}, Φ::KrausOperators{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
     m = sum(k⊗(conj.(k)) for k in Φ.matrices)
-    SuperOperator{T1}(T1(m), Φ.idim, Φ.odim)
+    SuperOperator{T1}(convert(T1,m), Φ.idim, Φ.odim)
 end
 
 """
@@ -300,7 +300,7 @@ function Base.convert(::Type{Stinespring{T1}}, Φ::KrausOperators{T2}) where {T1
     ko = orthogonalize(Φ)
     # TODO: improvement: transform to stacking
     m = sum(k ⊗ ket(i, ko.idim*ko.odim) for (i, k) in enumerate(ko.matrices))
-    Stinespring{T1}(T1(m), ko.idim, ko.odim)
+    Stinespring{T1}(convert(T1,m), ko.idim, ko.odim)
 end
 
 """
@@ -312,7 +312,7 @@ Transforms list of Kraus operators into dynamical matrix.
 """
 function Base.convert(::Type{DynamicalMatrix{T1}}, Φ::KrausOperators{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
     m = sum(res(k) * res(k)' for k in Φ.matrices)
-    DynamicalMatrix{T1}(T1(m), Φ.idim, Φ.odim)
+    DynamicalMatrix{T1}(convert(T1,m), Φ.idim, Φ.odim)
 end
 
 """
@@ -335,7 +335,7 @@ Transforms super-operator matrix into dynamical matrix.
 """
 function Base.convert(::Type{DynamicalMatrix{T1}}, Φ::SuperOperator{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
     m = reshuffle(Φ.matrix, [Φ.odim Φ.odim; Φ.idim Φ.idim])
-    DynamicalMatrix{T1}(T1(m), Φ.idim, Φ.odim)
+    DynamicalMatrix{T1}(convert(T1,m), Φ.idim, Φ.odim)
 end
 
 """
@@ -396,11 +396,11 @@ Transforms dynamical matrix into super-operator matrix.
 """
 function Base.convert(::Type{SuperOperator{T1}}, Φ::DynamicalMatrix{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
     m = reshuffle(Φ.matrix, [Φ.odim Φ.idim; Φ.odim Φ.idim])
-    SuperOperator{T1}(T1(m), Φ.idim, Φ.odim)
+    SuperOperator{T1}(convert(T1,m), Φ.idim, Φ.odim)
 end
 
 function Base.convert(::Type{KrausOperators{T1}}, Φ::UnitaryChannel{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-    KrausOperators{T1}(T1[T1(Φ.matrix)], Φ.idim, Φ.odim)
+    KrausOperators{T1}(T1[convert(T1,Φ.matrix)], Φ.idim, Φ.odim)
 end
 
 function Base.convert(::Type{KrausOperators{T1}}, Φ::IdentityChannel{T2}) where {T1<:AbstractMatrix{N1}, T2<:AbstractMatrix{N2}} where {N1<:Number, N2<:Number}
@@ -417,14 +417,14 @@ function Base.convert(::Type{KrausOperators{T1}}, Φ::POVMMeasurement{T2}) where
     for (i, p) in enumerate(Φ.matrices)
         sqrtp = sqrt(p)
         k = ket(i, Φ.odim)*sum(bra(j, Φ.idim)*sqrtp for j in 1:Φ.idim)
-        push!(v, T1(k))
+        push!(v, convert(T1,k))
     end
     KrausOperators{T1}(v, Φ.idim, Φ.odim)
 end
 
 function Base.convert(::Type{KrausOperators{T1}}, Φ::PostSelectionMeasurement{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
     m = Φ.matrix
-    v = T1[T1(m)]
+    v = T1[convert(T1,m)]
     KrausOperators{T1}(v, Φ.idim, Φ.odim)
 end
 
