@@ -1,4 +1,5 @@
-function ket(::Type{T}, val::Int, dim::Int) where T<:Number
+export ket, bra, ketbra, proj, res, unres, max_mixed, max_entangled,
+    werner_state, permutesystems
     dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
     1 <= val <= dim ? () : throw(ArgumentError("Label have to be smaller than vector dimension"))
     ψ = zeros(T, dim)
