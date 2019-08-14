@@ -1,8 +1,21 @@
-@testset "base_matrices" begin
+@testset "MatrixBases" begin
+
+@testset "HermitianBasisIterator" begin
     d = 4
-    m = collect(Matrix{ComplexF64}, base_matrices(4))
-    for i=1:d, j=1:d
-        v = tr(m[i]' * m[j])
-        i == j ? @test(v == 1.) : @test(v == 0.)
-    end
+    m = collect(HermitianBasisIterator{Matrix{ComplexF64}}(d))
+    @test [tr(m[i]' * m[j]) for i=1:d, j=1:d] ≈ Matrix{Float64}(I, d, d)
+end
+
+@testset "represent, combine" begin
+    d = 4
+    A = reshape(collect(1:16), 4, 4)
+    vA = represent(HermitianBasis{Matrix{ComplexF64}}(d), A)
+    Ap = combine(HermitianBasis{Matrix{ComplexF64}}(d), vA)
+    @test A ≈ Ap
+    B = A*A'
+    vB = represent(HermitianBasis{Matrix{ComplexF64}}(d), B)
+    Bp = combine(HermitianBasis{Matrix{ComplexF64}}(d), vB)
+    @test B ≈ Bp
+end
+
 end

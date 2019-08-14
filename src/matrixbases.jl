@@ -1,11 +1,21 @@
+import .Base: length, iterate
+export AbstractMatrixBasisIterator, HermitianBasisIterator, AbstractBasis,
+    AbstractMatrixBasis, HermitianBasis, hermitianbasis, represent, combine
 abstract type AbstractMatrixBasisIterator{T<:AbstractMatrix} end
 struct HermitianBasisIterator{T} <: AbstractMatrixBasisIterator{T} 
     dim::Int
 end
-import .Base: length, iterate
-export hermitianbasis, matrixtocoeffs, coeffstomatrix
 
-hermitianbasis(dim::Int) = hermitianbasis(Matrix{ComplexF64}, dim)
+abstract type AbstractBasis end
+abstract type AbstractMatrixBasis{T} <: AbstractBasis where T<:AbstractMatrix{<:Number} end 
+
+struct HermitianBasis{T} <: AbstractMatrixBasis{T} 
+    iterator::HermitianBasisIterator{T}
+
+    function HermitianBasis{T}(dim::Integer) where T<:AbstractMatrix{<:Number}
+        new(HermitianBasisIterator{T}(dim)) 
+    end
+end
 
 """
 $(SIGNATURES)
@@ -14,6 +24,9 @@ $(SIGNATURES)
 Returns elementary hermitian matrices of dimension `dim` x `dim`.
 """
 hermitianbasis(T::Type{<:AbstractMatrix{<:Number}}, dim::Int) = HermitianBasisIterator{T}(dim)
+
+hermitianbasis(dim::Int) = hermitianbasis(Matrix{ComplexF64}, dim)
+
 
 function iterate(itr::HermitianBasisIterator{T}, state=(1,1)) where T<:AbstractMatrix{<:Number}
     dim = itr.dim
@@ -32,10 +45,10 @@ end
 
 length(itr::HermitianBasisIterator) = itr.dim^2
 
-function matrixtocoeffs(basis::T, m::Matrix{<:Number}) where T<:AbstractMatrixBasisIterator
-    tr.([m] .* basis) 
+function represent(basis::T, m::Matrix{<:Number}) where T<:AbstractMatrixBasis
+    tr.([m] .* basis.iterator) 
 end
 
-function coeffstomatrix(basis::T, v::Vector{<:Number}) where T<:AbstractMatrixBasisIterator
-    sum(basis .* v)
+function combine(basis::T, v::Vector{<:Number}) where T<:AbstractMatrixBasis
+    sum(basis.iterator .* v)
 end
