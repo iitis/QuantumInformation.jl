@@ -28,7 +28,8 @@ end
 function rand(c::COE)
     z = rand(c.g)
     u = _qr_fix(z)
-    transpose(u)*u
+    ut = diagm(ones(c.d-1), 1) + diagm(-ones(c.d-1), -1)
+    ut*u
 end
 
 function rand(c::CUE)
@@ -41,8 +42,7 @@ function rand(c::CSE)
     z = rand(c.g)
     u = _qr_fix(z)
     #TODO this does not require matrix multiplication
-    a = diagm(-ones(c.d-1), 1) + diagm(ones(c.d-1), -1)
-    ur = -a*transpose(u)*a
+    ur = diagm(-ones(c.d-1), 1) + diagm(ones(c.d-1), -1)
     ur*u
 end
 
