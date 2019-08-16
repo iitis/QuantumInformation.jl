@@ -1,3 +1,8 @@
+export AbstractQuantumOperation, KrausOperators, SuperOperator, DynamicalMatrix,
+    Stinespring, UnitaryChannel, IdentityChannel, POVMMeasurement,
+    PostSelectionMeasurement, ispovm, iseffect, iscptp, iscptni, applychannel, 
+    compose, isidentity, ispositive, represent
+
 ################################################################################
 # Channels definitions and constructors
 ################################################################################
@@ -53,7 +58,7 @@ struct SuperOperator{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
         sr = isqrt(r)
         sc = isqrt(c)
         if r!=sr^2 || c!=sc^2
-            throw(ArgumentError("Superoperator matrix has bad dimensions"))
+            throw(ArgumentError("Superoperator matrix has invalid dimensions"))
         end
         odim, idim = sr, sc
         new{T1}(convert(T1, m), idim, odim)
@@ -96,7 +101,7 @@ struct DynamicalMatrix{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{
     function DynamicalMatrix{T1}(m, idim, odim) where {T1<:AbstractMatrix{<:Number}}
         r, c = size(m)
         if r!=c || r!=idim*odim
-            throw(ArgumentError("DynamicalMatrix matrix has bad dimensions"))
+            throw(ArgumentError("DynamicalMatrix matrix has invalid dimensions"))
         end
         new(convert(T1, m), idim, odim)
     end
@@ -112,8 +117,13 @@ struct Stinespring{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     matrix::T
     idim::Int
     odim::Int
-    # TODO: write inner constructor
-    # where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+    function Stinespring{T1}(m, idim, odim) where {T1<:AbstractMatrix{<:Number}}
+        r, c = size(m)
+        if r!=idim * (odim^2) || c!=idim
+            throw(ArgumentError("Stinespring matrix has invalid dimensions"))
+        end
+        new(T1(m), idim, odim)
+    end
 end
 
 """
@@ -267,6 +277,21 @@ for qop in (:KrausOperators, :SuperOperator, :DynamicalMatrix, :Stinespring,
         end
     end
 end
+
+################################################################################
+# represent() function
+################################################################################
+for qop in (:KrausOperators, :POVMMeasurement)
+    @eval represent(Φ::$qop) = Φ.matrices
+end
+
+for qop in (:SuperOperator, :DynamicalMatrix, :Stinespring,
+            :UnitaryChannel, :PostSelectionMeasurement)
+    @eval represent(Φ::$qop) = Φ.matrix
+end
+
+represent(Φ::IdentityChannel{T}) where T<:Matrix{<:Number} = Matrix{T}(I, Φ.idim, Φ.idim)
+represent(Φ::IdentityChannel) = represent(IdentityChannel{Matrix{ComplexF64}}())
 
 ################################################################################
 # conversions functions

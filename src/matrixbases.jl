@@ -1,95 +1,54 @@
-abstract type AbstractMatrixBase{T<:AbstractMatrix{<:Number}} end
-struct ElementaryMatrixBase{T<:AbstractMatrix{<:Number}} <: AbstractMatrixBase{T}
+import .Base: length, iterate
+export AbstractMatrixBasisIterator, HermitianBasisIterator, AbstractBasis,
+    AbstractMatrixBasis, HermitianBasis, hermitianbasis, represent, combine
+abstract type AbstractMatrixBasisIterator{T<:AbstractMatrix} end
+struct HermitianBasisIterator{T} <: AbstractMatrixBasisIterator{T} 
     dim::Int
-    length::Int
 end
 
-function ElementaryMatrixBase{T}(dim::Int) where T <: AbstractMatrix{<:Number}
-    dim > 0 ? () : error("Operator dimension has to be nonnegative")
-    ElementaryMatrixBase{T}(dim, dim^2)
-end
+abstract type AbstractBasis end
+abstract type AbstractMatrixBasis{T} <: AbstractBasis where T<:AbstractMatrix{<:Number} end 
 
-Base.length(iter::AbstractMatrixBase{T}) where T<:AbstractMatrix{<:Number} = iter.length
-Base.eltype(iter::AbstractMatrixBase{T}) where T<:AbstractMatrix{<:Number} = T
+struct HermitianBasis{T} <: AbstractMatrixBasis{T} 
+    iterator::HermitianBasisIterator{T}
 
-
-# function ElementaryMatrixBase{T}(::Type{T}, dim::Int) where T<:AbstractMatrix{<:Number}
-#     ElementaryMatrixBase(base_matrices(T, dim), dim)
-# end
-
-# TODO: allow rectangular matrices
-function Base.iterate(iter::ElementaryMatrixBase{M}, state=(Iterators.product(1:iter.dim,1:iter.dim),)) where M<:AbstractMatrix{T} where T<:Number
-    # for i=1:dim, j=1:dim
-    #     push!(c, )
-    # end
-    it = first(state)
-    i, j = it
-    element = ketbra(T, j, i, iter.dim)
-    if i == iter.dim && j == iter.dim
-        return nothing
+    function HermitianBasis{T}(dim::Integer) where T<:AbstractMatrix{<:Number}
+        new(HermitianBasisIterator{T}(dim)) 
     end
-
-    state = iterate(it, state)
-    return(element, state)
 end
-
-import Base.length
-
-import Base.collect
-
 
 """
 $(SIGNATURES)
-- `dim`: length of the matrix.
+- `dim`: dimensions of the matrix.
 
-Returns elementary matrices of dimension `dim` x `dim`.
+Returns elementary hermitian matrices of dimension `dim` x `dim`.
 """
-base_matrices(dim::Int) = base_matrices(ComplexF64, dim)
+hermitianbasis(T::Type{<:AbstractMatrix{<:Number}}, dim::Int) = HermitianBasisIterator{T}(dim)
 
-"""
-$(SIGNATURES)
-- `dim`: dimensions of registers of `ρ`.
+hermitianbasis(dim::Int) = hermitianbasis(Matrix{ComplexF64}, dim)
 
-Returns elementary hermitian matrices of dimension dim x dim.
-"""
-base_hermitian_matrices(dim) = Channel(ctype=Matrix{ComplexF64}) do bhm
-    for (a, b) in Base.product(0:dim-1, 0:dim-1)
-        if a > b
-            x = 1 / sqrt(2) * (1im * ketbra(a, b, dim) - 1im * ketbra(b, a, dim))
-            push!(bhm, x)
-        elseif a < b
-            x = 1 / sqrt(2) * (ketbra(a, b, dim) + ketbra(b, a, dim))
-            push!(bhm, x)
-        else
-            x = ketbra(a, b, dim)
-            push!(bhm, x)
-        end
+
+function iterate(itr::HermitianBasisIterator{T}, state=(1,1)) where T<:AbstractMatrix{<:Number}
+    dim = itr.dim
+    (a, b) = state
+    a > dim && return nothing
+
+    if a > b
+        x = 1 / sqrt(2) * (1im * ketbra(a, b, dim) - 1im * ketbra(b, a, dim))
+    elseif a < b
+        x = 1 / sqrt(2) * (ketbra(a, b, dim) + ketbra(b, a, dim))
+    else
+        x = ketbra(a, b, dim)
     end
-    bhm
+    return x, b==dim ? (a+1, 1) : (a, b+1)
 end
 
-base_generlized_pauli_matrices(d) = Channel(ctype=Matrix{ComplexF64}) do gm
-    E(i,j,d) = ketbra(j,i,d)
+length(itr::HermitianBasisIterator) = itr.dim^2
 
-    sm = sum([E(i,i,d) for i in 0:d-1])
-    push!(gm, sm)
-    for j in 0:d-2
-        for k in j+1:d-1
-            sm = E(j,k,d) + E(k,j,d)
-            push!(gm, sm)
-        end
-    end
+function represent(basis::T, m::Matrix{<:Number}) where T<:AbstractMatrixBasis
+    tr.([m] .* basis.iterator) 
+end
 
-    for j in 0:d-2
-        for k in j+1:d-1
-            sm = -1im*(E(j,k,d) - E(k,j,d))
-            push!(gm, sm)
-        end
-    end
-
-    for l in 1:d-1
-        sm = sqrt(2.0/(l*(l+1)))*(sum([E(j-1,j-1,d) for j in 1:l]) - l*E(l,l,d))
-        push!(gm, sm)
-    end
-    gm
+function combine(basis::T, v::Vector{<:Number}) where T<:AbstractMatrixBasis
+    sum(basis.iterator .* v)
 end

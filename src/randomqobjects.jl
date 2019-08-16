@@ -1,4 +1,5 @@
 using Distributions
+export HaarKet, HilbertSchmidtStates, ChoiJamiolkowskiMatrices
 
 """
 $(SIGNATURES)

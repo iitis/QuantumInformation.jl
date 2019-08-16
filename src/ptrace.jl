@@ -1,3 +1,5 @@
+export ptrace
+
 """
 $(SIGNATURES)
 - `ρ`: quantum state.
