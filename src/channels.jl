@@ -1,7 +1,7 @@
 export AbstractQuantumOperation, KrausOperators, SuperOperator, DynamicalMatrix,
     Stinespring, UnitaryChannel, IdentityChannel, POVMMeasurement,
     PostSelectionMeasurement, ispovm, iseffect, iscptp, iscptni, applychannel, 
-    compose, isidentity, ispositive, representation
+    compose, isidentity, ispositive, represent
 
 ################################################################################
 # Channels definitions and constructors
@@ -279,19 +279,19 @@ for qop in (:KrausOperators, :SuperOperator, :DynamicalMatrix, :Stinespring,
 end
 
 ################################################################################
-# representation() function
+# represent() function
 ################################################################################
 for qop in (:KrausOperators, :POVMMeasurement)
-    @eval representation(Φ::$qop) = Φ.matrices
+    @eval represent(Φ::$qop) = Φ.matrices
 end
 
 for qop in (:SuperOperator, :DynamicalMatrix, :Stinespring,
             :UnitaryChannel, :PostSelectionMeasurement)
-    @eval representation(Φ::$qop) = Φ.matrix
+    @eval represent(Φ::$qop) = Φ.matrix
 end
 
-representation(Φ::IdentityChannel{T}) where T<:Matrix{<:Number} = Matrix{T}(I, Φ.idim, Φ.idim)
-representation(Φ::IdentityChannel) = representation(IdentityChannel{Matrix{ComplexF64}}())
+represent(Φ::IdentityChannel{T}) where T<:Matrix{<:Number} = Matrix{T}(I, Φ.idim, Φ.idim)
+represent(Φ::IdentityChannel) = represent(IdentityChannel{Matrix{ComplexF64}}())
 
 ################################################################################
 # conversions functions
