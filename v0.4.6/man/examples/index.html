@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Examples · QuantumInformation.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><nav class="toc"><a href="../../"><img class="logo" src="../../assets/logo.png" alt="QuantumInformation.jl logo"/></a><h1>QuantumInformation.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../">Home</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../quickstart/">Quickstart</a></li><li><a class="toctext" href="../vectors/">Linear algebra in Julia</a></li><li><a class="toctext" href="../states/">States and channels</a></li><li><a class="toctext" href="../functionals/">Functionals</a></li><li><a class="toctext" href="../measurement/">Measurement</a></li><li><a class="toctext" href="../random/">Random quantum objects</a></li></ul></li><li><a class="toctext" href="../../lib/QuantumInformation/">Library</a></li></ul></nav><article id="docs"><header><nav><ul><li><a href>Examples</a></li></ul><a class="edit-page" href="https://github.com/ZKSI/QuantumInformation.jl/blob/master/docs/src/man/examples.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Examples</span><a class="fa fa-bars" href="#"></a></div></header><div></div><h1><a class="nav-anchor" id="Examples-1" href="#Examples-1">Examples</a></h1><p>As an example we provide the teleportation protocol in the presence of noise. Imagine we have an entangled pair of particles in the state \begin{equation} |\psi\rangle = \frac{1}{\sqrt{2}} \left( |00\rangle + |11\rangle \right). \end{equation}</p><p>One of the particles stays with Alice and another is sent through a noisy channel to Bob. As a noise model we chose the amplitude damping channel given by the Kraus operators \begin{equation} K<em>0 = \begin{matrix} 1 &amp; 0 \
+0 &amp; \sqrt{1-\gamma} \end{matrix} \quad K</em>1 = \begin{matrix} 0 &amp; \sqrt{\gamma} \
+0 &amp; 0 \end{matrix} . \end{equation} The channel has one parameter <span>$\gamma \in [0, 1]$</span> modeling the strength of the noise. Assume that Alice possesses a random pure state <span>$|\phi\rangle$</span> that she teleports to Bob.</p><p>Our examples show the fidelity of the final state at Bob&#39;s site averaged over <span>$100$</span> random pure initial states. We also check how the parameter <span>$\gamma$</span> influences this fidelity.</p><pre><code class="language-julia-repl">julia&gt; steps = 100
+100
+
+julia&gt; haar = HaarKet(2)
+HaarKet{2}(d=2)
+
+julia&gt; ψ = (ket(0, 4) + ket(3, 4))/sqrt(2)
+ERROR: ArgumentError: Label have to be smaller than vector dimension
+
+julia&gt; γs = 0.0:0.01:1.0
+0.0:0.01:1.0
+
+julia&gt; Φ = KrausOperators([[1 0; 0 sqrt(1-γ)], [0 sqrt(γ); 0 0]])
+ERROR: UndefVarError: γ not defined
+
+julia&gt; post = [PostSelectionMeasurement(proj(ket(i, 4)) ⊗ eye(2)) for i=0:3]
+ERROR: ArgumentError: Label have to be smaller than vector dimension
+
+julia&gt; rots = [UnitaryChannel(eye(2)), UnitaryChannel(sx), UnitaryChannel(sz),
+       UnitaryChannel(sx*sz)]
+ERROR: UndefVarError: eye not defined
+
+julia&gt; had = UnitaryChannel{Matrix{ComplexF64}}(hadamard(2))
+UnitaryChannel{Array{Complex{Float64},2}}
+    dimensions: (2, 2)
+    Complex{Float64}[0.707107+0.0im 0.707107+0.0im; 0.707107+0.0im -0.707107+0.0im]
+
+julia&gt; cnot = UnitaryChannel{Matrix{ComplexF64}}([1 0 0 0; 0 1 0 0; 0 0 0 1; 0 0 1 0])
+UnitaryChannel{Array{Complex{Float64},2}}
+    dimensions: (4, 4)
+    Complex{Float64}[1.0+0.0im 0.0+0.0im 0.0+0.0im 0.0+0.0im; 0.0+0.0im 1.0+0.0im 0.0+0.0im 0.0+0.0im; 0.0+0.0im 0.0+0.0im 0.0+0.0im 1.0+0.0im; 0.0+0.0im 0.0+0.0im 1.0+0.0im 0.0+0.0im]
+
+julia&gt; r = zeros(steps, length(γs), 4);
+
+julia&gt; for (k, γ) in enumerate(γs)
+           for i=1:steps
+               ϕ = rand(haar)
+               ξ = ϕ ⊗ ψ
+               ρ = ((had ⊗ IdentityChannel(4))∘(cnot ⊗
+       IdentityChannel(2))∘(IdentityChannel(4) ⊗ Φ))(ξ)
+               for j=1:4
+                   σ = rots[j](ptrace(post[j](ρ), [2, 2, 2], [1, 2]))
+                   r[i, k, j] = fidelity(ϕ, σ/tr(σ))
+               end
+           end
+       end
+ERROR: UndefVarError: ψ not defined
+
+julia&gt; mean(r, 1)
+ERROR: UndefVarError: mean not defined</code></pre><footer><hr/></footer></article></body></html>

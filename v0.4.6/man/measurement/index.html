@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Measurement · QuantumInformation.jl</title><link href="https://cdnjs.cloudflare.com/ajax/libs/normalize/4.2.0/normalize.min.css" rel="stylesheet" type="text/css"/><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL="../.."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.2.0/require.min.js" data-main="../../assets/documenter.js"></script><script src="../../siteinfo.js"></script><script src="../../../versions.js"></script><link href="../../assets/documenter.css" rel="stylesheet" type="text/css"/><link href="../../assets/favicon.ico" rel="icon" type="image/x-icon"/></head><body><nav class="toc"><a href="../../"><img class="logo" src="../../assets/logo.png" alt="QuantumInformation.jl logo"/></a><h1>QuantumInformation.jl</h1><select id="version-selector" onChange="window.location.href=this.value" style="visibility: hidden"></select><form class="search" id="search-form" action="../../search/"><input id="search-query" name="q" type="text" placeholder="Search docs"/></form><ul><li><a class="toctext" href="../../">Home</a></li><li><span class="toctext">Manual</span><ul><li><a class="toctext" href="../quickstart/">Quickstart</a></li><li><a class="toctext" href="../vectors/">Linear algebra in Julia</a></li><li><a class="toctext" href="../states/">States and channels</a></li><li><a class="toctext" href="../functionals/">Functionals</a></li><li class="current"><a class="toctext" href>Measurement</a><ul class="internal"><li><a class="toctext" href="#Positive-Operator-Valued-Measure-measurement-1">Positive Operator Valued Measure measurement</a></li><li><a class="toctext" href="#Measurement-with-post-selection-1">Measurement with post-selection</a></li></ul></li><li><a class="toctext" href="../random/">Random quantum objects</a></li></ul></li><li><a class="toctext" href="../../lib/QuantumInformation/">Library</a></li></ul></nav><article id="docs"><header><nav><ul><li>Manual</li><li><a href>Measurement</a></li></ul><a class="edit-page" href="https://github.com/ZKSI/QuantumInformation.jl/blob/master/docs/src/man/measurement.md"><span class="fa"></span> Edit on GitHub</a></nav><hr/><div id="topbar"><span>Measurement</span><a class="fa fa-bars" href="#"></a></div></header><div></div><h1><a class="nav-anchor" id="Measurement-1" href="#Measurement-1">Measurement</a></h1><p>Measurement is modeled in two ways:</p><ul><li>as Positive Operator Valued Measures (POVMs),</li><li>measurements with post-selection.</li></ul><p>In both cases a measurement is treated as a special case of a quantum channel (operation).</p><h2><a class="nav-anchor" id="Positive-Operator-Valued-Measure-measurement-1" href="#Positive-Operator-Valued-Measure-measurement-1">Positive Operator Valued Measure measurement</a></h2><p>A POVM measurement is defined as follows. Let <span>$\mu:\Gamma\to\mathrm{P}(\mathcal{X})$</span> be a mapping from a finite alphabet of measurement outcomes to the set of linear positive operators. If <span>$\sum_{\xi\in\Gamma} {\mu(\xi)=\mathbb{I}_{\mathcal{X}}}$</span> then <span>$\mu$</span> is a POVM measurement. The set of positive semi-definite linear operators is defined as <span>$\mathrm{P}(\mathcal{X})=\{X\in \mathrm{L}(\mathcal{X}): \langle\psi|X|\psi\rangle\geq 0 \text{ for all } |\psi\rangle\in\mathcal{X}\}$</span>. POVM measurement models the situation where a quantum object is destroyed during the measurement process and quantum state after the measurement does not exists.</p><p>We model POVM measurement as a channel <span>$\theta:\mathrm{L}(\mathcal{X})\to \mathrm{L}(\mathcal{Y})$</span>, where <span>$\mathcal{Y}=\mathrm{span}\{|\xi\rangle\}_{\xi\in\Gamma}$</span> such that <span>$\theta(\rho) = \sum_{\xi\in\Gamma} \mathrm{Tr}(\rho\, \mu(\xi))|\xi\rangle\langle\xi|$</span>. This channel transforms the measured quantum state into a classical state (diagonal matrix) containing probabilities of measuring given outcomes. Note that in <strong>QuantumInformation.jl</strong> <span>$\Gamma=\{1,2,\ldots,|\Gamma|\}$</span> and POVM measurements are represented by the type <code>POVMMeasurement{T} &lt;: AbstractQuantumOperation{T} where T&lt;:AbstractMatrix{&lt;:Number}</code>. Predicate function <code>ispovm()</code> verifies whether a list of matrices is a proper POVM.</p><pre><code class="language-julia-repl">julia&gt; ρ=proj(1.0/sqrt(2)*(ket(1,3)+ket(3,3)))
+3×3 Array{Complex{Float64},2}:
+ 0.5+0.0im  0.0+0.0im  0.5+0.0im
+ 0.0+0.0im  0.0+0.0im  0.0+0.0im
+ 0.5+0.0im  0.0+0.0im  0.5+0.0im
+
+julia&gt; E0 = proj(ket(1,3))
+3×3 Array{Complex{Float64},2}:
+ 1.0+0.0im  0.0+0.0im  0.0+0.0im
+ 0.0+0.0im  0.0+0.0im  0.0+0.0im
+ 0.0+0.0im  0.0+0.0im  0.0+0.0im
+
+julia&gt; E1 = proj(ket(2,3))+proj(ket(3,3))
+3×3 Array{Complex{Float64},2}:
+ 0.0+0.0im  0.0+0.0im  0.0+0.0im
+ 0.0+0.0im  1.0+0.0im  0.0+0.0im
+ 0.0+0.0im  0.0+0.0im  1.0+0.0im
+
+julia&gt; M = POVMMeasurement([E0,E1])
+POVMMeasurement{Array{Complex{Float64},2}}
+    dimensions: (3, 2)
+    Complex{Float64}[1.0+0.0im 0.0+0.0im 0.0+0.0im; 0.0+0.0im 0.0+0.0im 0.0+0.0im; 0.0+0.0im 0.0+0.0im 0.0+0.0im]
+    Complex{Float64}[0.0+0.0im 0.0+0.0im 0.0+0.0im; 0.0+0.0im 1.0+0.0im 0.0+0.0im; 0.0+0.0im 0.0+0.0im 1.0+0.0im]
+
+julia&gt; ispovm(M)
+true
+
+julia&gt; M(ρ)
+2×2 LinearAlgebra.Diagonal{Float64,Array{Float64,1}}:
+ 0.5   ⋅
+  ⋅   0.5</code></pre><h2><a class="nav-anchor" id="Measurement-with-post-selection-1" href="#Measurement-with-post-selection-1">Measurement with post-selection</a></h2><p>When a quantum system after being measured is not destroyed one can be interested in its state after the measurement. This state depends on the measurement outcome. In this case the measurement process is defined in the following way.</p><p>Let <span>$\mu:\Gamma\to \mathrm{L}(\mathcal{X}, \mathcal{Y})$</span> be a mapping from a finite set of measurement outcomes to set of linear operators called effects. If <span>$\sum_{\xi\in\Gamma} {\mu(\xi)^\dagger \mu(\xi)=\mathbb{I}_{\mathcal{X}}}$</span> then <span>$\mu$</span> is a quantum measurement. Given outcome <span>$\xi$</span> was obtained, the state before the measurement, <span>$\rho$</span>, is transformed into sub-normalized quantum state <span>$\rho_\xi=\mu(\xi)\rho\mu(\xi)^\dagger$</span>. The outcome <span>$\xi$</span> will be obtained with probability <span>$\mathrm{Tr}(\rho_\xi)$</span>.</p><pre><code class="language-julia-repl">julia&gt; PM = PostSelectionMeasurement(E1)
+PostSelectionMeasurement{Array{Complex{Float64},2}}
+    dimensions: (3, 3)
+    Complex{Float64}[0.0+0.0im 0.0+0.0im 0.0+0.0im; 0.0+0.0im 1.0+0.0im 0.0+0.0im; 0.0+0.0im 0.0+0.0im 1.0+0.0im]
+
+julia&gt; iseffect(PM)
+true
+
+julia&gt; PM(ρ)
+3×3 Array{Complex{Float64},2}:
+ 0.0+0.0im  0.0+0.0im  0.0+0.0im
+ 0.0+0.0im  0.0+0.0im  0.0+0.0im
+ 0.0+0.0im  0.0+0.0im  0.5+0.0im</code></pre><p>In <strong>QuantumInformation</strong> this kind of measurement is modeled as CP-TNI map with single Kraus operator <span>$\mu(\xi)$</span> and represented as <code>PostSelectionMeasurement{T} &lt;: AbstractQuantumOperation{T} where T&lt;:AbstractMatrix{&lt;:Number}</code>. Measurement types can be composed and converted to Kraus operators, superoperators, Stinespring representation operators, and dynamical matrices.</p><pre><code class="language-julia-repl">julia&gt; α = 0.3
+0.3
+
+julia&gt; K0 = ComplexF64[0 0 sqrt(α); 0 1 0; 0 0 0]
+3×3 Array{Complex{Float64},2}:
+ 0.0+0.0im  0.0+0.0im  0.547723+0.0im
+ 0.0+0.0im  1.0+0.0im       0.0+0.0im
+ 0.0+0.0im  0.0+0.0im       0.0+0.0im
+
+julia&gt; K1 = ComplexF64[1 0 0; 0 0 0; 0 0 sqrt(1 - α)]
+3×3 Array{Complex{Float64},2}:
+ 1.0+0.0im  0.0+0.0im      0.0+0.0im
+ 0.0+0.0im  0.0+0.0im      0.0+0.0im
+ 0.0+0.0im  0.0+0.0im  0.83666+0.0im
+
+julia&gt; Φ = KrausOperators([K0,K1])
+KrausOperators{Array{Complex{Float64},2}}
+    dimensions: (3, 3)
+    Complex{Float64}[0.0+0.0im 0.0+0.0im 0.547723+0.0im; 0.0+0.0im 1.0+0.0im 0.0+0.0im; 0.0+0.0im 0.0+0.0im 0.0+0.0im]
+    Complex{Float64}[1.0+0.0im 0.0+0.0im 0.0+0.0im; 0.0+0.0im 0.0+0.0im 0.0+0.0im; 0.0+0.0im 0.0+0.0im 0.83666+0.0im]
+
+julia&gt; ρ=proj(1.0/sqrt(2)*(ket(1,3)+ket(3,3)))
+3×3 Array{Complex{Float64},2}:
+ 0.5+0.0im  0.0+0.0im  0.5+0.0im
+ 0.0+0.0im  0.0+0.0im  0.0+0.0im
+ 0.5+0.0im  0.0+0.0im  0.5+0.0im
+
+julia&gt; (PM∘Φ)(ρ)
+3×3 Array{Complex{Float64},2}:
+ 0.0+0.0im  0.0+0.0im   0.0+0.0im
+ 0.0+0.0im  0.0+0.0im   0.0+0.0im
+ 0.0+0.0im  0.0+0.0im  0.35+0.0im</code></pre><footer><hr/><a class="previous" href="../functionals/"><span class="direction">Previous</span><span class="title">Functionals</span></a><a class="next" href="../random/"><span class="direction">Next</span><span class="title">Random quantum objects</span></a></footer></article></body></html>
