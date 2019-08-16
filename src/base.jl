@@ -39,13 +39,15 @@ Return Hermitian conjugate \$\\langle val| = |val\\rangle^\\dagger\$ of the ket 
 """
 bra(val::Int, dim::Int) = bra(Vector{ComplexF64}, val, dim)
 
-function ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:AbstractMatrix{<:Number}
-    dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
-    1 <= valk <= dim && 1 <= valb <= dim ? () : throw(ArgumentError("Ket and bra labels have to be smaller than operator dimension"))
-    ρ = zero(T(undef, dim, dim))
+function ketbra(::Type{T}, valk::Int, valb::Int, dimin::Int, dimout::Int) where T<:AbstractMatrix{<:Number}
+    dimin > 0 && dimout > 0 ? () : throw(ArgumentError("Matrix dimension has to be nonnegative"))
+    1 <= valk <= dimin && 1 <= valb <= dimout ? () : throw(ArgumentError("Ket and bra labels have to be smaller than operator dimension"))
+    ρ = zero(T(undef, dimout, dimin))
     ρ[valk,valb] = one(eltype(T))
     ρ
 end
+
+ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:AbstractMatrix{<:Number} = ketbra(T, valk, valb, dim, dim)
 
 function ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:Number
     @warn "This method is deprecated and will be removed. Use calls like `ketbra(Matrix{ComplexF64}, 1, 1, 2)`."
@@ -56,11 +58,22 @@ end
 $(SIGNATURES)
 - `valk`: non-zero entry - label.
 - `valb`: non-zero entry - label.
-- `dim`: length of the vector
+- `dim`: length of the ket and bra vectors
 
 # Return outer product \$|valk\\rangle\\langle vakb|\$ of states \$|valk\\rangle\$ and \$|valb\\rangle\$.
 """
 ketbra(valk::Int, valb::Int, dim::Int) = ketbra(Matrix{ComplexF64}, valk, valb, dim)
+
+
+"""
+- `valk`: non-zero entry - label.
+- `valb`: non-zero entry - label.
+- `dimin`: length of the ket vector
+- `dimout`: length of the bra vector
+
+# Return outer product \$|valk\\rangle\\langle vakb|\$ of states \$|valk\\rangle\$ and \$|valb\\rangle\$.
+"""
+ketbra(valk::Int, valb::Int, dimin::Int, dimout::Int) = ketbra(Matrix{ComplexF64}, valk, valb, dimin, dimout)
 
 """
 $(SIGNATURES)

@@ -28,6 +28,9 @@ end
     αβ[1, 1] = 1
     @test norm(ϕψ - αβ) ≈ 0.
 
+    ψ = ketbra(3, 2, 3, 4) * ket(2, 3)
+    @test ψ[3] ≈ 1
+
     @test_throws ArgumentError ketbra(4, 4, 3)
 
     @test typeof(ketbra(Matrix{Float64}, 1, 1, 4)) == Matrix{Float64}
