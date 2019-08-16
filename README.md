@@ -4,7 +4,7 @@
 [![DOI](https://zenodo.org/badge/23916883.svg)](https://zenodo.org/badge/latestdoi/23916883)
 # QuantumInformation
 
-A Julia package for numerical computation in quantum information theory.
+A Julia package for numerical computation in quantum information theory. [Published in PLoS ONE](https://doi.org/10.1371/journal.pone.0209358).
 
 Numerical investigations are prevalent in quantum information theory. Numerical experiments can be used to find counter examples for theorems, to test hypotheses or to gain insight about quantum objects and operations.
 
