@@ -1,3 +1,4 @@
+export ptranspose
 """
 $(SIGNATURES)
 - `ρ`: quantum state.

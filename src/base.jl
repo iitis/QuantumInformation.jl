@@ -1,9 +1,17 @@
-function ket(::Type{T}, val::Int, dim::Int) where T<:Number
+export ket, bra, ketbra, proj, res, unres, max_mixed, max_entangled,
+    werner_state, permutesystems
+
+function ket(::Type{T}, val::Int, dim::Int) where T<:AbstractVector{<:Number}
     dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
     1 <= val <= dim ? () : throw(ArgumentError("Label have to be smaller than vector dimension"))
-    ψ = zeros(T, dim)
-    ψ[val] = one(T)
+    ψ = zero(T(undef, dim))
+    ψ[val] = one(eltype(T))
     ψ
+end
+
+function ket(::Type{T}, val::Int, dim::Int) where T<:Number
+    @warn "This method is deprecated and will be removed. Use calls like `ket(Matrix{ComplexF64}, 1, 2)`."
+    ket(Vector{T}, val, dim)
 end
 
 """
@@ -13,9 +21,14 @@ $(SIGNATURES)
 
 Return complex column vector \$|val\\rangle\$ of unit norm describing quantum state.
 """
-ket(val::Int, dim::Int) = ket(ComplexF64, val, dim)
+ket(val::Int, dim::Int) = ket(Vector{ComplexF64}, val, dim)
 
-bra(::Type{T}, val::Int, dim::Int) where T<:Number = ket(T, val, dim)'
+function bra(::Type{T}, val::Int, dim::Int) where T<:Number 
+    @warn "This method is deprecated and will be removed. Use calls like `bra(Matrix{ComplexF64}, 1, 2)`."
+    ket(Vector{T}, val, dim)'
+end
+
+bra(::Type{T}, val::Int, dim::Int) where T<:AbstractVector{<:Number} = ket(T, val, dim)'
 
 """
 $(SIGNATURES)
@@ -24,14 +37,19 @@ $(SIGNATURES)
 
 Return Hermitian conjugate \$\\langle val| = |val\\rangle^\\dagger\$ of the ket with the same label.
 """
-bra(val::Int, dim::Int) = bra(ComplexF64, val, dim)
+bra(val::Int, dim::Int) = bra(Vector{ComplexF64}, val, dim)
 
-function ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:Number
+function ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:AbstractMatrix{<:Number}
     dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
     1 <= valk <= dim && 1 <= valb <= dim ? () : throw(ArgumentError("Ket and bra labels have to be smaller than operator dimension"))
-    ρ = zeros(T, dim, dim)
-    ρ[valk,valb] = one(T)
+    ρ = zero(T(undef, dim, dim))
+    ρ[valk,valb] = one(eltype(T))
     ρ
+end
+
+function ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:Number
+    @warn "This method is deprecated and will be removed. Use calls like `ketbra(Matrix{ComplexF64}, 1, 1, 2)`."
+    ketbra(Matrix{T}, valk, valb, dim)
 end
 
 """
@@ -42,7 +60,7 @@ $(SIGNATURES)
 
 # Return outer product \$|valk\\rangle\\langle vakb|\$ of states \$|valk\\rangle\$ and \$|valb\\rangle\$.
 """
-ketbra(valk::Int, valb::Int, dim::Int) = ketbra(ComplexF64, valk, valb, dim)
+ketbra(valk::Int, valb::Int, dim::Int) = ketbra(Matrix{ComplexF64}, valk, valb, dim)
 
 """
 $(SIGNATURES)

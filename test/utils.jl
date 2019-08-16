@@ -13,12 +13,13 @@ end
 end
 
 @testset "renormalize" begin
-    v = randn(10)
+    rng = MersenneTwister(1234);
+    v = randn(rng, 10)
     renormalize!(v)
 
     @test norm(v) ≈ 1 atol=1e-13
 
-    A = randn(10, 10)
+    A = randn(rng, 10, 10)
     renormalize!(A)
 
     @test tr(A) ≈ 1 atol=1e-13

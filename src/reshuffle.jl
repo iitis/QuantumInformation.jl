@@ -1,3 +1,5 @@
+export reshuffle
+
 # """
 #   Performs reshuffling of indices of a matrix.
 #   Given multiindexed matrix M_{(m,μ),(n,ν)} it returns
