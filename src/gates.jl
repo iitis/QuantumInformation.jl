@@ -1,10 +1,15 @@
-export 𝕀, sx, sy, sz, qft, hadamard, grover
+export sx, sy, sz, qft, hadamard, grover
 
 sx = ComplexF64[0 1; 1 0]
 sy = ComplexF64[0 1im; -1im 0]
 sz = ComplexF64[1 0; 0 -1]
+
+export 𝕀
 𝕀(::Type{T}, dim=2) where T<: Number = Matrix{T}(I, dim, dim)
 𝕀(dim=2) = 𝕀(ComplexF64, dim)
+if VERSION >= v"1.1"
+  @deprecate 𝕀 LinearAlgebra.I
+end
 
 """
 $(SIGNATURES)
