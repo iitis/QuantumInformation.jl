@@ -1,11 +1,6 @@
 using Distributions
-
-"""
-$(SIGNATURES)
-- `ϕ`: vector.
-
-Generates random ket based on `ϕ`.
-"""
+export HaarPOVM
+# Random pure states
 struct HaarKet{β} <: ContinuousMatrixDistribution
     d::Int
 end
@@ -24,12 +19,7 @@ function rand(h::HaarKet{1})
      ψ
   end
 
-"""
-$(SIGNATURES)
-- `d`: length.
-
-Generates random ket of length `d`.
-"""
+# Random mixed states
 struct HilbertSchmidtStates{β, K}
     w::WishartEnsemble
     d::Int
@@ -48,6 +38,7 @@ function rand(hs::HilbertSchmidtStates{β, K}) where {β, K}
     ρ
 end
 
+#Random channels
 struct ChoiJamiolkowskiMatrices{β, K}
     w::WishartEnsemble
     idim::Int
@@ -82,30 +73,9 @@ function rand(c::ChoiJamiolkowskiMatrices{β, K}) where {β, K}
     onesy = Matrix(I, c.odim, c.odim) ⊗ sy # onesy = eye(c.odim) ⊗ sy
     DynamicalMatrix(onesy * z * onesy, c.idim, c.odim)
 end
-# """
-# $(SIGNATURES)
-# - `ρ`: quantum state.
-#
-# Generates random quantum mixed state on the place of `ρ`.
-# """
-#
-# """
-# $(SIGNATURES)
-# - `d`: dimension.
-#
-# Generates random quantum mixed state of dimension `d`.
-# """
-#
-# """
-# $(SIGNATURES)
-# - `J`: dimension.
-#
-# Generates random Jamiolkowski state of dimension on the place of `J`.
-# """
-#
-# """
-# $(SIGNATURES)
-# - `d`: dimension.
-#
-# Generates random Jamiolkowski state of dimension `d`.
-# """
+
+# Random POVMs implemented according to
+# https://arxiv.org/pdf/1902.04751.pdf
+
+struct HaarPOVM
+end
