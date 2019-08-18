@@ -1,5 +1,5 @@
 using Distributions
-export HaarPOVM
+export HaarPOVM, WishartPOVM
 # Random pure states
 struct HaarKet{β} <: ContinuousMatrixDistribution
     d::Int
@@ -77,5 +77,45 @@ end
 # Random POVMs implemented according to
 # https://arxiv.org/pdf/1902.04751.pdf
 
-struct HaarPOVM
+struct HaarPOVM{N} <: ContinuousMatrixDistribution
+    idim::Int
+    odim::Int
+    c::HaarIsometry
+
+    function HaarPOVM{N}(idim::Int, odim::Int) where N
+        c = HaarIsometry(idim::Int, N*odim::Int)
+        new(idim, odim, c)
+    end
+end
+# N controls the rank (mixedness) of the effects, N=1 gives rank-one effects
+HaarPOVM(idim::Int, odim::Int) = HaarPOVM{1}(idim, odim)
+
+#this should use slicing of V
+function rand(c::HaarPOVM{N}) where N
+    V = rand(c.c)
+    POVMMeasurement([V'*(ketbra(i, i, c.odim) ⊗ 𝕀(N))*V for i=1:c.odim])
+end
+
+struct WishartPOVM{V} <: ContinuousMatrixDistribution
+    idim::Int
+    odim::Int
+    c::Vector{WishartEnsemble}
+
+    function WishartPOVM{V}(idim::Int) where V
+        odim = length(V)
+        c = [WishartEnsemble{2, v}(idim) for v=V]
+        new(idim, odim, c)
+    end
+end
+
+function WishartPOVM(idim::Int, odim::Int, K::Real=1)
+    V = Tuple(K .* ones(odim))
+    WishartPOVM{V}(idim)
+end
+
+function rand(c::WishartPOVM)
+    Ws = map(rand, c.c)
+    S = sum(Ws)
+    Ssq = funcmh!(x->1/sqrt(x), S)
+    POVMMeasurement([Ssq * W * Ssq for W=Ws])
 end
