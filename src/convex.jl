@@ -1,3 +1,5 @@
+export norm_diamond, diamond_distance
+
 """
 $(SIGNATURES)
 - `Φ`: DynamicalMatrix

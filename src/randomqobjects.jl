@@ -1,6 +1,7 @@
 using Distributions
-export HaarPOVM, WishartPOVM
-# Random pure states
+export HaarKet, HilbertSchmidtStates, ChoiJamiolkowskiMatrices, HaarPOVM, WishartPOVM
+
+
 struct HaarKet{β} <: ContinuousMatrixDistribution
     d::Int
 end

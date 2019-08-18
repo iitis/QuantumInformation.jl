@@ -196,3 +196,12 @@ end
     end
 end
 end
+
+@testset "represent" begin
+    for kraus_list in kraus_set
+        Φ = KrausOperators(kraus_list)
+        @test represent(Φ) == kraus_list
+    end
+
+    @test represent(DynamicalMatrix(J_random, 3, 3)) == J_random
+end
