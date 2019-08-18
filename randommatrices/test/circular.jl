@@ -55,5 +55,5 @@ end
     u = rand(c)
     @test size(u) == (odim, idim)
     @test isapprox(norm(u'*u - I), 0, atol=1e-6)
-    @test_throws ArgumentError, HaarIsometry(odim, idim)
+    @test_throws ArgumentError HaarIsometry(odim, idim)
 end

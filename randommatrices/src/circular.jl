@@ -29,8 +29,7 @@ end
 function rand(c::COE)
     z = rand(c.g)
     u = _qr_fix(z)
-    ut = diagm(ones(c.d-1), 1) + diagm(-ones(c.d-1), -1)
-    ut*u
+    transpose(u)*u
 end
 
 function rand(c::CUE)
@@ -42,9 +41,8 @@ end
 function rand(c::CSE)
     z = rand(c.g)
     u = _qr_fix(z)
-    #TODO this does not require matrix multiplication
-    ur = diagm(-ones(c.d-1), 1) + diagm(ones(c.d-1), -1)
-    ur*u
+    ur = cat([[0 -1; 1 0] for _=1:round(Int, c.d/2)]..., dims=[1,2])
+    ur*u*ur'*transpose(u)
 end
 
 struct CircularRealEnsemble <: ContinuousMatrixDistribution
