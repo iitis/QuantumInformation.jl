@@ -20,7 +20,7 @@ function rand(h::HaarKet{1})
   end
 
 # Random mixed states
-struct HilbertSchmidtStates{β, K}
+struct HilbertSchmidtStates{β, K} <: ContinuousMatrixDistribution
     w::WishartEnsemble
     d::Int
 
@@ -39,7 +39,7 @@ function rand(hs::HilbertSchmidtStates{β, K}) where {β, K}
 end
 
 #Random channels
-struct ChoiJamiolkowskiMatrices{β, K}
+struct ChoiJamiolkowskiMatrices{β, K} <: ContinuousMatrixDistribution
     w::WishartEnsemble
     idim::Int
     odim::Int
