@@ -77,6 +77,15 @@ Random.seed!(42)
         @test norm(sum(p.matrices) - I) ≈ 0  atol=1e-8
     end
 
+    @testset "VonNeumannPOVMs" begin
+        d = 3
+        c = VonNeumannPOVM(d)
+
+        p = rand(c)
+        @test norm(sum(p.matrices) - I) ≈ 0  atol=1e-8
+        @test length(p.matrices) == d
+    end
+
     @testset "WishartPOVMs" begin
         idim = 2
         odim = 3
