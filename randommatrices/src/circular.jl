@@ -1,6 +1,6 @@
 export CircularEnsemble, COE, CUE, CSE, CircularRealEnsemble,
     CircularQuaternionEnsemble, HaarIsometry
-struct CircularEnsemble{β} <: ContinuousMatrixDistribution
+struct CircularEnsemble{β} <: QIContinuousMatrixDistribution
     d::Int
     g::GinibreEnsemble{2}
 
@@ -51,7 +51,7 @@ function rand(rng::AbstractRNG, c::CSE)
     ur*u*ur'*transpose(u)
 end
 
-struct CircularRealEnsemble <: ContinuousMatrixDistribution
+struct CircularRealEnsemble <: QIContinuousMatrixDistribution
     d::Int
     g::GinibreEnsemble{1}
 
@@ -66,7 +66,7 @@ function rand(rng::AbstractRNG, c::CircularRealEnsemble)
     _qr_fix!(z)
 end
 
-struct CircularQuaternionEnsemble <: ContinuousMatrixDistribution
+struct CircularQuaternionEnsemble <: QIContinuousMatrixDistribution
     d::Int
     g::GinibreEnsemble{4}
 
@@ -82,7 +82,7 @@ function rand(rng::AbstractRNG, c::CircularQuaternionEnsemble)
 end
 
 
-struct HaarIsometry <: ContinuousMatrixDistribution
+struct HaarIsometry <: QIContinuousMatrixDistribution
     idim::Int
     odim::Int
     g::GinibreEnsemble{2}

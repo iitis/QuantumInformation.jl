@@ -1,6 +1,6 @@
 export WignerEnsemble
 
-struct WignerEnsemble{β} <: ContinuousMatrixDistribution
+struct WignerEnsemble{β} <: QIContinuousMatrixDistribution
     d::Int
 
     function WignerEnsemble{β}(d::Int) where β

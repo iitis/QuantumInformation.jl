@@ -1,6 +1,6 @@
 export GinibreEnsemble
 
-struct GinibreEnsemble{β} <: ContinuousMatrixDistribution
+struct GinibreEnsemble{β} <: QIContinuousMatrixDistribution
     m::Int
     n::Int
 

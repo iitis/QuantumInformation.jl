@@ -1,6 +1,6 @@
 export WishartEnsemble
 
-struct WishartEnsemble{β, K} <: ContinuousMatrixDistribution
+struct WishartEnsemble{β, K} <: QIContinuousMatrixDistribution
     d::Int
 
     function WishartEnsemble{β, K}(d::Int) where {β, K}

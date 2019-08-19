@@ -2,7 +2,7 @@ export HaarKet, HilbertSchmidtStates, ChoiJamiolkowskiMatrices,
     HaarPOVM, WishartPOVM, VonNeumannPOVM
 
 
-struct HaarKet{β} <: ContinuousMatrixDistribution
+struct HaarKet{β} <: QIContinuousMatrixDistribution
     d::Int
 end
 
@@ -21,7 +21,7 @@ function rand(rng::AbstractRNG, h::HaarKet{1})
   end
 
 # Random mixed states
-struct HilbertSchmidtStates{β, K} <: ContinuousMatrixDistribution
+struct HilbertSchmidtStates{β, K} <: QIContinuousMatrixDistribution
     w::WishartEnsemble
     d::Int
 
@@ -40,7 +40,7 @@ function rand(rng::AbstractRNG, hs::HilbertSchmidtStates{β, K}) where {β, K}
 end
 
 #Random channels
-struct ChoiJamiolkowskiMatrices{β, K} <: ContinuousMatrixDistribution
+struct ChoiJamiolkowskiMatrices{β, K} <: QIContinuousMatrixDistribution
     w::WishartEnsemble
     idim::Int
     odim::Int
@@ -77,7 +77,7 @@ end
 
 # Random POVMs implemented according to
 # https://arxiv.org/pdf/1902.04751.pdf
-abstract type AbstractHaarPOVM <: ContinuousMatrixDistribution
+abstract type AbstractHaarPOVM <: QIContinuousMatrixDistribution
 end
 
 struct HaarPOVM{N} <: AbstractHaarPOVM
@@ -114,7 +114,7 @@ function rand(rng::AbstractRNG, c::VonNeumannPOVM)
     POVMMeasurement([proj(V[:, i]) for i=1:c.d])
 end
 
-struct WishartPOVM{V} <: ContinuousMatrixDistribution
+struct WishartPOVM{V} <: QIContinuousMatrixDistribution
     idim::Int
     odim::Int
     c::Vector{WishartEnsemble}
