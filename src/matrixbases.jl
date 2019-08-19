@@ -33,12 +33,13 @@ function iterate(itr::HermitianBasisIterator{T}, state=(1,1)) where T<:AbstractM
     (a, b) = state
     a > dim && return nothing
 
+    Tn = eltype(T)
     if a > b
-        x = 1 / sqrt(2) * (1im * ketbra(a, b, dim) - 1im * ketbra(b, a, dim))
+        x =  (im * ketbra(T, a, b, dim) - im * ketbra(T, b, a, dim)) / sqrt(Tn(2))
     elseif a < b
-        x = 1 / sqrt(2) * (ketbra(a, b, dim) + ketbra(b, a, dim))
+        x = (ketbra(T, a, b, dim) + ketbra(T, b, a, dim)) / sqrt(Tn(2))
     else
-        x = ketbra(a, b, dim)
+        x = ketbra(T, a, b, dim)
     end
     return x, b==dim ? (a+1, 1) : (a, b+1)
 end

@@ -8,7 +8,7 @@ end
 
 @testset "represent, combine" begin
     d = 4
-    A = reshape(collect(1:16), 4, 4)
+    A = reshape(collect(1:16), d, d)
     vA = represent(HermitianBasis{Matrix{ComplexF64}}(d), A)
     Ap = combine(HermitianBasis{Matrix{ComplexF64}}(d), vA)
     @test A ≈ Ap
@@ -16,6 +16,9 @@ end
     vB = represent(HermitianBasis{Matrix{ComplexF64}}(d), B)
     Bp = combine(HermitianBasis{Matrix{ComplexF64}}(d), vB)
     @test B ≈ Bp
+
+    vB = represent(HermitianBasis{Matrix{ComplexF32}}(d), B)
+    @test eltype(vB) == ComplexF32
 end
 
 end
