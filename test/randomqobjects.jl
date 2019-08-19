@@ -66,4 +66,32 @@ Random.seed!(42)
         @test ChoiJamiolkowskiMatrices(idim, odim) == ChoiJamiolkowskiMatrices{2, 1}(idim, odim)
         @test ChoiJamiolkowskiMatrices(idim) == ChoiJamiolkowskiMatrices{2, 1}(idim, idim)
     end
+
+    @testset "HaarPOVMs" begin
+        idim = 2
+        odim = 3
+        c = HaarPOVM(idim, odim)
+        @test_throws ArgumentError HaarPOVM(odim, idim)
+
+        p = rand(c)
+        @test norm(sum(p.matrices) - I) ≈ 0  atol=1e-8
+    end
+
+    @testset "VonNeumannPOVMs" begin
+        d = 3
+        c = VonNeumannPOVM(d)
+
+        p = rand(c)
+        @test norm(sum(p.matrices) - I) ≈ 0  atol=1e-8
+        @test length(p.matrices) == d
+    end
+
+    @testset "WishartPOVMs" begin
+        idim = 2
+        odim = 3
+        c = WishartPOVM(idim, odim)
+
+        p = rand(c)
+        @test norm(sum(p.matrices) - I) ≈ 0  atol=1e-8
+    end
 end

@@ -1,14 +1,13 @@
 module RandomMatrices
 using LinearAlgebra
-import Base: rand
-import Distributions: ContinuousMatrixDistribution
+import Base: rand, size
+using Random: GLOBAL_RNG, AbstractRNG
 
-export CircularEnsemble, COE, CUE, CSE, CircularRealEnsemble,
-CircularQuaternionEnsemble,
-GinibreEnsemble,
-WishartEnsemble,
-WignerEnsemble,
-rand
+export rand, size, QIContinuousMatrixDistribution
+
+abstract type QIContinuousMatrixDistribution; end
+
+rand(c::QIContinuousMatrixDistribution) = rand(GLOBAL_RNG, c)
 
 include("ginibre.jl")
 include("circular.jl")

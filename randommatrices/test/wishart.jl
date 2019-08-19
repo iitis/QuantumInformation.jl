@@ -6,7 +6,7 @@ Random.seed!(42)
     ev = eigvals(z)
 
     @test size(z) == (10, 10)
-    @test eltype(w) <: Real
+    @test eltype(z) <: Real
     @test length(ev[ev.>1e-5]) == 1
     @test all(ev[ev.>1e-5] .> 0)
 end

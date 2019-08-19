@@ -1,4 +1,6 @@
-struct WignerEnsemble{β} <: ContinuousMatrixDistribution
+export WignerEnsemble
+
+struct WignerEnsemble{β} <: QIContinuousMatrixDistribution
     d::Int
 
     function WignerEnsemble{β}(d::Int) where β
@@ -9,7 +11,7 @@ end
 
 WignerEnsemble(d::Int) = WignerEnsemble{2}(d)
 
-function rand(w::WignerEnsemble{β}) where β
-    z = rand(GinibreEnsemble{β}(w.d))
+function rand(rng::AbstractRNG, w::WignerEnsemble{β}) where β
+    z = rand(rng, GinibreEnsemble{β}(w.d))
     (z + z') / 2sqrt(2β * w.d)
 end

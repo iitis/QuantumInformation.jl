@@ -1,4 +1,6 @@
-struct CircularEnsemble{β} <: ContinuousMatrixDistribution
+export CircularEnsemble, COE, CUE, CSE, CircularRealEnsemble,
+    CircularQuaternionEnsemble, HaarIsometry
+struct CircularEnsemble{β} <: QIContinuousMatrixDistribution
     d::Int
     g::GinibreEnsemble{2}
 
@@ -13,40 +15,43 @@ const COE = CircularEnsemble{1}
 const CUE = CircularEnsemble{2}
 const CSE = CircularEnsemble{4}
 
-function _qr_fix(z::AbstractMatrix)
-    q, r = qr(z)
+function _qr_fix!(z::AbstractMatrix)
+    q, r = qr!(z)
     d = diag(r)
     ph = d./abs.(d)
     q = Matrix(q)
-    for i=1:size(q, 1)
+    idim = size(r, 1)
+    for i=1:idim
         q[:, i] .*= ph[i]
     end
-    # q .* repeat(ph, 1, size(q, 1))'
-    q
+    q[:, 1:idim]
 end
 
-function rand(c::COE)
-    z = rand(c.g)
-    u = _qr_fix(z)
+function _qr_fix(z::AbstractMatrix)
+    a = copy(z)
+    _qr_fix!(a)
+end
+
+function rand(rng::AbstractRNG, c::COE)
+    z = rand(rng, c.g)
+    u = _qr_fix!(z)
     transpose(u)*u
 end
 
-function rand(c::CUE)
-    z = rand(c.g)
-    u = _qr_fix(z)
+function rand(rng::AbstractRNG, c::CUE)
+    z = rand(rng, c.g)
+    u = _qr_fix!(z)
     u
 end
 
-function rand(c::CSE)
-    z = rand(c.g)
-    u = _qr_fix(z)
-    #TODO this does not require matrix multiplication
-    a = diagm(-ones(c.d-1), 1) + diagm(ones(c.d-1), -1)
-    ur = -a*transpose(u)*a
-    ur*u
+function rand(rng::AbstractRNG, c::CSE)
+    z = rand(rng, c.g)
+    u = _qr_fix!(z)
+    ur = cat([[0 -1; 1 0] for _=1:c.d÷2]..., dims=[1,2])
+    ur*u*ur'*transpose(u)
 end
 
-struct CircularRealEnsemble <: ContinuousMatrixDistribution
+struct CircularRealEnsemble <: QIContinuousMatrixDistribution
     d::Int
     g::GinibreEnsemble{1}
 
@@ -56,12 +61,12 @@ struct CircularRealEnsemble <: ContinuousMatrixDistribution
     end
 end
 
-function rand(c::CircularRealEnsemble)
-    z = rand(c.g)
-    _qr_fix(z)
+function rand(rng::AbstractRNG, c::CircularRealEnsemble)
+    z = rand(rng, c.g)
+    _qr_fix!(z)
 end
 
-struct CircularQuaternionEnsemble <: ContinuousMatrixDistribution
+struct CircularQuaternionEnsemble <: QIContinuousMatrixDistribution
     d::Int
     g::GinibreEnsemble{4}
 
@@ -71,7 +76,25 @@ struct CircularQuaternionEnsemble <: ContinuousMatrixDistribution
     end
 end
 
-function rand(c::CircularQuaternionEnsemble)
-    z = rand(c.g)
-    _qr_fix(z)
+function rand(rng::AbstractRNG, c::CircularQuaternionEnsemble)
+    z = rand(rng, c.g)
+    _qr_fix!(z)
+end
+
+
+struct HaarIsometry <: QIContinuousMatrixDistribution
+    idim::Int
+    odim::Int
+    g::GinibreEnsemble{2}
+
+    function HaarIsometry(idim::Int, odim::Int)
+        idim <= odim || throw(ArgumentError("idim can't be greater than odim"))
+        g = GinibreEnsemble{2}(odim, idim)
+        new(idim, odim, g)
+    end
+end
+
+function rand(rng::AbstractRNG, c::HaarIsometry)
+    z = rand(rng, c.g)
+    _qr_fix!(z)
 end
