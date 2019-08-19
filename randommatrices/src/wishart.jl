@@ -1,3 +1,5 @@
+export WishartEnsemble
+
 struct WishartEnsemble{β, K} <: ContinuousMatrixDistribution
     d::Int
 

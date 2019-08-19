@@ -1,3 +1,5 @@
+export WignerEnsemble
+
 struct WignerEnsemble{β} <: ContinuousMatrixDistribution
     d::Int
 

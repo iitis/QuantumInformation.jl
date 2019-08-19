@@ -1,4 +1,5 @@
-export HaarIsometry
+export CircularEnsemble, COE, CUE, CSE, CircularRealEnsemble,
+    CircularQuaternionEnsemble, HaarIsometry
 struct CircularEnsemble{β} <: ContinuousMatrixDistribution
     d::Int
     g::GinibreEnsemble{2}

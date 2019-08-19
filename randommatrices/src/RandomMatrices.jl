@@ -3,12 +3,7 @@ using LinearAlgebra
 import Base: rand
 import Distributions: ContinuousMatrixDistribution
 
-export CircularEnsemble, COE, CUE, CSE, CircularRealEnsemble,
-CircularQuaternionEnsemble,
-GinibreEnsemble,
-WishartEnsemble,
-WignerEnsemble,
-rand
+export rand
 
 include("ginibre.jl")
 include("circular.jl")
