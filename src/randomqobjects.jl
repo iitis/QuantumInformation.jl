@@ -97,6 +97,21 @@ function rand(c::HaarPOVM{N}) where N
     POVMMeasurement([V'*(ketbra(i, i, c.odim) ⊗ 𝕀(N))*V for i=1:c.odim])
 end
 
+struct VonNeumannPOVM <: HaarPOVM
+    d::Int
+    c::CUE
+
+    function VonNeumannPOVM(d::Int)
+        c = CUE(d)
+        new(d, c)
+    end
+end
+
+function rand(c::VonNeumannPOVM)
+    V = rand(c.c)
+    POVMMeasurement([proj(V[:, i]) for i=1:c.d])
+end
+
 struct WishartPOVM{V} <: ContinuousMatrixDistribution
     idim::Int
     odim::Int
