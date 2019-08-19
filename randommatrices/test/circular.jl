@@ -56,4 +56,12 @@ end
     @test size(u) == (odim, idim)
     @test isapprox(norm(u'*u - I), 0, atol=1e-6)
     @test_throws ArgumentError HaarIsometry(odim, idim)
+
+@testset "CSE" begin
+    n = 10
+    c = COE(n)
+    o = rand(c)
+    @test norm(o*o' - I) ≈ 0 atol=1e-13
+    @test size(o) == (10, 10)
+end
 end

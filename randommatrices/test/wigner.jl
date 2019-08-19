@@ -7,4 +7,5 @@ Random.seed!(42)
     @test size(z) == (10, 10)
     @test eltype(z) <: Real
     @test ishermitian(z)
+    @test WignerEnsemble(10) == WignerEnsemble{2}(10)
 end

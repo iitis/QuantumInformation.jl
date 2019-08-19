@@ -9,4 +9,7 @@ Random.seed!(42)
     @test eltype(z) <: Real
     @test length(ev[ev.>1e-5]) == 1
     @test all(ev[ev.>1e-5] .> 0)
+
+    @test WishartEnsemble{1}(10) == WishartEnsemble{1, 1}(10)
+    @test WishartEnsemble(10) == WishartEnsemble{2, 1}(10)
 end
