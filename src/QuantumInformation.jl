@@ -6,6 +6,7 @@ using LinearAlgebra
 using DocStringExtensions
 using TensorOperations
 using Convex, SCS
+using Random: AbstractRNG, GLOBAL_RNG
 
 import Base: convert, size, length, kron, *, rand, show
 

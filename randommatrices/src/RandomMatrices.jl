@@ -1,9 +1,13 @@
 module RandomMatrices
 using LinearAlgebra
-import Base: rand
-import Distributions: ContinuousMatrixDistribution
+import Base: rand, size
+using Random: GLOBAL_RNG, AbstractRNG
 
-export rand
+export rand, size, ContinuousMatrixDistribution
+
+abstract type ContinuousMatrixDistribution; end
+
+rand(c::ContinuousMatrixDistribution) = rand(GLOBAL_RNG, c)
 
 include("ginibre.jl")
 include("circular.jl")

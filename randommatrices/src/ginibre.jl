@@ -14,15 +14,15 @@ GinibreEnsemble{β}(d::Int) where β = GinibreEnsemble{β}(d, d)
 GinibreEnsemble(m::Int, n::Int) = GinibreEnsemble{2}(m, n)
 GinibreEnsemble(d::Int) = GinibreEnsemble(d, d)
 
-rand(g::GinibreEnsemble{1}) = randn(g.m, g.n)
-rand(g::GinibreEnsemble{2}) = randn(g.m, g.n)+1im*randn(g.m, g.n)
+rand(rng::AbstractRNG, g::GinibreEnsemble{1}) = randn(rng, g.m, g.n)
+rand(rng::AbstractRNG, g::GinibreEnsemble{2}) = randn(rng, g.m, g.n)+1im*randn(rng, g.m, g.n)
 
-function rand(g::GinibreEnsemble{4})
+function rand(rng::AbstractRNG, g::GinibreEnsemble{4})
     # TODO: fix dimensions of blocks
     error("Not implemented")
-    q0=randn(g.m, g.d)
-    q1=randn(g.d, g.d)
-    q2=randn(g.d, g.d)
-    q3=randn(g.d, g.d)
+    q0=randn(rng, g.m, g.d)
+    q1=randn(rng, g.d, g.d)
+    q2=randn(rng, g.d, g.d)
+    q3=randn(rng, g.d, g.d)
     [q0 + 1im * q1 q2 + 1im * q3; -q2 + 1im * q3 q0 - 1im * q1]
 end

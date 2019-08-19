@@ -1,6 +1,5 @@
-using Distributions
 export HaarKet, HilbertSchmidtStates, ChoiJamiolkowskiMatrices,
-HaarPOVM, WishartPOVM, VonNeumannPOVM
+    HaarPOVM, WishartPOVM, VonNeumannPOVM
 
 
 struct HaarKet{β} <: ContinuousMatrixDistribution
@@ -9,14 +8,14 @@ end
 
 HaarKet(d::Int) = HaarKet{2}(d)
 
-function rand(h::HaarKet{1})
-    ψ = randn(h.d)
+function rand(rng::AbstractRNG, h::HaarKet{1})
+    ψ = randn(rng, h.d)
     renormalize!(ψ)
     ψ
  end
 
- function rand(h::HaarKet{2})
-     ψ = randn(h.d) + 1im * randn(h.d)
+ function rand(rng::AbstractRNG, h::HaarKet{2})
+     ψ = randn(rng, h.d) + 1im * randn(rng, h.d)
      renormalize!(ψ)
      ψ
   end
@@ -34,8 +33,8 @@ end
 HilbertSchmidtStates{β}(d::Int) where β = HilbertSchmidtStates{β, 1}(d)
 HilbertSchmidtStates(d::Int) = HilbertSchmidtStates{2, 1}(d)
 
-function rand(hs::HilbertSchmidtStates{β, K}) where {β, K}
-    ρ = rand(hs.w)
+function rand(rng::AbstractRNG, hs::HilbertSchmidtStates{β, K}) where {β, K}
+    ρ = rand(rng, hs.w)
     renormalize!(ρ)
     ρ
 end
@@ -68,8 +67,8 @@ function ChoiJamiolkowskiMatrices(d::Int)
     ChoiJamiolkowskiMatrices(d, d)
 end
 
-function rand(c::ChoiJamiolkowskiMatrices{β, K}) where {β, K}
-    z = rand(c.w)
+function rand(rng::AbstractRNG, c::ChoiJamiolkowskiMatrices{β, K}) where {β, K}
+    z = rand(rng, c.w)
     y = ptrace(z, [c.odim, c.idim], [1])
     sy = funcmh!(x -> 1 / sqrt(x), y)
     onesy = Matrix(I, c.odim, c.odim) ⊗ sy # onesy = eye(c.odim) ⊗ sy
@@ -95,8 +94,8 @@ end
 HaarPOVM(idim::Int, odim::Int) = HaarPOVM{1}(idim, odim)
 
 #this should use slicing of V
-function rand(c::HaarPOVM{N}) where N
-    V = rand(c.c)
+function rand(rng::AbstractRNG, c::HaarPOVM{N}) where N
+    V = rand(rng, c.c)
     POVMMeasurement([V'*(ketbra(i, i, c.odim) ⊗ 𝕀(N))*V for i=1:c.odim])
 end
 
@@ -110,8 +109,8 @@ struct VonNeumannPOVM <: AbstractHaarPOVM
     end
 end
 
-function rand(c::VonNeumannPOVM)
-    V = rand(c.c)
+function rand(rng::AbstractRNG, c::VonNeumannPOVM)
+    V = rand(rng, c.c)
     POVMMeasurement([proj(V[:, i]) for i=1:c.d])
 end
 
@@ -132,8 +131,8 @@ function WishartPOVM(idim::Int, odim::Int, K::Real=1)
     WishartPOVM{V}(idim)
 end
 
-function rand(c::WishartPOVM)
-    Ws = map(rand, c.c)
+function rand(rng::AbstractRNG, c::WishartPOVM)
+    Ws = map(x->rand(rng, x), c.c)
     S = sum(Ws)
     Ssq = funcmh!(x->1/sqrt(x), S)
     POVMMeasurement([Ssq * W * Ssq for W=Ws])
