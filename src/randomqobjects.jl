@@ -1,5 +1,6 @@
 using Distributions
-export HaarKet, HilbertSchmidtStates, ChoiJamiolkowskiMatrices, HaarPOVM, WishartPOVM
+export HaarKet, HilbertSchmidtStates, ChoiJamiolkowskiMatrices,
+HaarPOVM, WishartPOVM, VonNeumannPOVM
 
 
 struct HaarKet{β} <: ContinuousMatrixDistribution
@@ -77,8 +78,10 @@ end
 
 # Random POVMs implemented according to
 # https://arxiv.org/pdf/1902.04751.pdf
+abstract type AbstractHaarPOVM <: ContinuousMatrixDistribution
+end
 
-struct HaarPOVM{N} <: ContinuousMatrixDistribution
+struct HaarPOVM{N} <: AbstractHaarPOVM
     idim::Int
     odim::Int
     c::HaarIsometry
@@ -97,7 +100,7 @@ function rand(c::HaarPOVM{N}) where N
     POVMMeasurement([V'*(ketbra(i, i, c.odim) ⊗ 𝕀(N))*V for i=1:c.odim])
 end
 
-struct VonNeumannPOVM <: HaarPOVM
+struct VonNeumannPOVM <: AbstractHaarPOVM
     d::Int
     c::CUE
 
