@@ -14,8 +14,8 @@ const COE = CircularEnsemble{1}
 const CUE = CircularEnsemble{2}
 const CSE = CircularEnsemble{4}
 
-function _qr_fix(z::AbstractMatrix)
-    q, r = qr(z)
+function _qr_fix!(z::AbstractMatrix)
+    q, r = qr!(z)
     d = diag(r)
     ph = d./abs.(d)
     q = Matrix(q)
@@ -26,22 +26,27 @@ function _qr_fix(z::AbstractMatrix)
     q[:, 1:idim]
 end
 
+function _qr_fix(z::AbstractMatrix)
+    a = copy(z)
+    _qr_fix!(a)
+end
+
 function rand(c::COE)
     z = rand(c.g)
-    u = _qr_fix(z)
+    u = _qr_fix!(z)
     transpose(u)*u
 end
 
 function rand(c::CUE)
     z = rand(c.g)
-    u = _qr_fix(z)
+    u = _qr_fix!(z)
     u
 end
 
 function rand(c::CSE)
     z = rand(c.g)
-    u = _qr_fix(z)
-    ur = cat([[0 -1; 1 0] for _=1:round(Int, c.d/2)]..., dims=[1,2])
+    u = _qr_fix!(z)
+    ur = cat([[0 -1; 1 0] for _=1:c.d÷2]..., dims=[1,2])
     ur*u*ur'*transpose(u)
 end
 
@@ -57,7 +62,7 @@ end
 
 function rand(c::CircularRealEnsemble)
     z = rand(c.g)
-    _qr_fix(z)
+    _qr_fix!(z)
 end
 
 struct CircularQuaternionEnsemble <: ContinuousMatrixDistribution
@@ -72,7 +77,7 @@ end
 
 function rand(c::CircularQuaternionEnsemble)
     z = rand(c.g)
-    _qr_fix(z)
+    _qr_fix!(z)
 end
 
 
@@ -90,5 +95,5 @@ end
 
 function rand(c::HaarIsometry)
     z = rand(c.g)
-    _qr_fix(z)
+    _qr_fix!(z)
 end
