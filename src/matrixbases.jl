@@ -47,7 +47,12 @@ end
 length(itr::HermitianBasisIterator) = itr.dim^2
 
 function represent(basis::T, m::Matrix{<:Number}) where T<:AbstractMatrixBasis
-    tr.([m] .* basis.iterator) 
+    real.(tr.([m] .* basis.iterator))
+end
+
+function represent(basis::Type{T}, m::Matrix{<:Number}) where T<:AbstractMatrixBasis
+    d = size(m, 1)
+    represent(basis{typeof(m)}(d), m)
 end
 
 function combine(basis::T, v::Vector{<:Number}) where T<:AbstractMatrixBasis
