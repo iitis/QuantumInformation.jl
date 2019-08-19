@@ -18,6 +18,10 @@ include("../randommatrices/src/RandomMatrices.jl")
 using .RandomMatrices
 eval(Expr(:export, names(RandomMatrices)...))
 
+include("../elementaryarrays/src/ElementaryArrays.jl")
+using .ElementaryArrays
+eval(Expr(:export, names(ElementaryArrays)...))
+
 include("base.jl")
 include("randomqobjects.jl")
 include("gates.jl")
