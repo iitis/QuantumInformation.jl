@@ -79,7 +79,7 @@ $(SIGNATURES)
 Transforms quntum channel into super-operator matrix.
 """
 function SuperOperator{T}(channel::Function, idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
-    odim > 0 && idim > 0 ? () : error("Channel dimension has to be nonnegative")
+    odim > 0 && idim > 0 ? () : throw(ArgumentError("Channel dimensions have to be nonnegative"))
 
     m = zeros(eltype(T), idim^2, odim^2)
     for (i, e) in enumerate(ElementaryBasisIterator{Matrix{Int}}(idim, odim))
