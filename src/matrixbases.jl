@@ -1,9 +1,16 @@
 import .Base: length, iterate
-export AbstractMatrixBasisIterator, HermitianBasisIterator, AbstractBasis,
-    AbstractMatrixBasis, HermitianBasis, hermitianbasis, represent, combine
+export AbstractMatrixBasisIterator, HermitianBasisIterator, ElementaryBasisIterator, AbstractBasis,
+    AbstractMatrixBasis, HermitianBasis, ElementaryBasis, hermitianbasis,
+    represent, combine
+
 abstract type AbstractMatrixBasisIterator{T<:AbstractMatrix} end
 struct HermitianBasisIterator{T} <: AbstractMatrixBasisIterator{T} 
     dim::Int
+end
+
+struct ElementaryBasisIterator{T} <: AbstractMatrixBasisIterator{T} 
+    idim::Int
+    odim::Int
 end
 
 abstract type AbstractBasis end
@@ -15,6 +22,18 @@ struct HermitianBasis{T} <: AbstractMatrixBasis{T}
     function HermitianBasis{T}(dim::Integer) where T<:AbstractMatrix{<:Number}
         new(HermitianBasisIterator{T}(dim)) 
     end
+end
+
+struct ElementaryBasis{T} <: AbstractMatrixBasis{T} 
+    iterator::ElementaryBasisIterator{T}
+
+    function ElementaryBasis{T}(idim::Integer, odim::Integer) where T<:AbstractMatrix{<:Number}
+        new(ElementaryBasisIterator{T}(idim, odim)) 
+    end
+end
+
+function ElementaryBasis{T}(dim::Integer) where T<:AbstractMatrix{<:Number}
+    ElementaryBasisIterator{T}(dim, dim)
 end
 
 """
@@ -45,6 +64,18 @@ function iterate(itr::HermitianBasisIterator{T}, state=(1,1)) where T<:AbstractM
 end
 
 length(itr::HermitianBasisIterator) = itr.dim^2
+
+function iterate(itr::ElementaryBasisIterator{T}, state=(1,1)) where T<:AbstractMatrix{<:Number}
+    idim, odim = itr.idim, itr.odim
+    (a, b) = state
+    a > idim  && return nothing
+
+    x = zeros(eltype(T), odim, idim)
+    x[b, a] = one(eltype(T))
+    return x, b == odim ? (a+1, 1) : (a, b+1)
+end
+
+length(itr::ElementaryBasisIterator) = itr.idim * itr.odim
 
 function represent(basis::T, m::Matrix{<:Number}) where T<:AbstractMatrixBasis
     real.(tr.([m] .* basis.iterator))
