@@ -19,6 +19,17 @@ end
 
     vB = represent(HermitianBasis{Matrix{ComplexF32}}(d), B)
     @test eltype(vB) == Float32
+
+    C = Float16[1 2; 3 4]
+    C += C'
+    vC = represent(HermitianBasis, C)
+    @test eltype(vC) == eltype(C)
+    @test length(vC) == prod(size(C))
+end
+
+@testset "hermitainbasis" begin
+    @test hermitianbasis(Matrix{Float32}, 2) == HermitianBasisIterator{Matrix{Float32}}(2)
+    @test hermitianbasis(2) == HermitianBasisIterator{Matrix{ComplexF64}}(2)
 end
 
 end

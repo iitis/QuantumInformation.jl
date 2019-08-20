@@ -6,7 +6,8 @@ $(SIGNATURES)
 
 Return [diamond norm](https://arxiv.org/pdf/1207.5726.pdf) of dynamical matrix `Φ`.
 """
-function norm_diamond(Φ::DynamicalMatrix{T}, method=:primal, eps=1e-7) where T<:AbstractMatrix{<:Number}
+function norm_diamond(Φ::AbstractQuantumOperation{T}, method=:primal, eps=1e-7) where T<:AbstractMatrix{<:Number}
+    ψ = convert(DynamicalMatrix{T}, Φ)
 	(method == :primal || method == :dual) || throw(ArgumentError("method must be either :primal or :dual"))
 
 	method == :dual ? norm_diamond_dual(Φ,eps) : norm_diamond_primal(Φ,eps)
@@ -57,9 +58,9 @@ end
 
 
 
-function norm_diamond(Φ::AbstractQuantumOperation{T}, args...) where T<:AbstractMatrix{<:Number}
-    norm_diamond(DynamicalMatrix{T}(ϕ), args...)
-end
+# function norm_diamond(Φ::AbstractQuantumOperation{T}, args...) where T<:AbstractMatrix{<:Number}
+#     norm_diamond(DynamicalMatrix{T}(ϕ), args...)
+# end
 
 """
 $(SIGNATURES)

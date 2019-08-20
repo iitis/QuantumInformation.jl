@@ -24,4 +24,9 @@ end
     @test diamond_distance(AD,AD2) ≈ diamond_distance(AD2,AD) atol=1e-5
 end
 
+@testset "diamond norm dual" begin
+    c = ChoiJamiolkowskiMatrices(3, 4)
+    Φ = rand(c)
+    @test norm_diamond(Φ, :dual) ≈ 1 atol=1e-6
+end
 end

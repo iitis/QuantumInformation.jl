@@ -25,7 +25,7 @@ ket(val::Int, dim::Int) = ket(Vector{ComplexF64}, val, dim)
 
 function bra(::Type{T}, val::Int, dim::Int) where T<:Number 
     @warn "This method is deprecated and will be removed. Use calls like `bra(Matrix{ComplexF64}, 1, 2)`."
-    ket(Vector{T}, val, dim)'
+    bra(Vector{T}, val, dim)
 end
 
 bra(::Type{T}, val::Int, dim::Int) where T<:AbstractVector{<:Number} = ket(T, val, dim)'
