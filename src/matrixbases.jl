@@ -8,6 +8,7 @@ end
 
 abstract type AbstractBasis end
 abstract type AbstractMatrixBasis{T} <: AbstractBasis where T<:AbstractMatrix{<:Number} end 
+abstract type AbstractChannelBasis{T} <: AbstractBasis where T<:AbstractMatrix{<:Number} end 
 
 struct HermitianBasis{T} <: AbstractMatrixBasis{T} 
     iterator::HermitianBasisIterator{T}
@@ -57,4 +58,11 @@ end
 
 function combine(basis::T, v::Vector{<:Number}) where T<:AbstractMatrixBasis
     sum(basis.iterator .* v)
+end
+
+function represent(basis, Φ::AbstractQuantumOperation{T}) where T<: AbstractMatrix{<:Number}
+    J = convert(DynamicalMatrix{T}, Φ)
+    J.idim
+    J.odim
+    J.matrix
 end
