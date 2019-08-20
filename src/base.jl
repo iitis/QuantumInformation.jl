@@ -4,7 +4,8 @@ export ket, bra, ketbra, proj, res, unres, max_mixed, max_entangled,
 function ket(::Type{T}, val::Int, dim::Int) where T<:AbstractVector{<:Number}
     dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
     1 <= val <= dim ? () : throw(ArgumentError("Label have to be smaller than vector dimension"))
-    ψ = zero(T(undef, dim))
+    ψ = T(undef, dim)
+    fill!(ψ, zero(eltype(T)))
     ψ[val] = one(eltype(T))
     ψ
 end
@@ -42,7 +43,8 @@ bra(val::Int, dim::Int) = bra(Vector{ComplexF64}, val, dim)
 function ketbra(::Type{T}, valk::Int, valb::Int, dimin::Int, dimout::Int) where T<:AbstractMatrix{<:Number}
     dimin > 0 && dimout > 0 ? () : throw(ArgumentError("Matrix dimension has to be nonnegative"))
     1 <= valk <= dimin && 1 <= valb <= dimout ? () : throw(ArgumentError("Ket and bra labels have to be smaller than operator dimension"))
-    ρ = zero(T(undef, dimout, dimin))
+    ρ = T(undef, dimout, dimin)
+    fill!(ρ, zero(eltype(T)))
     ρ[valk,valb] = one(eltype(T))
     ρ
 end
