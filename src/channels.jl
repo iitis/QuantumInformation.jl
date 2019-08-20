@@ -73,16 +73,16 @@ end
 """
 $(SIGNATURES)
 - `channel`: quantum channel map.
-- `dim`: square root of the [super-operator](https://en.wikipedia.org/wiki/Superoperator) matrix dimension.
+- `idim`: square root of the [super-operator](https://en.wikipedia.org/wiki/Superoperator) matrix input dimension.
+- `odim`: square root of the [super-operator](https://en.wikipedia.org/wiki/Superoperator) matrix output dimension.
 
 Transforms quntum channel into super-operator matrix.
 """
 function SuperOperator{T}(channel::Function, idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
-    error("Broken")
-    odim > 0 ? () : error("Channel dimension has to be nonnegative") # TODO: fix
+    odim > 0 && idim > 0 ? () : throw(ArgumentError("Channel dimensions have to be nonnegative"))
 
-    m = zeros(T, idim^2, odim^2)
-    for (i, e) in enumerate(base_matrices(idim)) # TODO : base_matrices should be not only square
+    m = zeros(eltype(T), idim^2, odim^2)
+    for (i, e) in enumerate(ElementaryBasisIterator{Matrix{Int}}(idim, odim))
         m[:, i] = res(channel(e))
     end
     SuperOperator(m, idim, odim)
