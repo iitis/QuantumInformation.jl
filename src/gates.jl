@@ -4,12 +4,14 @@ sx = ComplexF64[0 1; 1 0]
 sy = ComplexF64[0 1im; -1im 0]
 sz = ComplexF64[1 0; 0 -1]
 
-export 𝕀
-𝕀(::Type{T}, dim=2) where T<: Number = Matrix{T}(I, dim, dim)
-𝕀(dim=2) = 𝕀(ComplexF64, dim)
-if VERSION >= v"1.1"
+export 𝕀, I
+if VERSION < v"1.2"
   @deprecate 𝕀 LinearAlgebra.I
+  (I::UniformScaling)(n::Integer) = Diagonal(fill(I.λ, n))
 end
+𝕀(::Type{T}, dim=2) where T<: Number = Matrix(one(T)*I(dim))
+𝕀(dim=2) = 𝕀(ComplexF64, dim)
+
 
 """
 $(SIGNATURES)
