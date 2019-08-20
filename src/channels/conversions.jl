@@ -99,8 +99,6 @@ function Base.convert(::Type{KrausOperators{T1}}, Φ::DynamicalMatrix{T2}) where
     for i in 1:length(F.values)
         if F.values[i] >= 0.0
             push!(v, sqrt(F.values[i]) * unres(F.vectors[:,i], Φ.idim))
-        else
-            push!(v, zero(unres(F.vectors[:,i], Φ.idim)))
         end
     end
     KrausOperators{T1}(v, Φ.idim, Φ.odim)
