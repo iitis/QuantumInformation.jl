@@ -9,6 +9,7 @@ using Convex, SCS
 using Random: AbstractRNG, GLOBAL_RNG
 
 import Base: convert, size, length, kron, *, rand, show
+import LinearAlgebra: I
 
 const ⊗ = kron
 
