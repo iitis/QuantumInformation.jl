@@ -1,7 +1,7 @@
 export AbstractQuantumOperation, KrausOperators, SuperOperator, DynamicalMatrix,
     Stinespring, UnitaryChannel, IdentityChannel, POVMMeasurement,
-    PostSelectionMeasurement, ispovm, iseffect, iscptp, iscptni, applychannel, 
-    compose, isidentity, ispositive, represent
+    PostSelectionMeasurement, ispovm, iseffect, iscp, istp, istni, iscptp,
+    iscptni, applychannel, compose, isidentity, ispositive, represent
 
 ################################################################################
 # Channels definitions and constructors
@@ -682,61 +682,122 @@ function Base.show(io::IO, Φ::AbstractQuantumOperation{<:Matrix{<:Number}})
     end
 end
 # Base.show(io::IO, m::MIME"text/plain", Φ::AbstractQuantumOperation{<:Matrix{<:Number}}) = show(io, m, Φ)
+
 ################################################################################
-# CPTP, CPTNI
+# CP
 ################################################################################
 """
 $(SIGNATURES)
-- `Φ`: list of Kraus operators.
+- `Φ`: A subtype of AbstractQuantumOperation.
 - `atol`: tolerance of approximation.
 
-Checks if set of Kraus operators fulfill completness relation.
+Checks if an object is completely positive.
 """
-function iscptp(Φ::KrausOperators{<:AbstractMatrix{<:Number}}; atol=1e-13)
-    cr = sum(k'*k for k in Φ.matrices)
-    isidentity(cr, atol=atol)
+function iscp end
+
+function iscp(Φ::KrausOperators{<:AbstractMatrix{<:Number}}; atol=1e-13)
+    # by definition Kraus operators represent a CP map
+    true
 end
 
-function iscptni(Φ::KrausOperators{<:AbstractMatrix{<:Number}}; atol=1e-13)
+function iscp(Φ::SuperOperator{T}; atol=1e-13) where T<:AbstractMatrix{<:Number}
+    iscp(convert(DynamicalMatrix{T}, Φ), atol=atol)
+end
+
+function iscp(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}; atol=1e-13)
+    ispositive(Φ.matrix)
+end
+
+function iscp(Φ::Stinespring{<:AbstractMatrix{<:Number}}; atol=1e-13)
+    # by definition Stinespring operator represents a CP map(?)
+    true
+end
+
+function iscp(Φ::UnitaryChannel; atol=1e-13)
+    # by definition Unitary operator represents a CP map
+    true
+end
+
+
+################################################################################
+# TNI
+################################################################################
+"""
+$(SIGNATURES)
+- `Φ`: A subtype of AbstractQuantumOperation.
+- `atol`: tolerance of approximation.
+
+Checks if an object is trace non-increasing.
+"""
+function istni end
+
+function istni(Φ::KrausOperators{<:AbstractMatrix{<:Number}}; atol=1e-13)
     cr = sum(k'*k for k in Φ.matrices)
     ispositive(one(cr) - cr, atol=atol)
 end
 
-function iscptp(Φ::SuperOperator{T}; atol=1e-13) where T<:AbstractMatrix{<:Number}
-    iscptp(DynamicalMatrix{T}(Φ))
+function istni(Φ::SuperOperator{T}; atol=1e-13) where T<:AbstractMatrix{<:Number}
+    istni(convert(DynamicalMatrix{T}, Φ))
 end
 
-function iscptni(Φ::SuperOperator{T}; atol=1e-13) where T<:AbstractMatrix{<:Number}
-    iscptni(DynamicalMatrix{T}(Φ))
-end
-
-function iscptp(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}; atol=1e-13)
-    # TODO : check it
-    pt = ptrace(Φ.matrix, [Φ.odim, Φ.idim], [1])
-    ispositive(Φ.matrix) && isidentity(pt, atol=atol)
-end
-
-function iscptni(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}; atol=1e-13)
+function istni(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}; atol=1e-13)
     pt = ptrace(Φ.matrix, [Φ.odim, Φ.idim], [1])
     ispositive(one(pt) - pt, atol=atol)
 end
 
-function iscptp(Φ::Stinespring{<:AbstractMatrix{<:Number}}; atol=1e-13)
-    u = Φ.matrix
-    isidentity(u'*u, atol=atol)
-end
-
-function iscptni(Φ::Stinespring{<:AbstractMatrix{<:Number}}; atol=1e-13)
+function istni(Φ::Stinespring{<:AbstractMatrix{<:Number}}; atol=1e-13)
     u = Φ.matrix
     m = u'*u
     ispositive(one(m) - m, atol=atol)
 end
 
-function iscptp(Φ::UnitaryChannel; atol=1e-13)
+function istni(Φ::UnitaryChannel; atol=1e-13)
+    iscptp(Φ, atol=atol)
+end
+
+################################################################################
+# TP
+################################################################################
+"""
+$(SIGNATURES)
+- `Φ`: A subtype of AbstractQuantumOperation.
+- `atol`: tolerance of approximation.
+
+Checks if an object is trace preserving.
+"""
+function istp end
+
+function istp(Φ::KrausOperators{<:AbstractMatrix{<:Number}}; atol=1e-13)
+    cr = sum(k'*k for k in Φ.matrices)
+    isidentity(cr, atol=atol)
+end
+
+function istp(Φ::SuperOperator{T}; atol=1e-13) where T<:AbstractMatrix{<:Number}
+    istp(convert(DynamicalMatrix{T}, Φ), atol=atol)
+end
+
+function istp(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}; atol=1e-13)
+    pt = ptrace(Φ.matrix, [Φ.odim, Φ.idim], [1])
+    isidentity(pt, atol=atol)
+end
+
+function istp(Φ::Stinespring{<:AbstractMatrix{<:Number}}; atol=1e-13)
+    u = Φ.matrix
+    isidentity(u'*u, atol=atol)
+end
+
+function istp(Φ::UnitaryChannel; atol=1e-13)
     u = Φ.matrix
     isidentity(u'*u, atol=atol) && isidentity(u*u', atol=atol)
 end
 
-function iscptni(Φ::UnitaryChannel; atol=1e-13)
-    iscptp(Φ, atol=atol)
+################################################################################
+# CPTP, CPTNI
+################################################################################
+function iscptp(Φ::AbstractQuantumOperation; atol=1e-13)
+    iscp(Φ, atol=atol) && istp(Φ, atol=atol)
+end
+
+function iscptni(Φ::AbstractQuantumOperation; atol=1e-13)
+    iscp(Φ, atol=atol) && istni(Φ, atol=atol)
 end
