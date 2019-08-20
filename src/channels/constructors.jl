@@ -36,11 +36,10 @@ function KrausOperators{T1}(v::Vector{T2}, idim::Int, odim::Int) where {T1<:Abst
 end
 
 length(Φ::KrausOperators) = length(Φ.matrices)
+
 function orthogonalize(Φ::KrausOperators{T}) where {T<:AbstractMatrix{<:Number}}
     convert(KrausOperators{T}, convert(DynamicalMatrix{T}, Φ))
 end
-
-# TODO: create iterator over KrausOperators see: https://docs.julialang.org/en/v0.6.3/manual/interfaces/
 
 """
 $(SIGNATURES)

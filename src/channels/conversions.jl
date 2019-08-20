@@ -145,14 +145,14 @@ function Base.convert(::Type{KrausOperators{T1}}, Φ::POVMMeasurement{T2}) where
     for (i, p) in enumerate(Φ.matrices)
         sqrtp = sqrt(p)
         k = ket(i, Φ.odim)*sum(bra(j, Φ.idim)*sqrtp for j in 1:Φ.idim)
-        push!(v, convert(T1,k))
+        push!(v, convert(T1, k))
     end
     KrausOperators{T1}(v, Φ.idim, Φ.odim)
 end
 
 function Base.convert(::Type{KrausOperators{T1}}, Φ::PostSelectionMeasurement{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
     m = Φ.matrix
-    v = T1[convert(T1,m)]
+    v = T1[convert(T1, m)]
     KrausOperators{T1}(v, Φ.idim, Φ.odim)
 end
 
