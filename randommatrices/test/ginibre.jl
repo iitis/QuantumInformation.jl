@@ -10,7 +10,9 @@ Random.seed!(42)
 
     @test_throws ArgumentError GinibreEnsemble{4}(11, 21)
     g = GinibreEnsemble{4}(10, 20)
-    @test_throws Exception rand(g)
+    z = rand(g)
+    @test size(z) == (20, 40)
+    @test eltype(z) == ComplexF64
 
 @testset "_qr_fix" begin
     a = rand(2, 2)

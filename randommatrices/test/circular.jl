@@ -48,20 +48,27 @@ Random.seed!(42)
     end
 end
 
-@testset "HaarIsometry" begin
-    idim = 2
-    odim = 3
-    c = HaarIsometry(idim, odim)
-    u = rand(c)
-    @test size(u) == (odim, idim)
-    @test isapprox(norm(u'*u - I), 0, atol=1e-6)
-    @test_throws ArgumentError HaarIsometry(odim, idim)
+    @testset "HaarIsometry" begin
+        idim = 2
+        odim = 3
+        c = HaarIsometry(idim, odim)
+        u = rand(c)
+        @test size(u) == (odim, idim)
+        @test isapprox(norm(u'*u - I), 0, atol=1e-6)
+        @test_throws ArgumentError HaarIsometry(odim, idim)
 
-@testset "CSE" begin
-    n = 10
-    c = COE(n)
-    o = rand(c)
-    @test norm(o*o' - I) ≈ 0 atol=1e-13
-    @test size(o) == (10, 10)
-end
+    @testset "CSE" begin
+        n = 10
+        c = CSE(n)
+        o = rand(c)
+        @test norm(o*o' - I) ≈ 0 atol=1e-13
+        @test size(o) == (n, n)
+    end
+
+    @testset "Circular quaternion ensemble" begin
+        c = CircularQuaternionEnsemble(10)
+        u = rand(c)
+        @test size(u) == (20, 20)
+        @test isapprox(norm(u'*u - I), 0, atol=1e-12)
+    end
 end

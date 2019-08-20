@@ -70,7 +70,7 @@ struct CircularQuaternionEnsemble <: QIContinuousMatrixDistribution
     d::Int
     g::GinibreEnsemble{4}
 
-    function CircularRealEnsemble(d::Int)
+    function CircularQuaternionEnsemble(d::Int)
         g = GinibreEnsemble{4}(d)
         new(d, g)
     end
