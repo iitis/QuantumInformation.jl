@@ -8,7 +8,7 @@ using TensorOperations
 using Convex, SCS
 using Random: AbstractRNG, GLOBAL_RNG
 
-import Base: convert, size, length, kron, *, rand, show
+import Base: convert, size, length, kron, *, show, rand
 
 const ⊗ = kron
 
@@ -17,6 +17,13 @@ export ⊗
 include("../randommatrices/src/RandomMatrices.jl")
 using .RandomMatrices
 eval(Expr(:export, names(RandomMatrices)...))
+
+using Pkg
+if "CuArrays" ∈ keys(Pkg.installed())
+    include("../curandommatrices/src/CuRandomMatrices.jl")
+    @eval using ..CuRandomMatrices
+    @eval export curand
+end
 
 include("base.jl")
 include("randomqobjects.jl")
