@@ -1,5 +1,6 @@
 # FIXME: this can be accelerated by writing a custom kernel
 function angle!(a)
+    a = CuArray(a)
     # @cuprintf("thread %ld", Int64(1))
     ℜ = real.(a)
     # @cuprintf("thread %ld", Int64(1))
@@ -10,9 +11,11 @@ function angle!(a)
     # @cuprintf("thread %ld", Int64(1))
     stride = blockDim().x * gridDim().x
     # @cuprintf("thread %ld", Int64(1))
-    for i=index:stride:length(ℜ)
-        a[i] = (ℑ[i], ℜ[i])
-    end
+    i = (blockIdx().x-1) * blockDim().x + threadIdx().x
+    a[i] = ℜ[i] + ℑ[i]
+    # for i=index:stride:length(ℜ)
+    #     a[i] = +(ℑ[i], ℜ[i])
+    # end
     return nothing
 end
 
