@@ -2,7 +2,8 @@ module CuRandomMatrices
 export curand
 
 using LinearAlgebra
-using CuArrays, CUDAnative
+using ..CuArrays
+using CUDAnative
 
 include("../../randommatrices/src/RandomMatrices.jl")
 using ..RandomMatrices
