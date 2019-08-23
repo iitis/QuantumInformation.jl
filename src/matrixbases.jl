@@ -99,7 +99,7 @@ function iterate(itr::ChannelBasisIterator{T}, state=(1,1,1,1)) where T<:Abstrac
         x = (im * ketbra(T, a, c, odim) ⊗ ketbra(T, b, d, idim) - im * ketbra(T, c, a, odim) ⊗ ketbra(T, d, b, idim)) / sqrt(Tn(2))
     elseif a < odim 
         H = iterate(hitr, (b, d))[1]
-        x = (diagm(0 => vcat(ones(Tn, a), Tn[-a], zeros(Tn, odim-a-1))) ⊗ H) / sqrt(Tn(a+a^2))
+        x = (diagm(0 => vcat(ones(Tn, a), Tn[-a], zeros(Tn, odim - a-1))) ⊗ H) / sqrt(Tn(a + a^2))
     else 
         x = Matrix{Tn}(I, idim * odim, idim * odim) / sqrt(Tn(idim * odim))
     end
@@ -116,7 +116,7 @@ function iterate(itr::ChannelBasisIterator{T}, state=(1,1,1,1)) where T<:Abstrac
 end 
 length(itr::ChannelBasisIterator) = itr.idim^2 * itr.odim^2 - itr.idim^2 + 1
 
-function represent(basis::ChannelBasis{T1}, Φ::AbstractQuantumOperation{T2}) where T1<:AbstractMatrix{<:Number} where T2<: AbstractMatrix{<:Number}
+function represent(basis::ChannelBasis{T1}, Φ::AbstractQuantumOperation{T2}) where T1<:AbstractMatrix{<:Number} where T2<:AbstractMatrix{<:Number}
     J = convert(DynamicalMatrix{T2}, Φ)
     represent(basis, J.matrix) 
 end
