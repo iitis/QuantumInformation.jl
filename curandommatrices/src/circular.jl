@@ -34,8 +34,7 @@ end
 
 function curand(c::CUE)
     z = curand(c.g)
-    u = _qr_fix!(z)
-    u
+    _qr_fix!(z)
 end
 
 function curand(c::CSE)
@@ -45,50 +44,17 @@ function curand(c::CSE)
     ur*u*ur'*transpose(u)
 end
 
-# struct CircularRealEnsemble <: QIContinuousMatrixDistribution
-#     d::Int
-#     g::GinibreEnsemble{1}
+function curand(c::CircularRealEnsemble)
+    z = curand(c.g)
+    _qr_fix!(z)
+end
 
-#     function CircularRealEnsemble(d::Int)
-#         g = GinibreEnsemble{1}(d)
-#         new(d, g)
-#     end
-# end
+function curand(c::CircularQuaternionEnsemble)
+    z = curand(c.g)
+    _qr_fix!(z)
+end
 
-# function rand(rng::AbstractRNG, c::CircularRealEnsemble)
-#     z = rand(rng, c.g)
-#     _qr_fix!(z)
-# end
-
-# struct CircularQuaternionEnsemble <: QIContinuousMatrixDistribution
-#     d::Int
-#     g::GinibreEnsemble{4}
-
-#     function CircularQuaternionEnsemble(d::Int)
-#         g = GinibreEnsemble{4}(d)
-#         new(d, g)
-#     end
-# end
-
-# function rand(rng::AbstractRNG, c::CircularQuaternionEnsemble)
-#     z = rand(rng, c.g)
-#     _qr_fix!(z)
-# end
-
-
-# struct HaarIsometry <: QIContinuousMatrixDistribution
-#     idim::Int
-#     odim::Int
-#     g::GinibreEnsemble{2}
-
-#     function HaarIsometry(idim::Int, odim::Int)
-#         idim <= odim || throw(ArgumentError("idim can't be greater than odim"))
-#         g = GinibreEnsemble{2}(odim, idim)
-#         new(idim, odim, g)
-#     end
-# end
-
-# function rand(rng::AbstractRNG, c::HaarIsometry)
-#     z = rand(rng, c.g)
-#     _qr_fix!(z)
-# end
+function curand(c::HaarIsometry)
+    z = curand(c.g)
+    _qr_fix!(z)
+end
