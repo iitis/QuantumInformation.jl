@@ -1,8 +1,9 @@
 # FIXME: this can be accelerated
 function cplx_phase!(a)
-    index = (blockIdx().x - 1) * blockDim().x + threadIdx().x
     i = (blockIdx().x-1) * blockDim().x + threadIdx().x
-    @inbounds a[i] = a[i] / sqrt(real(a[i])^2 + imag(a[i])^2)
+    if i <= length(a)
+        @inbounds a[i] = a[i] / sqrt(real(a[i])^2 + imag(a[i])^2)
+    end
     return nothing
 end
 
@@ -11,8 +12,8 @@ end
 function _qr_fix!(z::CuMatrix)
     q, r = CuArrays.qr!(z)
     ph = diag(r)
-    len = length(ph)
-    @cuda threads=len cplx_phase!(ph)
+    len = min(length(ph), 1024)
+    @cuda threads=len blocks=16 cplx_phase!(ph)
     q = CuMatrix(q)
     idim = size(r, 1)
     for i=1:idim
