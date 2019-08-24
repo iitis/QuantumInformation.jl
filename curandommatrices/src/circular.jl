@@ -1,30 +1,18 @@
-# FIXME: this can be accelerated by writing a custom kernel
-function angle!(a)
-    a = CuArray(a)
-    # @cuprintf("thread %ld", Int64(1))
-    ℜ = real.(a)
-    # @cuprintf("thread %ld", Int64(1))
-    ℑ = imag.(a)
-    # @cuprintf("thread %ld", Int64(1))
-    # @cuprintf("thread %ld", Int64(1))
+# FIXME: this can be accelerated
+function cplx_phase!(a)
     index = (blockIdx().x - 1) * blockDim().x + threadIdx().x
-    # @cuprintf("thread %ld", Int64(1))
-    stride = blockDim().x * gridDim().x
-    # @cuprintf("thread %ld", Int64(1))
     i = (blockIdx().x-1) * blockDim().x + threadIdx().x
-    a[i] = ℜ[i] + ℑ[i]
-    # for i=index:stride:length(ℜ)
-    #     a[i] = +(ℑ[i], ℜ[i])
-    # end
+    @inbounds a[i] = a[i] / sqrt(real(a[i])^2 + imag(a[i])^2)
     return nothing
 end
 
+# FIXME: use blocks to support larger than 1024
+
 function _qr_fix!(z::CuMatrix)
     q, r = CuArrays.qr!(z)
-    # @cuprintf("thread %ld", Int64(1))
     ph = diag(r)
-    # @cuprintf("thread %ld", Int64(1))
-    @cuda threads=256 blocks=16 angle!(ph)
+    len = length(ph)
+    @cuda threads=len cplx_phase!(ph)
     q = CuMatrix(q)
     idim = size(r, 1)
     for i=1:idim
@@ -44,18 +32,18 @@ function curand(c::COE)
     transpose(u)*u
 end
 
-# function rand(rng::AbstractRNG, c::CUE)
-#     z = rand(rng, c.g)
-#     u = _qr_fix!(z)
-#     u
-# end
+function curand(c::CUE)
+    z = curand(c.g)
+    u = _qr_fix!(z)
+    u
+end
 
-# function rand(rng::AbstractRNG, c::CSE)
-#     z = rand(rng, c.g)
-#     u = _qr_fix!(z)
-#     ur = cat([[0 -1; 1 0] for _=1:c.d÷2]..., dims=[1,2])
-#     ur*u*ur'*transpose(u)
-# end
+function curand(c::CSE)
+    z = curand(c.g)
+    u = _qr_fix!(z)
+    ur = cat([CuMatrix{Float32}([0 -1; 1 0]) for _=1:c.d÷2]..., dims=[1,2])
+    ur*u*ur'*transpose(u)
+end
 
 # struct CircularRealEnsemble <: QIContinuousMatrixDistribution
 #     d::Int
