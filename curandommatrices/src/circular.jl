@@ -1,25 +1,17 @@
-# FIXME: this can be accelerated
-function cplx_phase!(a)
-    i = (blockIdx().x-1) * blockDim().x + threadIdx().x
-    if i <= length(a)
-        @inbounds a[i] = a[i] / sqrt(real(a[i])^2 + imag(a[i])^2)
+for T in (ComplexF32, ComplexF64, ComplexF16)
+    @eval begin
+        @inline CUDAnative.abs(x::$T) = CUDAnative.hypot(x.re, x.im)
     end
-    return nothing
 end
 
-# FIXME: use blocks to support larger than 1024
 
 function _qr_fix!(z::CuMatrix)
     q, r = CuArrays.qr!(z)
-    ph = diag(r)
-    len = min(length(ph), 1024) #hack, warpsize() segfaults
-    @cuda threads=len blocks=16 cplx_phase!(ph)
-    q = CuMatrix(q)
+    ph = CuArrays.diag(r)
+    ph = ph ./ CUDAnative.abs.(ph)
     idim = size(r, 1)
-    for i = 1:idim
-        q[:, i] .*= ph[i]
-    end
-    q[:, 1:idim]
+    q = CuMatrix(q)[:, 1:idim]
+    q = CuArrays.transpose(ph) .* q
 end
 
 function _qr_fix(z::CuMatrix)
