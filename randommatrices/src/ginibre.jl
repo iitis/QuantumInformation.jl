@@ -19,9 +19,9 @@ rand(rng::AbstractRNG, g::GinibreEnsemble{2}) = randn(rng, g.m, g.n)+1im*randn(r
 
 function rand(rng::AbstractRNG, g::GinibreEnsemble{4})
     # TODO: fix dimensions of blocks
-    q0=randn(rng, g.m, g.n)
-    q1=randn(rng, g.m, g.n)
-    q2=randn(rng, g.m, g.n)
-    q3=randn(rng, g.m, g.n)
+    q0 = randn(rng, g.m, g.n)
+    q1 = randn(rng, g.m, g.n)
+    q2 = randn(rng, g.m, g.n)
+    q3 = randn(rng, g.m, g.n)
     [q0+1im*q1 q2+1im*q3; -q2+1im*q3 q0-1im*q1]
 end
