@@ -25,7 +25,7 @@ using Requires
 
 include("base.jl")
 include("randomqobjects.jl")
-# @init @require CuArrays = "3a865a2d-5b23-5a0f-bc46-62713ec82fae" include("gpurandomqobjects.jl")
+@init @require CuArrays = "3a865a2d-5b23-5a0f-bc46-62713ec82fae" include("gpurandomqobjects.jl")
 include("gates.jl")
 include("utils.jl")
 include("channels.jl")
