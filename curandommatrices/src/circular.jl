@@ -12,11 +12,11 @@ end
 function _qr_fix!(z::CuMatrix)
     q, r = CuArrays.qr!(z)
     ph = diag(r)
-    len = min(length(ph), 1024)
+    len = min(length(ph), 1024) #hack, warpsize() segfaults
     @cuda threads=len blocks=16 cplx_phase!(ph)
     q = CuMatrix(q)
     idim = size(r, 1)
-    for i=1:idim
+    for i = 1:idim
         q[:, i] .*= ph[i]
     end
     q[:, 1:idim]
@@ -33,11 +33,6 @@ function curand(c::COE)
     transpose(u)*u
 end
 
-function curand(c::CUE)
-    z = curand(c.g)
-    _qr_fix!(z)
-end
-
 function curand(c::CSE)
     z = curand(c.g)
     u = _qr_fix!(z)
@@ -45,17 +40,11 @@ function curand(c::CSE)
     ur*u*ur'*transpose(u)
 end
 
-function curand(c::CircularRealEnsemble)
-    z = curand(c.g)
-    _qr_fix!(z)
-end
-
-function curand(c::CircularQuaternionEnsemble)
-    z = curand(c.g)
-    _qr_fix!(z)
-end
-
-function curand(c::HaarIsometry)
-    z = curand(c.g)
-    _qr_fix!(z)
+for T in (CUE, CircularRealEnsemble, CircularQuaternionEnsemble, HaarIsometry)
+    @eval begin
+        function curand(c::$T)
+            z = curand(c.g)
+            _qr_fix!(z)
+        end
+    end
 end
