@@ -3,20 +3,22 @@ uuid = "3c0b384b-479c-5684-b2ef-9d7a46dd931e"
 authors = ["Dariusz Kurzyk <dkurzyk@iitis.pl>", "Łukasz Pawela <lpawela@iitis.pl>", "Piotr Gawron <gawron@iitis.pl>", "Marcin Przewięźlikowski <m.przewie@gmail.com>"]
 version = "0.4.6"
 
-[compat]
-julia = "0.7, 1.0, 1.1, 1.2"
-
 [deps]
 Convex = "f65535da-76fb-5f13-bab9-19810c17039a"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 SCS = "c946c3f1-0d1f-5ce8-9dea-7daa1f7e2d13"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 TensorOperations = "6aa20fa7-93e2-5fca-9bc0-fbd0db3c71a2"
 
+[compat]
+julia = "0.7, 1.0, 1.1, 1.2"
+
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
-        
+
 [targets]
 test = ["Test"]
