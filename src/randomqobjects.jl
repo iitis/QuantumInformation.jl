@@ -127,7 +127,7 @@ struct WishartPOVM{V} <: QIContinuousMatrixDistribution
 end
 
 function WishartPOVM(idim::Int, odim::Int, K::Real=1)
-    V = Tuple(K .* ones(odim))
+    V = Tuple(round.(Int, K .* ones(odim)))
     WishartPOVM{V}(idim)
 end
 
