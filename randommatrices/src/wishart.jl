@@ -2,10 +2,13 @@ export WishartEnsemble
 
 struct WishartEnsemble{β, K} <: QIContinuousMatrixDistribution
     d::Int
+    g::GinibreEnsemble{β}
 
     function WishartEnsemble{β, K}(d::Int) where {β, K}
-        K*d == round(Int, K*d) ? () : throw(ArgumentError("K*d is not and integer"))
-        new(d)
+        n = round(Int, K*d)
+        K*d == n ? () : throw(ArgumentError("K*d is not and integer"))
+        g = GinibreEnsemble{β}(d, n)
+        new(d, g)
     end
 end
 
@@ -13,7 +16,7 @@ end
  WishartEnsemble(d::Int) = WishartEnsemble{2}(d)
 
 function rand(rng::AbstractRNG, w::WishartEnsemble{β, K}) where {β, K}
-    n = Int(K*w.d)
-    z = rand(rng, GinibreEnsemble{β}(w.d, n))/sqrt(2β * w.d)
+    
+    z = rand(rng, w.g)/sqrt(2β * w.d)
     z*z'
 end

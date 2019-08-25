@@ -11,6 +11,26 @@ Numerical investigations are prevalent in quantum information theory. Numerical 
 Our goal while designing **QuantumInformation.jl** library was to follow principles presented in book "Geometry of Quantum States'' [1]. We work with column vectors reprinting kets and row vectors representing bras. We fix our basis to the computational one. Density matrices and quantum channels are represented as two dimensional arrays in the same fixed basis. This approach allows us to obtain low level complexity of our code, high flexibility and good computational efficiency. The design choices where highly motivated by the properties of the language in which the our library was implemented, namely
 [Julia](https://julialang.org/) [2].
 
+## Sampling random matrices on the GPU
+
+We have introduced an experimental implementation of sampling of random matrices and random quantum objects on the GPU. In order to use this feature, the `CuArrays` package is required. To import `QuantumInformation` with GPU support use
+```julia
+using CuArrays, QuantumInformation
+```
+In order to sample use the `curand` method on a distribuiotn. For instance
+```julia
+julia> c = CUE(4096)
+CircularEnsemble{2}(4096, GinibreEnsemble{2}(4096, 4096))
+
+julia> @time rand(c);
+ 10.452419 seconds (8.22 k allocations: 2.005 GiB, 2.18% gc time)
+
+julia> @time QuantumInformation.curand(c);
+  0.459959 seconds (624.79 k allocations: 21.493 MiB)
+```
+Please report any bugs/problems and feature requests.
+
+If you run into problems, try changing the ugly hack in `curandommatrices/src/circular.jl`, where we set `threads`. This is due to `warpsize()` segfaulting.
 ## Package features
 The purpose of **QuantumInformation.jl** library is to provide
 functions to:
