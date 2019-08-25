@@ -2,7 +2,7 @@ Random.seed!(42)
 
 @testset "CircularEnsemble" begin
     @testset "CUE" begin
-        n=10
+        n = 10
         c = CUE(n)
         u = CuRandomMatrices.curand(c)
         @test norm(u*u' - I) ≈ 0 atol=1e-5
