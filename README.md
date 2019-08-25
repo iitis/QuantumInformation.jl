@@ -30,7 +30,6 @@ julia> @time QuantumInformation.curand(c);
 ```
 Please report any bugs/problems and feature requests.
 
-If you run into problems, try changing the ugly hack in `curandommatrices/src/circular.jl`, where we set `threads`. This is due to `warpsize()` segfaulting.
 ## Package features
 The purpose of **QuantumInformation.jl** library is to provide
 functions to:
