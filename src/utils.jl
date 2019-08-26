@@ -2,27 +2,36 @@ export number2mixedradix, mixedradix2number,
     funcmh, funcmh!, renormalize!
     # realdiag, realdiag!
 
-function number2mixedradix(n::Int, radices::Vector{Int})
+function number2mixedradix(n::Int, radices::NTuple{N, Int}) where N
     n >= prod(radices) ? throw(ArgumentError("number to big to transform")) : ()
-
-    digits = Array{Int}(undef, length(radices))
+    digits = Vector{Int}(undef, N)
     for (i, radix) in enumerate(reverse(radices))
-        n, digits[end-i+1] = divrem(n, radix)
+        n, digits[N-i+1] = divrem(n, radix)
     end
-    digits
+    tuple(digits...)
+end
+
+function number2mixedradix(n::Int, radices::Vector{Int})
+    @warn "method number2mixedradix(n::Int, radices::Vector{Int}) is deprecated"
+    collect(number2mixedradix(n, tuple(radices...)))
+end
+
+
+function mixedradix2number(digits::NTuple{N, Int}, radices::NTuple{N, Int}) where N
+    number = 0
+    # digitsreversed = reverse(digits)
+    for (digit, radix) = zip(digits, radices)
+        digit >= radix ? throw(ArgumentError("digit larger or equal to base")) : ()
+        number = number * radix + digit
+    end
+    number
 end
 
 function mixedradix2number(digits::Vector{Int}, radices::Vector{Int})
-    length(digits)>length(radices) ? throw(ArgumentError("more digits than radices")) : ()
-
-    res = 0
-    digitsreversed = reverse(digits)
-    for (digit, radix) = zip(digits, radices)
-        digit >= radix ? throw(ArgumentError("digit larger or equal to base")) : ()
-        res = res * radix + digit
-    end
-    res
+    @warn "method mixedradix2number(digits::Vector{Int}, radices::Vector{Int}) is deprecated"
+    mixedradix2number(tuple(digits...), tuple(radices...))
 end
+
 
 function renormalize!(ψ::AbstractVector{<:Number})
     n = norm(ψ)
