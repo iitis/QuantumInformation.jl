@@ -1,9 +1,11 @@
 using CuArrays
+using .GPUArrays
 import .CuRandomMatrices: curand
 
 renormalize!(x::CuVector) = (x = x ./ CuArrays.norm(x))
 renormalize!(x::CuMatrix) = (x = x ./ CuArrays.tr(x))
 # this works only for positive matrices!!
+# invsqrt
 function invsqrt!(x::CuMatrix)
     F = CuArrays.svd!(x)
     S = 1 ./ sqrt.(F.S)
@@ -13,6 +15,19 @@ end
 function invsqrt(x::CuMatrix)
     y = copy(x)
     invsqrt!(y)
+end
+
+# kron for CuArrays
+function kron(a::CuMatrix{T1}, b::CuMatrix{T2}) where {T1<:Number, T2<:Number}
+    dims = map(prod, zip(size(a), size(b)))
+    T = promote_type(T1, T2)
+    c = CuMatrix{T}(undef, dims...)
+    gpu_call(c, (c, a, b)) do state, c, a, b
+        idx = @cartesianidx c
+        @inbounds c[idx...] = a[1,1] * b[1,1]
+        return
+    end
+    return c
 end
 
 function curand(h::HaarKet{1})
