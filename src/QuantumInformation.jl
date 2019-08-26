@@ -18,10 +18,6 @@ include("../randommatrices/src/RandomMatrices.jl")
 using .RandomMatrices
 eval(Expr(:export, names(RandomMatrices)...))
 
-include("../elementaryarrays/src/ElementaryArrays.jl")
-using .ElementaryArrays
-eval(Expr(:export, names(ElementaryArrays)...))
-
 include("base.jl")
 include("randomqobjects.jl")
 include("gates.jl")
@@ -33,5 +29,9 @@ include("ptrace.jl")
 include("ptranspose.jl")
 include("convex.jl")
 include("matrixbases.jl")
+
+include("../elementaryarrays/src/ElementaryArrays.jl")
+using .ElementaryArrays
+eval(Expr(:export, names(ElementaryArrays)...))
 
 end # module
