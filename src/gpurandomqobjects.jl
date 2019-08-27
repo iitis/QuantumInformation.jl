@@ -45,17 +45,22 @@ function curand(h::HaarKet{1})
      renormalize!(ψ)
   end
 
-function curand(hs::HilbertSchmidtStates{β, K}) where {β, K}
+function curand(hs::HilbertSchmidtStates)
     ρ = curand(hs.w)
     renormalize!(ρ)
 end
 
-function curand(c::ChoiJamiolkowskiMatrices{β, K}) where {β, K}
-    error("Not iplmeneted")
+function curand(c::ChoiJamiolkowskiMatrices)
     z = curand(c.w)
     y = ptrace(z, [c.odim, c.idim], [1])
     sy = invsqrt(y)
-    onesy = Matrix(I, c.odim, c.odim) ⊗ sy # onesy = eye(c.odim) ⊗ sy
+    # onesy = CuMatrix{eltype(sy)}}(undef, size(sy) .* c.odim)
+    # gpu_call(onesy, (onesy, sy)) do state, onesy, sy
+    #     (i, j) = @cartesianidx onesy
+    #     onesy[i, j] = ? 
+    # end
+    #TODO: fix this, can be accelerated with a custom kernel
+    onesy = CuMatrix(I(c.odim)) ⊗ sy
     DynamicalMatrix(onesy * z * onesy, c.idim, c.odim)
 end
 
