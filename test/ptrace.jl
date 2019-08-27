@@ -28,5 +28,10 @@ end
     ξ = ptrace(ϕ, [2, 2], 1)
     @test ξ ≈ I/2 atol=1e-15
     @test_throws ArgumentError ptrace(ϕ, [2, 2], 3)
+
+    ψ = [sqrt(1 / 3), sqrt(2 / 3)]
+    ϕ = [sqrt(2 / 3), sqrt(1 / 3)]
+    @test ptrace(ψ⊗ϕ, [2, 2], 1) ≈ proj(ϕ) atol=1e-15
+    @test ptrace(ψ⊗ϕ, [2, 2], 2) ≈ proj(ψ) atol=1e-15
 end
 end
