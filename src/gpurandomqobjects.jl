@@ -1,5 +1,5 @@
 using CuArrays
-using .GPUArrays
+using GPUArrays
 import .CuRandomMatrices: curand
 
 renormalize!(x::CuVector) = (x = x ./ CuArrays.norm(x))
@@ -23,8 +23,13 @@ function kron(a::CuMatrix{T1}, b::CuMatrix{T2}) where {T1<:Number, T2<:Number}
     T = promote_type(T1, T2)
     c = CuMatrix{T}(undef, dims...)
     gpu_call(c, (c, a, b)) do state, c, a, b
-        idx = @cartesianidx c
-        @inbounds c[idx...] = a[1,1] * b[1,1]
+        (i, j) = @cartesianidx c
+        (p, q) = size(b)
+        k = (i - 1) ÷ p + 1
+        l = (j - 1) ÷ q + 1
+        m = i - ((i - 1) ÷ p) * p
+        n = j - ((j - 1) ÷ q) * q
+        @inbounds c[i, j] = a[k, l] * b[m, n]
         return
     end
     return c
