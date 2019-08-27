@@ -25,7 +25,7 @@ function ElementaryArray{T}(idx::NTuple{N, Int}, dims::Vararg{Int}) where {T<:Nu
 end
 
 function ElementaryArray(value::T, idx::NTuple{N, Int}, dims::Vararg{Int}) where {T<:Number, N}
-    ElementaryArray{T, N}(one(T), idx, dims...)
+    ElementaryArray{T, N}(value, idx, dims...)
 end
 
 const ElementaryVector{T} = ElementaryArray{T, 1}
@@ -150,29 +150,28 @@ end
 
 Base.:*(e::ElementaryArray, a::Number) = Base.:*(a, e)
 
-# for op in  (:+, :-)
-#     @eval begin
-#         function $op(n::T1, e::ElementaryArray{T2, N}) where {T1<:Number, T2<:Number, N} 
-#             T = promote_type(T1, T2)
-#             x = zeros(T1, e.dims)
-#             x[e.idx...] $op= n
-#             x
-#         end
-#     end
-# end
+function Base.:*(e::ElementaryMatrix{T1}, a::AbstractMatrix{T2}) where {T1<:Number, T2<:Number}
+    T = promote_type(T1, T2)
+    b = zeros(T, size(e)[1], size(a)[2])
+    r = e.value * a[e.idx[2],:]
+    b[e.idx[1], :] = r
+    b
+end
 
-# for op in  (:+, :-, :*, :/)
-#     @eval begin
-#         function $op(e::ElementaryArray{T2, N}, n::T1) where {T1<:Number, T2<:Number, N} 
-#             T = promote_type(T1, T2)
-#             x = zeros(T1, e.dims)
-#             x[e.idx...] = $op(1, n)
-#             x
-#         end
-#     end
-# end
+function Base.:*(a::AbstractMatrix{T1}, e::ElementaryMatrix{T2}) where {T1<:Number, T2<:Number}
+    T = promote_type(T1, T2)
+    b = zeros(T, size(a)[1], size(e)[2])
+    r = e.value * a[:,e.idx[1]]
+    b[:, e.idx[2]] = r
+    b
+end
 
-
+function Base.:*(e1::ElementaryMatrix{T1}, a::AbstractMatrix{T2}, e2::ElementaryMatrix{T3}) where {T1<:Number, T2<:Number, T3<:Number}
+    T = promote_type(T1, T2, T3)
+    b = zeros(T, size(e1)[1], size(e2)[2])
+    r = e1.value * e1.value * a[e1.idx[2], e2.idx[1]]
+    ElementaryMatrix{T}(r, (e1.idx[1], e2.idx[2]), size(e1)[1], size(e2)[2])
+end
 
 end
 
