@@ -69,7 +69,7 @@ end
 
 function applychannel(Φ::UnitaryChannel{<:AbstractMatrix{<:Number}}, ψ::AbstractVector{<:Number})
     # TODO: promote type
-    Φ*ψ
+    Φ.matrix*ψ
 end
 
 function applychannel(Φ::IdentityChannel{<:AbstractMatrix{<:Number}}, ψ::AbstractVector{<:Number})
