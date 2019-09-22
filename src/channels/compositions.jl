@@ -93,10 +93,7 @@ end
 
 function compose(::Type{UnitaryChannel{M}}, Φ1::UnitaryChannel{M1}, Φ2::UnitaryChannel{M2}) where {M<:AbstractMatrix{<:Number}, M1<:AbstractMatrix{<:Number}, M2<:AbstractMatrix{<:Number}}
     Φ1.odim == Φ2.idim ? () : throw(ArgumentError("Unitaries are incompatible"))
-  
-    um1 = Φ1.matrix
-    um2 = Φ2.matrix
-    um = um2 * um1
+    um = Φ1.matrix * Φ2.matrix
     UnitaryChannel{M}(convert(M, um), Φ1.idim, Φ2.odim)
 end
 
