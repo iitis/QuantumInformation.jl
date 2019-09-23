@@ -136,6 +136,13 @@ end
 
     c = UnitaryChannel(Diagonal(ComplexF64[1 -1.0im]))
     @test c isa UnitaryChannel{<:Diagonal}
+
+    u1 = UnitaryChannel([cos(1) sin(1); -sin(1) cos(1)])
+    u2 = UnitaryChannel([cos(2) sin(2); -sin(2) cos(2)])
+    @test compose(u1, u2).matrix ≈ u2.matrix * u1.matrix
+    @test compose(UnitaryChannel{Array{Float64,2}}, u1, u2).matrix ≈ u2.matrix * u1.matrix
+
+    @test kron(u1, u2).matrix ≈ kron(u1.matrix, u2.matrix)
 end
 
 @testset "POVMMeasurement" begin
