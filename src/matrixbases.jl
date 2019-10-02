@@ -64,7 +64,6 @@ end
 $(SIGNATURES)
 
 """
-abstract type AbstractMatrixBasisIterator{T<:AbstractMatrix} end
 struct ChannelBasisIterator{T} <: AbstractMatrixBasisIterator{T} 
     idim::Int 
     odim::Int
@@ -75,7 +74,7 @@ struct ChannelBasisIterator{T} <: AbstractMatrixBasisIterator{T}
 end
 
 abstract type AbstractChannelBasis{T} <: AbstractMatrixBasis{T} end 
-struct ChannelBasis{T} <: AbstractMatrixBasis{T} 
+struct ChannelBasis{T} <: AbstractChannelBasis{T} 
     iterator::ChannelBasisIterator{T}
     function ChannelBasis{T}(idim::Integer, odim::Integer) where T<:AbstractMatrix{<:Number}
         new(ChannelBasisIterator{T}(idim, odim)) 
@@ -86,8 +85,7 @@ channelbasis(T::Type{<:AbstractMatrix{<:Number}}, idim::Int, odim::Int=idim) = C
 channelbasis(idim::Int, odim::Int=idim) = channelbasis(Matrix{ComplexF64}, idim, odim)
 
 function iterate(itr::ChannelBasisIterator{T}, state=(1,1,1,1)) where T<:AbstractMatrix{<:Number}
-    idim = itr.idim
-    odim = itr.odim
+    (idim, odim) = (itr.idim, itr.odim)
     hitr = itr.hitr
     (a, c, b, d) = state
     (a == odim && c == odim && d == 2) && return nothing
@@ -114,10 +112,11 @@ function iterate(itr::ChannelBasisIterator{T}, state=(1,1,1,1)) where T<:Abstrac
     end 
     return x, newstate
 end 
+
 length(itr::ChannelBasisIterator) = itr.idim^2 * itr.odim^2 - itr.idim^2 + 1
 
-function represent(basis::ChannelBasis{T1}, Φ::AbstractQuantumOperation{T2}) where T1<:AbstractMatrix{<:Number} where T2<:AbstractMatrix{<:Number}
-    J = convert(DynamicalMatrix{T2}, Φ)
+function represent(basis::AbstractChannelBasis{T1}, Φ::AbstractQuantumOperation{T2}) where T1<:AbstractMatrix{<:Number} where T2<:AbstractMatrix{<:Number}
+    J = convert(DynamicalMatrix{T1}, Φ)
     represent(basis, J.matrix) 
 end
 
