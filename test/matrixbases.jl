@@ -40,18 +40,18 @@ end
     A = reshape(collect(1:16), idim * odim, idim) * reshape(collect(1:16), idim * odim, idim)'
     B = Matrix{Float64}(I, odim, odim) ⊗ (ptrace(A, [odim, idim], 1))^(-1/2)
     A = B * A * B'
-    vA = represent(ChannelBasis{Matrix{ComplexF64}}(idim, odim), A)
-    Ap = combine(ChannelBasis{Matrix{ComplexF64}}(idim, odim), vA)
+    vA = represent(channelbasis(Matrix{ComplexF64}, idim, odim), A)
+    Ap = combine(channelbasis(Matrix{ComplexF64}, idim, odim), vA)
     @test A ≈ Ap.matrix
     
     A = reshape(collect(1:64), idim * odim, idim * odim) * reshape(collect(1:64), idim * odim, idim * odim)' + Matrix{Float64}(I, idim * odim, idim * odim)
     B = Matrix{Float64}(I, idim, idim) ⊗ (ptrace(A, [idim, odim], 1))^(-1/2)
     B = B * A * B'
-    vB = represent(ChannelBasis{Matrix{ComplexF64}}(odim, idim), B)
-    Bp = combine(ChannelBasis{Matrix{ComplexF64}}(odim, idim), vB)
+    vB = represent(channelbasis(Matrix{ComplexF64}, odim, idim), B)
+    Bp = combine(channelbasis(Matrix{ComplexF64}, odim, idim), vB)
     @test B ≈ Bp.matrix
 
-    vB = represent(ChannelBasis{Matrix{ComplexF32}}(idim,odim), B)
+    vB = represent(channelbasis(Matrix{ComplexF32}, idim,odim), B)
     @test eltype(vB) == Float64
 
 end
@@ -61,5 +61,9 @@ end
     @test hermitianbasis(2) == HermitianBasisIterator{Matrix{ComplexF64}}(2)
 end
 
+@testset "channelbasis" begin
+    @test channelbasis(Matrix{Float32}, 2) == ChannelBasis{Matrix{Float32}}(2,2)
+    @test channelbasis(2,3) ==  ChannelBasis{Matrix{ComplexF64}}(2,3)
+end
 
 end

@@ -120,7 +120,7 @@ function represent(basis::AbstractChannelBasis{T1}, Φ::AbstractQuantumOperation
     represent(basis, J.matrix) 
 end
 
-function combine(basis::ChannelBasis{T}, v::Vector{<:Number}) where T<:AbstractMatrix
+function combine(basis::AbstractChannelBasis{T}, v::Vector{<:Number}) where T<:AbstractMatrix
     m = sum(basis.iterator .* v)
     DynamicalMatrix{T}(m, basis.iterator.idim, basis.iterator.odim)
 end
