@@ -4,7 +4,8 @@ export ket, bra, ketbra, proj, res, unres, max_mixed, max_entangled,
 function ket(::Type{T}, val::Int, dim::Int) where T<:AbstractVector{<:Number}
     dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
     1 <= val <= dim ? () : throw(ArgumentError("Label have to be smaller than vector dimension"))
-    ψ = zero(T(undef, dim))
+    ψ = T(undef, dim)
+    fill!(ψ, zero(eltype(T)))
     ψ[val] = one(eltype(T))
     ψ
 end
@@ -39,10 +40,11 @@ Return Hermitian conjugate \$\\langle val| = |val\\rangle^\\dagger\$ of the ket 
 """
 bra(val::Int, dim::Int) = bra(Vector{ComplexF64}, val, dim)
 
-function ketbra(::Type{T}, valk::Int, valb::Int, dimin::Int, dimout::Int) where T<:AbstractMatrix{<:Number}
-    dimin > 0 && dimout > 0 ? () : throw(ArgumentError("Matrix dimension has to be nonnegative"))
-    1 <= valk <= dimin && 1 <= valb <= dimout ? () : throw(ArgumentError("Ket and bra labels have to be smaller than operator dimension"))
-    ρ = zero(T(undef, dimout, dimin))
+function ketbra(::Type{T}, valk::Int, valb::Int, idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
+    idim > 0 && odim > 0 ? () : throw(ArgumentError("Matrix dimension has to be nonnegative"))
+    1 <= valk <= idim && 1 <= valb <= odim ? () : throw(ArgumentError("Ket and bra labels have to be smaller than operator dimension"))
+    ρ = T(undef, odim, idim)
+    fill!(ρ, zero(eltype(T)))
     ρ[valk,valb] = one(eltype(T))
     ρ
 end
@@ -68,12 +70,12 @@ ketbra(valk::Int, valb::Int, dim::Int) = ketbra(Matrix{ComplexF64}, valk, valb, 
 """
 - `valk`: non-zero entry - label.
 - `valb`: non-zero entry - label.
-- `dimin`: length of the ket vector
-- `dimout`: length of the bra vector
+- `idim`: length of the ket vector
+- `odim`: length of the bra vector
 
 # Return outer product \$|valk\\rangle\\langle vakb|\$ of states \$|valk\\rangle\$ and \$|valb\\rangle\$.
 """
-ketbra(valk::Int, valb::Int, dimin::Int, dimout::Int) = ketbra(Matrix{ComplexF64}, valk, valb, dimin, dimout)
+ketbra(valk::Int, valb::Int, idim::Int, odim::Int) = ketbra(Matrix{ComplexF64}, valk, valb, idim, odim)
 
 """
 $(SIGNATURES)

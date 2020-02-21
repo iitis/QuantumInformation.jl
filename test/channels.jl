@@ -56,8 +56,8 @@ end
     @testset "construction from function" begin
         ρ = [0.25 0.25im; -0.25im 0.75]
         t = hcat([ComplexF64[0.25, 0.25im, -0.25im, 0.75] for i=1:4]...) #stack res ρ
-        @test_throws ErrorException m = SuperOperator{Matrix{ComplexF64}}(x -> ρ, 2, 2).matrix
-        @test_broken norm(t-m) ≈ 0. atol=1e-15
+        m = SuperOperator{Matrix{ComplexF64}}(x -> ρ, 2, 2).matrix
+        @test norm(t-m) ≈ 0. atol=1e-15
     end
 
     @testset "convert to KrausOperators" begin
@@ -136,6 +136,13 @@ end
 
     c = UnitaryChannel(Diagonal(ComplexF64[1 -1.0im]))
     @test c isa UnitaryChannel{<:Diagonal}
+
+    u1 = UnitaryChannel([cos(1) sin(1); -sin(1) cos(1)])
+    u2 = UnitaryChannel([cos(2) sin(2); -sin(2) cos(2)])
+    @test compose(u1, u2).matrix ≈ u2.matrix * u1.matrix
+    @test compose(UnitaryChannel{Array{Float64,2}}, u1, u2).matrix ≈ u2.matrix * u1.matrix
+
+    @test kron(u1, u2).matrix ≈ kron(u1.matrix, u2.matrix)
 end
 
 @testset "POVMMeasurement" begin

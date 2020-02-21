@@ -19,12 +19,9 @@ function _qr_fix!(z::AbstractMatrix)
     q, r = qr!(z)
     d = diag(r)
     ph = d./abs.(d)
-    q = Matrix(q)
     idim = size(r, 1)
-    for i=1:idim
-        q[:, i] .*= ph[i]
-    end
-    q[:, 1:idim]
+    q = Matrix(q)[:, 1:idim]
+    q = transpose(ph) .* q
 end
 
 function _qr_fix(z::AbstractMatrix)

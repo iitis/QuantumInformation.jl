@@ -1,6 +1,6 @@
-[![](https://img.shields.io/badge/docs-latest-green.svg)](https://zksi.github.io/QuantumInformation.jl/latest)
-[![Build Status](https://travis-ci.org/ZKSI/QuantumInformation.jl.svg?branch=master)](https://travis-ci.org/ZKSI/QuantumInformation.jl)
-[![Coverage Status](https://coveralls.io/repos/github/ZKSI/QuantumInformation.jl/badge.svg?branch=master)](https://coveralls.io/github/ZKSI/QuantumInformation.jl?branch=master)
+[![](https://img.shields.io/badge/docs-latest-green.svg)](https://iitis.github.io/QuantumInformation.jl/latest)
+[![Build Status](https://travis-ci.org/iitis/QuantumInformation.jl.svg?branch=master)](https://travis-ci.org/ZKSI/QuantumInformation.jl)
+[![Coverage Status](https://coveralls.io/repos/github/iitis/QuantumInformation.jl/badge.svg?branch=master)](https://coveralls.io/github/iitis/QuantumInformation.jl?branch=master)
 [![DOI](https://zenodo.org/badge/23916883.svg)](https://zenodo.org/badge/latestdoi/23916883)
 # QuantumInformation
 
@@ -10,6 +10,25 @@ Numerical investigations are prevalent in quantum information theory. Numerical 
 
 Our goal while designing **QuantumInformation.jl** library was to follow principles presented in book "Geometry of Quantum States'' [1]. We work with column vectors reprinting kets and row vectors representing bras. We fix our basis to the computational one. Density matrices and quantum channels are represented as two dimensional arrays in the same fixed basis. This approach allows us to obtain low level complexity of our code, high flexibility and good computational efficiency. The design choices where highly motivated by the properties of the language in which the our library was implemented, namely
 [Julia](https://julialang.org/) [2].
+
+## Sampling random matrices on the GPU
+
+We have introduced an experimental implementation of sampling of random matrices and random quantum objects on the GPU. In order to use this feature, the `CuArrays` package is required. To import `QuantumInformation` with GPU support use
+```julia
+using CuArrays, QuantumInformation
+```
+In order to sample use the `curand` method on a distribuiotn. For instance
+```julia
+julia> c = CUE(4096)
+CircularEnsemble{2}(4096, GinibreEnsemble{2}(4096, 4096))
+
+julia> @time rand(c);
+ 10.452419 seconds (8.22 k allocations: 2.005 GiB, 2.18% gc time)
+
+julia> @time QuantumInformation.curand(c);
+  0.459959 seconds (624.79 k allocations: 21.493 MiB)
+```
+Please report any bugs/problems and feature requests.
 
 ## Package features
 The purpose of **QuantumInformation.jl** library is to provide
