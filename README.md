@@ -1,5 +1,5 @@
 [![](https://img.shields.io/badge/docs-latest-green.svg)](https://iitis.github.io/QuantumInformation.jl/latest)
-[![Build Status](https://travis-ci.org/iitis/QuantumInformation.jl.svg?branch=master)](https://travis-ci.org/ZKSI/QuantumInformation.jl)
+[![Build Status](https://travis-ci.org/iitis/QuantumInformation.jl.svg?branch=master)](https://travis-ci.org/iitis/QuantumInformation.jl)
 [![Coverage Status](https://coveralls.io/repos/github/iitis/QuantumInformation.jl/badge.svg?branch=master)](https://coveralls.io/github/iitis/QuantumInformation.jl?branch=master)
 [![DOI](https://zenodo.org/badge/23916883.svg)](https://zenodo.org/badge/latestdoi/23916883)
 # QuantumInformation
