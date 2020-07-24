@@ -36,7 +36,7 @@ $(SIGNATURES)
 Prepares [Hadamard operator](https://en.wikipedia.org/wiki/Hadamard_transform) of dimension `d`.
 """
 function hadamard(dim::Int)
-  if floor(log2(dim))!=log2(dim)
+  if !ispow2(dim)
     throw(ArgumentError("Hadamard dim has to be power of 2"))
   end
 
