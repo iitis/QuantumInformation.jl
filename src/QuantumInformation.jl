@@ -18,14 +18,8 @@ include("../randommatrices/src/RandomMatrices.jl")
 using .RandomMatrices
 eval(Expr(:export, names(RandomMatrices)...))
 
-using Requires
-@init @require CuArrays = "3a865a2d-5b23-5a0f-bc46-62713ec82fae" include("../curandommatrices/src/CuRandomMatrices.jl")
-@init @require CuArrays = "3a865a2d-5b23-5a0f-bc46-62713ec82fae" using ..CuRandomMatrices
-@init @require CuArrays = "3a865a2d-5b23-5a0f-bc46-62713ec82fae" export curand
-
 include("base.jl")
 include("randomqobjects.jl")
-@init @require CuTensorOperations = "01a401d6-3e09-11e9-13be-6f1bb8674acf" include("gpurandomqobjects.jl")
 include("gates.jl")
 include("utils.jl")
 include("channels.jl")
