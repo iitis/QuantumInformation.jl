@@ -1,8 +1,12 @@
 using Documenter, QuantumInformation
 
+format = Documenter.HTML(edit_link = "master",
+                         prettyurls = get(ENV, "CI", nothing) == "true",
+)
+
 makedocs(
     clean = true,
-    format = :html,
+    format = format,
     sitename = "QuantumInformation.jl",
     authors = "Piotr Gawron, Dariusz Kurzyk, Łukasz Pawela",
     assets = ["assets/favicon.ico"],
@@ -31,5 +35,5 @@ makedocs(
 deploydocs(
     deps = Deps.pip("pygments", "mkdocs", "python-markdown-math"),
     target = "build",
-    repo = "github.com/ZKSI/QuantumInformation.jl.git"
+    repo = "github.com/iitis/QuantumInformation.jl.git"
 )
