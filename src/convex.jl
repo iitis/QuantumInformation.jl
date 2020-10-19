@@ -6,15 +6,9 @@ $(SIGNATURES)
 
 Return [diamond norm](https://arxiv.org/pdf/1207.5726.pdf) of dynamical matrix `Φ`.
 """
-function norm_diamond(Φ::AbstractQuantumOperation{T}, method=:primal, eps=1e-7) where T<:AbstractMatrix{<:Number}
-    ψ = convert(DynamicalMatrix{T}, Φ)
-	(method == :primal || method == :dual) || throw(ArgumentError("method must be either :primal or :dual"))
+norm_diamond(Φ::AbstractQuantumOperation, method::Symbol=:primal, eps=1e-7) = norm_diamond(Φ, Val(method), eps)
 
-	method == :dual ? norm_diamond_dual(Φ,eps) : norm_diamond_primal(Φ,eps)
-end
-
-
-function norm_diamond_primal(Φ::DynamicalMatrix{T}, eps) where T<:AbstractMatrix{<:Number}
+function norm_diamond(Φ::DynamicalMatrix, ::Val{:primal}, eps)
     J = Φ.matrix
     # TODO: compare d1, d2 with idim, odim
     d1 = Φ.idim
@@ -31,12 +25,12 @@ function norm_diamond_primal(Φ::DynamicalMatrix{T}, eps) where T<:AbstractMatri
     constraints += [𝕀(d2) ⊗ ρ₀ X; X' 𝕀(d2) ⊗ ρ₁] in :SDP
 
     problem = maximize(t, constraints)
-    solve!(problem, SCSSolver(verbose=0, eps=eps))
+    solve!(problem, () -> SCS.Optimizer(verbose=false, eps=eps))
     problem.optval
 end
 
 
-function norm_diamond_dual(Φ::DynamicalMatrix{T}, eps) where T<:AbstractMatrix{<:Number}
+function norm_diamond(Φ::DynamicalMatrix, ::Val{:dual}, eps)
     J = Φ.matrix
     # TODO: compare d1, d2 with idim, odim
     d1 = Φ.idim
@@ -52,7 +46,7 @@ function norm_diamond_dual(Φ::DynamicalMatrix{T}, eps) where T<:AbstractMatrix{
     constraints += Z+Z' in :SDP
 
     problem = minimize(t, constraints)
-    solve!(problem, SCSSolver(verbose=0, eps=eps))
+    solve!(problem, () -> SCS.Optimizer(verbose=false, eps=eps))
     problem.optval
 end
 

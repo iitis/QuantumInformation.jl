@@ -2,7 +2,7 @@ using QuantumInformation
 using Random
 
 using LinearAlgebra
-using SparseArrays
+# using SparseArrays
 using Test
 
 my_tests = ["utils.jl", "base.jl", "ptrace.jl", "ptranspose.jl", "reshuffle.jl",
