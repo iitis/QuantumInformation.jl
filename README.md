@@ -1,6 +1,6 @@
-[![](https://img.shields.io/badge/docs-latest-green.svg)](https://zksi.github.io/QuantumInformation.jl/latest)
-[![Build Status](https://travis-ci.org/ZKSI/QuantumInformation.jl.svg?branch=master)](https://travis-ci.org/ZKSI/QuantumInformation.jl)
-[![Coverage Status](https://coveralls.io/repos/github/ZKSI/QuantumInformation.jl/badge.svg?branch=master)](https://coveralls.io/github/ZKSI/QuantumInformation.jl?branch=master)
+[![](https://img.shields.io/badge/docs-latest-green.svg)](https://iitis.github.io/QuantumInformation.jl/latest)
+[![Build Status](https://travis-ci.org/iitis/QuantumInformation.jl.svg?branch=master)](https://travis-ci.org/iitis/QuantumInformation.jl)
+[![Coverage Status](https://coveralls.io/repos/github/iitis/QuantumInformation.jl/badge.svg?branch=master)](https://coveralls.io/github/iitis/QuantumInformation.jl?branch=master)
 [![DOI](https://zenodo.org/badge/23916883.svg)](https://zenodo.org/badge/latestdoi/23916883)
 # QuantumInformation
 
@@ -30,7 +30,6 @@ julia> @time QuantumInformation.curand(c);
 ```
 Please report any bugs/problems and feature requests.
 
-If you run into problems, try changing the ugly hack in `curandommatrices/src/circular.jl`, where we set `threads`. This is due to `warpsize()` segfaulting.
 ## Package features
 The purpose of **QuantumInformation.jl** library is to provide
 functions to:
