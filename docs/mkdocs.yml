@@ -1,5 +1,5 @@
 site_name:        QuantumInformation.jl
-repo_url:         https://github.com/ZKSI/QuantumInformation.jl.git
+repo_url:         https://github.com/iitis/QuantumInformation.jl.git
 site_description: A Julia package for numerical computation in quantum information theory.
 site_author:      Piotr Gawron, Dariusz Kurzyk, Łukasz Pawela
 

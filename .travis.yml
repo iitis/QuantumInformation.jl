@@ -12,11 +12,9 @@ script:
   - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
   - julia -e 'using Pkg; pkg"build QuantumInformation"; pkg"add StatsBase"; pkg"add Test"'
   - julia --code-coverage test/runtests.jl 
-  - julia -e 'using Pkg; pkg"add Distributions"';
-  - julia --code-coverage randommatrices/test/runtests.jl
 
 after_success:
-  - julia -e 'import QuantumInformation; using Pkg; pkg"add Coverage"; using Coverage; Coveralls.submit(vcat(process_folder(), process_folder("randommatrices/src")))'
+  - julia -e 'import QuantumInformation; using Pkg; pkg"add Coverage"; using Coverage; Coveralls.submit(process_folder())'
 
 jobs:
   include:

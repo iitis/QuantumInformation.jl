@@ -15,9 +15,8 @@ const ⊗ = kron
 
 export ⊗
 
-include("../randommatrices/src/RandomMatrices.jl")
-using .RandomMatrices
-eval(Expr(:export, names(RandomMatrices)...))
+using MatrixEnsembles
+eval(Expr(:export, names(MatrixEnsembles)...))
 
 include("base.jl")
 include("randomqobjects.jl")
