@@ -52,9 +52,9 @@ function ptrace(ψ::AbstractVector{<:Number}, idims::Vector{Int}, sys::Int)
     m = unres(ψ, cols)
     length(idims) == 2 ? () : throw(ArgumentError("idims has to be of length 2"))
     if sys == 1
-        return m'*m
+        return transpose(m) * conj.(m)
     elseif sys == 2
-        return m*m'
+        return m * transpose(conj.(m))
     else
         throw(ArgumentError("sys must be 1 or 2"))
     end

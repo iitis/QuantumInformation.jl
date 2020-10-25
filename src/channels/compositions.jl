@@ -86,6 +86,17 @@ function compose(::Type{T}, Φ1::T1, Φ2::T2) where {T<:AbstractQuantumOperation
     convert(T, so)
 end
 
+function compose(Φ1::UnitaryChannel{M1}, Φ2::UnitaryChannel{M2}) where {M1<:AbstractMatrix{<:Number}, M2<:AbstractMatrix{<:Number}}
+    M = promote_type(M1, M2)
+    compose(UnitaryChannel{M}, Φ1, Φ2)
+end
+
+function compose(::Type{UnitaryChannel{M}}, Φ1::UnitaryChannel{M1}, Φ2::UnitaryChannel{M2}) where {M<:AbstractMatrix{<:Number}, M1<:AbstractMatrix{<:Number}, M2<:AbstractMatrix{<:Number}}
+    Φ1.odim == Φ2.idim ? () : throw(ArgumentError("Unitaries are incompatible"))
+    um = Φ1.matrix * Φ2.matrix
+    UnitaryChannel{M}(convert(M, um), Φ1.idim, Φ2.odim)
+end
+
 function compose(Φ1::T, Φ2::T) where {T<:AbstractQuantumOperation{<:Number}}
     compose(T, Φ1, Φ2)
 end
