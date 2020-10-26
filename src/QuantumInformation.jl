@@ -7,6 +7,7 @@ using DocStringExtensions
 using TensorOperations
 using Convex, SCS
 using Random: AbstractRNG, GLOBAL_RNG
+using IsApprox: isone, iszero, ishermitian, isposdef, ispossemidef, isunitary, Approx
 
 import Base: convert, size, length, kron, *, show, rand
 import LinearAlgebra: I
