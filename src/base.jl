@@ -10,10 +10,7 @@ function ket(::Type{T}, val::Int, dim::Int) where T<:AbstractVector{<:Number}
     ψ
 end
 
-function ket(::Type{T}, val::Int, dim::Int) where T<:Number
-    @warn "This method is deprecated and will be removed. Use calls like `ket(Matrix{ComplexF64}, 1, 2)`."
-    ket(Vector{T}, val, dim)
-end
+ket(::Type{T}, val::Int, dim::Int) where T<:Number = ket(Vector{T}, val, dim)
 
 """
 $(SIGNATURES)
@@ -22,14 +19,11 @@ $(SIGNATURES)
 
 Return complex column vector \$|val\\rangle\$ of unit norm describing quantum state.
 """
-ket(val::Int, dim::Int) = ket(Vector{ComplexF64}, val, dim)
+ket(val::Int, dim::Int) = ket(ComplexF64, val, dim)
 
-function bra(::Type{T}, val::Int, dim::Int) where T<:Number 
-    @warn "This method is deprecated and will be removed. Use calls like `bra(Matrix{ComplexF64}, 1, 2)`."
-    bra(Vector{T}, val, dim)
-end
 
 bra(::Type{T}, val::Int, dim::Int) where T<:AbstractVector{<:Number} = ket(T, val, dim)'
+bra(::Type{T}, val::Int, dim::Int) where T<:Number = bra(Vector{T}, val, dim)
 
 """
 $(SIGNATURES)
@@ -38,7 +32,7 @@ $(SIGNATURES)
 
 Return Hermitian conjugate \$\\langle val| = |val\\rangle^\\dagger\$ of the ket with the same label.
 """
-bra(val::Int, dim::Int) = bra(Vector{ComplexF64}, val, dim)
+bra(val::Int, dim::Int) = bra(ComplexF64, val, dim)
 
 function ketbra(::Type{T}, valk::Int, valb::Int, idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
     idim > 0 && odim > 0 ? () : throw(ArgumentError("Matrix dimension has to be nonnegative"))
@@ -50,11 +44,7 @@ function ketbra(::Type{T}, valk::Int, valb::Int, idim::Int, odim::Int) where T<:
 end
 
 ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:AbstractMatrix{<:Number} = ketbra(T, valk, valb, dim, dim)
-
-function ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:Number
-    @warn "This method is deprecated and will be removed. Use calls like `ketbra(Matrix{ComplexF64}, 1, 1, 2)`."
-    ketbra(Matrix{T}, valk, valb, dim)
-end
+ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:Number = ketbra(Matrix{T}, valk, valb, dim)
 
 """
 $(SIGNATURES)
@@ -64,7 +54,7 @@ $(SIGNATURES)
 
 # Return outer product \$|valk\\rangle\\langle vakb|\$ of states \$|valk\\rangle\$ and \$|valb\\rangle\$.
 """
-ketbra(valk::Int, valb::Int, dim::Int) = ketbra(Matrix{ComplexF64}, valk, valb, dim)
+ketbra(valk::Int, valb::Int, dim::Int) = ketbra(ComplexF64, valk, valb, dim)
 
 
 """
@@ -94,14 +84,9 @@ $(SIGNATURES)
 Returns `vec(ρ.T)`. Reshaping maps
     matrix `ρ` into a vector row by row.
 """
-res(ρ::AbstractMatrix{<:Number}) = vec(transpose(ρ))
+res(ρ::AbstractMatrix{<:Number}) = @cast x[(j, i)] := ρ[i, j]
 
-function unres(ϕ::AbstractVector{<:Number}, cols::Int)
-    dim = length(ϕ)
-    rows = div(dim, cols)
-    rows*cols == dim ? () : throw(ArgumentError("Wrong number of columns"))
-    transpose(reshape(ϕ, cols, rows))
-end
+unres(ϕ::AbstractVector{<:Number}, cols::Int) = @cast x[i, j] := ϕ[(j, i)] j:cols
 
 """
 $(SIGNATURES)
@@ -122,7 +107,7 @@ $(SIGNATURES)
 
 Return maximally mixed state \$\\frac{1}{d}\\sum_{i=0}^{d-1}|i\\rangle\\langle i |\$ of length \$d\$.
 """
-max_mixed(d::Int) = Matrix(I/d, d, d)  # eye(ComplexF64, d, d)/d
+max_mixed(d::Int) = I(d)/d
 
 """
 $(SIGNATURES)

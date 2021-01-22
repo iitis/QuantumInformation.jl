@@ -12,6 +12,7 @@ Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 SCS = "c946c3f1-0d1f-5ce8-9dea-7daa1f7e2d13"
 StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
+TensorCast = "02d47bb6-7ce6-556a-be16-bb1710789e2b"
 TensorOperations = "6aa20fa7-93e2-5fca-9bc0-fbd0db3c71a2"
 
 [compat]
