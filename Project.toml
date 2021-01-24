@@ -18,6 +18,7 @@ TensorOperations = "6aa20fa7-93e2-5fca-9bc0-fbd0db3c71a2"
 [compat]
 Convex = "0.13.7, 0.14"
 DocStringExtensions = "0.8.3"
+MatrixEnsembles = "0.1"
 SCS = "0.7.0"
 StatsBase = "0.33.2"
 TensorOperations = "3.0.1"
