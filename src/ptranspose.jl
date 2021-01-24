@@ -25,8 +25,8 @@ function ptranspose(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, isystems::
     tensor = reshape(ρ, [dims; dims]...)
     perm = collect(1:(2offset))
     for s in systems
-        idx1 = findall(x->x==s, perm)[1]
-        idx2 = findall(x->x==(s + offset), perm)[1]
+        idx1 = findfirst(x->x==s, perm)
+        idx2 = findfirst(x->x==(s + offset), perm)
         perm[idx1], perm[idx2] = perm[idx2], perm[idx1]
     end
     tensor = permutedims(tensor, invperm(perm))
@@ -40,3 +40,30 @@ $(SIGNATURES)
 - `sys`: transposed subsystem.
 """
 ptranspose(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, sys::Int) = ptranspose(ρ, idims, [sys])
+
+function _ptranspose(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, isystems::Vector{Int})
+    ns = length(idims)
+
+    ex1 = Expr(:ref, :x)
+    ex2 = Expr(:ref, ρ)
+
+    I = Expr(:tuple, [gensym() for _=1:ns]...)
+    J = Expr(:tuple, [gensym() for _=1:ns]...)
+
+    K = copy(I)
+    L = copy(J)
+
+    r = Expr(:tuple)
+    for (k, (i, j)) in enumerate(zip(K.args, L.args))
+        push!(r.args, :($i:$(idims[k])), :($j:$(idims[k])))
+    end
+    for s in isystems
+        K.args[s], L.args[s] = L.args[s], K.args[s]
+    end
+    push!(ex1.args, I, J)
+    push!(ex2.args, L, K)
+
+    ex = Expr(:(:=), ex1, ex2)
+    ex, r
+    @eval @cast $ex $r
+end

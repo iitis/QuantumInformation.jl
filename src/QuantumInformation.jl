@@ -5,6 +5,7 @@ module QuantumInformation
 using LinearAlgebra
 using DocStringExtensions
 using TensorOperations
+using TensorCast
 using Convex, SCS
 using Random: AbstractRNG, GLOBAL_RNG
 
