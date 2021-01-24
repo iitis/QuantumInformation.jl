@@ -7,13 +7,13 @@
   
   res1 = ptranspose(ρ, [2, 2], [1])
   res2 = ptranspose(ρ, [2, 2], [2])
-  
+
   @test norm(res1 - trans1) ≈ 0. atol=1e-15
   @test norm(res2 - trans2) ≈ 0. atol=1e-15
 
-  @test_throws DimensionMismatch ptranspose(ones(2, 3), [2, 2], 1)
-  @test_throws DimensionMismatch ptranspose(ones(4, 4), [2, 3], 1)
-  @test_throws BoundsError ptranspose(ones(4, 4), [2, 2], 3)
+  @test_throws ArgumentError ptranspose(ones(2, 3), [2, 2], 1)
+  @test_throws ArgumentError ptranspose(ones(4, 4), [2, 3], 1)
+  @test_throws ArgumentError ptranspose(ones(4, 4), [2, 2], 3)
 end
 
 end

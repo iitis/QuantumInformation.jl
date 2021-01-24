@@ -48,13 +48,13 @@ $(SIGNATURES)
 """
 function ptrace(ψ::AbstractVector{<:Number}, idims::Vector{Int}, sys::Int)
     # TODO : Allow mutlipartite systems
+    length(idims) == 2 ? () : throw(ArgumentError("idims has to be of length 2"))
     _, cols = idims
     m = unres(ψ, cols)
-    length(idims) == 2 ? () : throw(ArgumentError("idims has to be of length 2"))
     if sys == 1
         return transpose(m) * conj.(m)
     elseif sys == 2
-        return m * transpose(conj.(m))
+        return m * m'
     else
         throw(ArgumentError("sys must be 1 or 2"))
     end

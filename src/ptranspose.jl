@@ -25,8 +25,8 @@ function ptranspose(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, isystems::
     tensor = reshape(ρ, [dims; dims]...)
     perm = collect(1:(2offset))
     for s in systems
-        idx1 = findall(x->x==s, perm)[1]
-        idx2 = findall(x->x==(s + offset), perm)[1]
+        idx1 = findfirst(x->x==s, perm)
+        idx2 = findfirst(x->x==(s + offset), perm)
         perm[idx1], perm[idx2] = perm[idx2], perm[idx1]
     end
     tensor = permutedims(tensor, invperm(perm))
