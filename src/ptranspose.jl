@@ -7,7 +7,7 @@ $(SIGNATURES)
 
 Return [partial transposition](http://en.wikipedia.org/wiki/Peres-Horodecki_criterion) of matrix `ρ` over the subsystems determined by `isystems`.
 """
-function _ptranspose(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, isystems::Vector{Int})
+function ptranspose(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, isystems::Vector{Int})
     dims = reverse(idims)
     systems = length(idims) .- isystems .+ 1
 
@@ -41,7 +41,7 @@ $(SIGNATURES)
 """
 ptranspose(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, sys::Int) = ptranspose(ρ, idims, [sys])
 
-function ptranspose(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, isystems::Vector{Int})
+function _ptranspose(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, isystems::Vector{Int})
     ns = length(idims)
 
     ex1 = Expr(:ref, :x)
