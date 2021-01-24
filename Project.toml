@@ -15,7 +15,7 @@ StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 TensorOperations = "6aa20fa7-93e2-5fca-9bc0-fbd0db3c71a2"
 
 [compat]
-Convex = "0.13.7"
+Convex = "0.13.7, 0.14"
 DocStringExtensions = "0.8.3"
 SCS = "0.7.0"
 StatsBase = "0.33.2"
