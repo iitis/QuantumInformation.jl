@@ -251,3 +251,42 @@ function concurrence(ρ::AbstractMatrix{<:Number})
     λ = sqrt.(sort(real(eigvals(ρ*σ)), rev=true))
     max(0, λ[1]-λ[2]-λ[3]-λ[4])
 end
+
+"""
+$(SIGNATURES)
+- `ρ`: quantum state.
+- `Φ`: quantum state.
+- `Ψ`: quantum state.
+
+Calculates the non optimized part of expression in channel relative entropy formula. The expression $D(\Phi\|\Psi) = \sup_{\rho_{AR} \in \Ln(\mathcal(X)_A \otimes \mathcal(X)_R)} 
+D\Big((\Phi\otimes\Id)(\rho_{AR})\|(\Psi\otimes\Id)(\rho_{AR})\Big)$ was introduced in [Entropy of a quantum channel](https://arxiv.org/abs/1808.06980).
+
+TODO:
+- add test,
+- maybe optimization can be added in future.
+"""
+function channel_relative_entropy(ρ::AbstractMatrix{<:Number}, Φ::AbstractQuantumOperation, Ψ::AbstractQuantumOperation) 
+    rdim = size(ρ)[1]
+    dim1 = Φ.idim
+    dim2 = Ψ.idim
+    
+    if rdim <= dim1 || mod(rdim,dim1)≠0
+        throw(ArgumentError("Inconsistent dimension between Φ and ρ."))
+    end
+    if rdim <= dim2 || mod(rdim,dim2)≠0
+        throw(ArgumentError("Inconsistent dimension between Ψ and ρ."))
+    end
+    rdim/dim1
+    a = (Φ⊗IdentityChannel(Int(rdim/dim1)))(ρ)
+    
+    if norm(a-a') > 1.0e-15
+        throw(ArgumentError("Φ⊗Id(ρ) is not hermitian."))
+    end
+    
+    b = (Ψ⊗IdentityChannel(Int(rdim/dim2)))(ρ)
+    if norm(a-a') > 1.0e-15
+        throw(ArgumentError("Φ⊗Id(ρ) is not hermitian."))
+    end
+
+    relative_entropy(Hermitian(a),Hermitian(b))   
+end
