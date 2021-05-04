@@ -5,7 +5,7 @@ export reshuffle
 #   Given multiindexed matrix M_{(m,μ),(n,ν)} it returns
 #   matrix M_{(m,n),(μ,ν)}.
 # """
-function reshuffle(ρ::AbstractMatrix{<:Number}, dims::Matrix{Int})
+function reshuffle(ρ::AbstractMatrix, dims::Matrix{Int})
   m, n, μ, ν  = dims
   tensor = reshape(ρ, μ, m, ν, n)
   perm = [4, 2, 3, 1]
@@ -20,7 +20,7 @@ end
   Given multiindexed matrix \$M_{(m,μ),(n,ν)}\$ it returns
   matrix \$M_{(m,n),(μ,ν)}\$.
 """
-function reshuffle(ρ::AbstractMatrix{<:Number})
+function reshuffle(ρ::AbstractMatrix)
     (r, c) = size(ρ)
     sqrtr = isqrt(r)
     sqrtc = isqrt(c)
