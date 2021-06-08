@@ -8,7 +8,7 @@ $(SIGNATURES)
 
 Return [partial trace](https://en.wikipedia.org/wiki/Partial_trace) of matrix `ρ` over the subsystems determined by `isystems`.
 """
-function ptrace(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, isystems::Vector{Int})
+function ptrace(ρ::AbstractMatrix, idims::Vector{Int}, isystems::Vector{Int})
     dims = reverse(idims)
     systems = length(idims) .- isystems .+ 1
 
@@ -38,7 +38,7 @@ $(SIGNATURES)
 - `idims`: dimensins of subsystems.
 - `sys`: traced subsystem.
 """
-ptrace(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, sys::Int) = ptrace(ρ, idims, [sys])
+ptrace(ρ::AbstractMatrix, idims::Vector{Int}, sys::Int) = ptrace(ρ, idims, [sys])
 
 """
 $(SIGNATURES)
@@ -46,7 +46,7 @@ $(SIGNATURES)
 - `idims`: dimensins of subsystems - only bipartite states accepted.
 - `sys`: traced subsystem.
 """
-function ptrace(ψ::AbstractVector{<:Number}, idims::Vector{Int}, sys::Int)
+function ptrace(ψ::AbstractVector, idims::Vector{Int}, sys::Int)
     # TODO : Allow mutlipartite systems
     length(idims) == 2 ? () : throw(ArgumentError("idims has to be of length 2"))
     _, cols = idims
