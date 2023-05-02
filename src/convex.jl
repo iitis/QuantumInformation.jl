@@ -1,5 +1,7 @@
 export norm_diamond, diamond_distance
 
+const MOI = Convex.MOI
+
 """
 $(SIGNATURES)
 - `Φ`: DynamicalMatrix
@@ -25,7 +27,11 @@ function norm_diamond(Φ::DynamicalMatrix, ::Val{:primal}, eps)
     constraints += [𝕀(d2) ⊗ ρ₀ X; X' 𝕀(d2) ⊗ ρ₁] in :SDP
 
     problem = maximize(t, constraints)
-    solve!(problem, () -> SCS.Optimizer(verbose=false, eps=eps))
+    solve!(
+        problem,
+        MOI.OptimizerWithAttributes(SCS.Optimizer, "eps_abs" => eps);
+        silent_solver = true
+    )
     problem.optval
 end
 
@@ -38,7 +44,7 @@ function norm_diamond(Φ::DynamicalMatrix, ::Val{:dual}, eps)
     Y₀ = ComplexVariable(d1*d2, d1*d2)
     Y₁ = ComplexVariable(d1*d2, d1*d2)
 
-	t = 0.5*sigmamax(partialtrace(Y₀, 1, [d2,d1])) + 
+	t = 0.5*sigmamax(partialtrace(Y₀, 1, [d2,d1])) +
 		0.5*sigmamax(partialtrace(Y₁, 1, [d2,d1]))
 	Z = [Y₀ -J; -J' Y₁ ]
 
@@ -46,7 +52,11 @@ function norm_diamond(Φ::DynamicalMatrix, ::Val{:dual}, eps)
     constraints += Z+Z' in :SDP
 
     problem = minimize(t, constraints)
-    solve!(problem, () -> SCS.Optimizer(verbose=false, eps=eps))
+    solve!(
+        problem,
+        MOI.OptimizerWithAttributes(SCS.Optimizer, "eps_abs" => eps);
+        silent_solver = true
+    )
     problem.optval
 end
 

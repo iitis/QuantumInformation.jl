@@ -1,7 +1,7 @@
 name = "QuantumInformation"
 uuid = "3c0b384b-479c-5684-b2ef-9d7a46dd931e"
 authors = ["Dariusz Kurzyk <dkurzyk@iitis.pl>", "Łukasz Pawela <lpawela@iitis.pl>", "Piotr Gawron <gawron@iitis.pl>", "Marcin Przewięźlikowski <m.przewie@gmail.com>"]
-version = "0.4.8"
+version = "0.4.9"
 
 [deps]
 Convex = "f65535da-76fb-5f13-bab9-19810c17039a"
@@ -17,13 +17,13 @@ TensorOperations = "6aa20fa7-93e2-5fca-9bc0-fbd0db3c71a2"
 
 [compat]
 Convex = "0.13.7, 0.14, 0.15"
-DocStringExtensions = "0.8.3"
+DocStringExtensions = "0.8.3, 0.9"
 MatrixEnsembles = "0.1"
-SCS = "0.7.0"
+SCS = "1.1.0"
 StatsBase = "0.33.2"
 TensorCast = "0.3.2, 0.4"
 TensorOperations = "3.0.1"
-julia = "1.4, 1.5"
+julia = "1.7"
 
 [extras]
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"

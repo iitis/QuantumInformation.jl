@@ -5,7 +5,7 @@ import Random: seed!
     seed!(42)
     c = ChoiJamiolkowskiMatrices(3, 4)
     Φ = rand(c)
-    @test norm_diamond(Φ) ≈ 1 atol=1e-6
+    @test norm_diamond(Φ) ≈ 1 atol=1e-5
 end
 
 @testset "diamond distance" begin
@@ -27,6 +27,6 @@ end
 @testset "diamond norm dual" begin
     c = ChoiJamiolkowskiMatrices(3, 4)
     Φ = rand(c)
-    @test norm_diamond(Φ, :dual) ≈ 1 atol=1e-6
+    @test norm_diamond(Φ, :dual) ≈ 1 atol=1e-4
 end
 end
