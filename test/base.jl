@@ -52,6 +52,33 @@ end
     @test norm(ϕϕ - ψψ) ≈ 0.
 end
 
+@testset "bloch_vector" begin
+    @testset "Test 1: Identity matrix" begin
+        ρ = Matrix{ComplexF64}(I, 2, 2)
+        @test bloch_vector(ρ) ≈ ComplexF64[0.0, 0.0, 1.0]
+    end
+
+    @testset "Test 2: X basis state" begin
+        ρ = [0.5 0.5; 0.5 0.5]
+        @test bloch_vector(ρ) ≈ Float64[1.0, 0.0, 0.0]
+    end
+
+    @testset "Test 3: Y basis state" begin
+        ρ = [0.5 0.5im; -0.5im 0.5]
+        @test bloch_vector(ρ) ≈ ComplexF64[0.0, 1.0, 0.0]
+    end
+
+    @testset "Test 4: Z basis state" begin
+        ρ = [1.0 0.0; 0.0 0.0]
+        @test bloch_vector(ρ) ≈ Float64[0.0, 0.0, 1.0]
+    end
+
+    @testset "Test 5: Arbitrary density matrix" begin
+        ρ = [0.6 0.3-0.2im; 0.3+0.2im 0.4]
+        @test bloch_vector(ρ) ≈ ComplexF64[0.6, -0.4, 0.2]
+    end
+end
+
 @testset "res" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     ϕ = res(ρ)

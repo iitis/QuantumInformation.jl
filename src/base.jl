@@ -1,4 +1,4 @@
-export ket, bra, ketbra, proj, res, unres, max_mixed, max_entangled,
+export ket, bra, ketbra, proj, bloch_vector, res, unres, max_mixed, max_entangled,
     werner_state, permutesystems
 
 function ket(::Type{T}, val::Int, dim::Int) where T<:AbstractVector{<:Number}
@@ -75,7 +75,19 @@ Return outer product \$|ket\\rangle\\langle ket|\$ of `ket`.
 """
 proj(ψ::AbstractVector{<:Number}) = ψ * ψ'
 
+"""
+$(SIGNATURES)
+- `ρ`: input qubit density matrix.
 
+Return the Bloch vector corresponding to the inpu quit state.
+"""
+function bloch_vector(ρ::AbstractMatrix{T}) where {T <: Number}
+    @assert size(ρ) == (2, 2)
+    x = 2real(ρ[1, 2])
+    y = 2imag(ρ[1, 2])
+    z = 2real(ρ[1, 1]) - 1
+    T[x, y, z]
+end
 
 """
 $(SIGNATURES)
