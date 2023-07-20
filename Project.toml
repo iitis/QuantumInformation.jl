@@ -22,7 +22,7 @@ MatrixEnsembles = "0.1"
 SCS = "1.1.0"
 StatsBase = "0.33.2, 0.34"
 TensorCast = "0.3.2, 0.4"
-TensorOperations = "3.0.1"
+TensorOperations = "3.0.1, 4"
 julia = "1.7"
 
 [extras]
