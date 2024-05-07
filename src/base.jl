@@ -98,7 +98,7 @@ Returns `vec(ρ.T)`. Reshaping maps
 """
 res(ρ::AbstractMatrix{<:Number}) = @cast x[(j, i)] := ρ[i, j]
 
-unres(ϕ::AbstractVector{<:Number}, cols::Int) = @cast x[i, j] := ϕ[(j, i)] j:cols
+unres(ϕ::AbstractVector{<:Number}, cols::Int) = @cast x[i, j] := ϕ[(j, i)] j in 1:cols
 
 """
 $(SIGNATURES)
