@@ -13,7 +13,7 @@ end
 ket(::Type{T}, val::Int, dim::Int) where T<:Number = ket(Vector{T}, val, dim)
 
 """
-$(SIGNATURES)
+
 - `val`: non-zero entry - label.
 - `dim`: length of the vector.
 
@@ -26,7 +26,7 @@ bra(::Type{T}, val::Int, dim::Int) where T<:AbstractVector{<:Number} = ket(T, va
 bra(::Type{T}, val::Int, dim::Int) where T<:Number = bra(Vector{T}, val, dim)
 
 """
-$(SIGNATURES)
+
 - `val`: non-zero entry - label.
 - `dim`: length of the vector
 
@@ -47,7 +47,7 @@ ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:AbstractMatrix{<:Numb
 ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:Number = ketbra(Matrix{T}, valk, valb, dim)
 
 """
-$(SIGNATURES)
+
 - `valk`: non-zero entry - label.
 - `valb`: non-zero entry - label.
 - `dim`: length of the ket and bra vectors
@@ -68,7 +68,7 @@ ketbra(valk::Int, valb::Int, dim::Int) = ketbra(ComplexF64, valk, valb, dim)
 ketbra(valk::Int, valb::Int, idim::Int, odim::Int) = ketbra(Matrix{ComplexF64}, valk, valb, idim, odim)
 
 """
-$(SIGNATURES)
+
 - `ket`: input column vector.
 
 Return outer product \$|ket\\rangle\\langle ket|\$ of `ket`.
@@ -76,7 +76,7 @@ Return outer product \$|ket\\rangle\\langle ket|\$ of `ket`.
 proj(ψ::AbstractVector{<:Number}) = ψ * ψ'
 
 """
-$(SIGNATURES)
+
 - `ρ`: input qubit density matrix.
 
 Return the Bloch vector corresponding to the inpu quit state.
@@ -90,7 +90,7 @@ function bloch_vector(ρ::AbstractMatrix{T}) where {T <: Number}
 end
 
 """
-$(SIGNATURES)
+
 - `ρ`: input matrix.
 
 Returns `vec(ρ.T)`. Reshaping maps
@@ -101,7 +101,7 @@ res(ρ::AbstractMatrix{<:Number}) = @cast x[(j, i)] := ρ[i, j]
 unres(ϕ::AbstractVector{<:Number}, cols::Int) = @cast x[i, j] := ϕ[(j, i)] j in 1:cols
 
 """
-$(SIGNATURES)
+
 - `ϕ`: input matrix.
 
 Return de-reshaping of the vector into a matrix.
@@ -114,7 +114,7 @@ end
 
 
 """
-$(SIGNATURES)
+
 - `d`: length of the vector.
 
 Return maximally mixed state \$\\frac{1}{d}\\sum_{i=0}^{d-1}|i\\rangle\\langle i |\$ of length \$d\$.
@@ -122,7 +122,7 @@ Return maximally mixed state \$\\frac{1}{d}\\sum_{i=0}^{d-1}|i\\rangle\\langle i
 max_mixed(d::Int) = I(d)/d
 
 """
-$(SIGNATURES)
+
 - `d`: length of the vector.
 
 Return maximally entangled state \$\\frac{1}{\\sqrt{d}}\\sum_{i=0}^{\\sqrt{d}-1}|ii\\rangle\$ of length \$\\sqrt{d}\$.
@@ -135,7 +135,7 @@ function max_entangled(d::Int)
 end
 
 """
-$(SIGNATURES)
+
 - `d`: length of the vector.
 - `α`: real number from [0, 1].
 
@@ -150,7 +150,7 @@ function werner_state(d::Int, α::Float64)
 end
 
 """
-$(SIGNATURES)
+
 - `ρ`: input state.
 - `dims`: dimensions of registers of `ρ`.
 - `systems`: permuted registers.

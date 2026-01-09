@@ -6,7 +6,7 @@ export ispovm, iseffect, iscp, istp, istni, iscptp, iscptni, isidentity,
 # CP
 ################################################################################
 """
-$(SIGNATURES)
+
 - `Φ`: A subtype of AbstractQuantumOperation.
 - `atol`: tolerance of approximation.
 
@@ -42,7 +42,7 @@ end
 # TNI
 ################################################################################
 """
-$(SIGNATURES)
+
 - `Φ`: A subtype of AbstractQuantumOperation.
 - `atol`: tolerance of approximation.
 
@@ -78,7 +78,7 @@ end
 # TP
 ################################################################################
 """
-$(SIGNATURES)
+
 - `Φ`: A subtype of AbstractQuantumOperation.
 - `atol`: tolerance of approximation.
 
@@ -113,10 +113,24 @@ end
 ################################################################################
 # CPTP, CPTNI
 ################################################################################
+"""
+
+- `Φ`: A subtype of AbstractQuantumOperation.
+- `atol`: tolerance of approximation.
+
+Checks if an object is completely positive and trace preserving.
+"""
 function iscptp(Φ::AbstractQuantumOperation; atol=1e-13)
     iscp(Φ, atol=atol) && istp(Φ, atol=atol)
 end
 
+"""
+
+- `Φ`: A subtype of AbstractQuantumOperation.
+- `atol`: tolerance of approximation.
+
+Checks if an object is completely positive and trace non-increasing.
+"""
 function iscptni(Φ::AbstractQuantumOperation; atol=1e-13)
     iscp(Φ, atol=atol) && istni(Φ, atol=atol)
 end
@@ -124,10 +138,22 @@ end
 ################################################################################
 # Measurements
 ################################################################################
+"""
+
+- `Φ`: POVM Measurement.
+
+Checks if a set of matrices forms a valid POVM (Positive Operator-Valued Measure).
+"""
 function ispovm(Φ::POVMMeasurement{<:AbstractMatrix{<:Number}})
     isidentity(sum(Φ.matrices))
 end
 
+"""
+
+- `Φ`: Post-selection Measurement.
+
+Checks if a matrix represents a valid quantum effect (0 <= E <= I).
+"""
 function iseffect(Φ::PostSelectionMeasurement{<:AbstractMatrix{<:Number}})
     e = Φ.matrix
     m = e'*e

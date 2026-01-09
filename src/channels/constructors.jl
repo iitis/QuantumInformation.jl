@@ -9,7 +9,7 @@ export AbstractQuantumOperation, KrausOperators, SuperOperator, DynamicalMatrix,
 abstract type AbstractQuantumOperation{T<:AbstractMatrix{<:Number}} end
 
 """
-$(SIGNATURES)
+
 - `T`: quantum channel map.
 
 Representation of quantum channel by Kraus operators.
@@ -42,7 +42,7 @@ function orthogonalize(Φ::KrausOperators{T}) where {T<:AbstractMatrix{<:Number}
 end
 
 """
-$(SIGNATURES)
+
 - `T`: quantum channel map.
 
 Representation of quantum channel by super-operator.
@@ -69,7 +69,7 @@ function SuperOperator{T1}(m::T2, idim::Int, odim::Int) where {T1<:AbstractMatri
 end
 
 """
-$(SIGNATURES)
+
 - `channel`: quantum channel map.
 - `idim`: square root of the [super-operator](https://en.wikipedia.org/wiki/Superoperator) matrix input dimension.
 - `odim`: square root of the [super-operator](https://en.wikipedia.org/wiki/Superoperator) matrix output dimension.
@@ -87,7 +87,7 @@ function SuperOperator{T}(channel::Function, idim::Int, odim::Int) where T<:Abst
 end
 
 """
-$(SIGNATURES)
+
 - `T`: quantum channel map.
 
 Representation of quantum channel by Dynamical matrix operators.
@@ -106,7 +106,7 @@ struct DynamicalMatrix{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{
 end
 
 """
-$(SIGNATURES)
+
 - `T`: quantum channel map.
 
 Stinespring representation of quantum channel.
@@ -125,7 +125,7 @@ struct Stinespring{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
 end
 
 """
-$(SIGNATURES)
+
 - `T`: quantum channel map.
 
 Representation of unitary channel.
@@ -147,7 +147,7 @@ function UnitaryChannel{T1}(m::T2, idim::Int, odim::Int) where {T1<:AbstractMatr
 end
 
 """
-$(SIGNATURES)
+
 - `T`: quantum channel map.
 
 Representation of identity channel.

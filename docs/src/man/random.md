@@ -107,6 +107,29 @@ ptrace(Φ.matrix, [3, 2],[1])
 ```
 Note that the resulting sample is of type `DynamicalMatrix`.
 
+## Random Matrix Ensembles
+
+The package provides support for sampling from various random matrix ensembles.
+
+### Ginibre Ensemble
+The Ginibre ensemble allows sampling non-Hermitian random matrices.
+```@repl QuantumInformation
+rand(GinibreEnsemble(ComplexF64, 3, 3))
+```
+
+### Circular Ensembles
+Circular ensembles (COE, CUE, CSE) are available for sampling unitary matrices distributed according to Haar measure.
+```@repl QuantumInformation
+rand(CUE(3))
+```
+
+### Wishart Ensemble
+The Wishart ensemble is used for sampling random positive semi-definite matrices.
+```@repl QuantumInformation
+rand(WishartEnsemble(3, 3))
+```
+
+
 ## [References](@id refs_rand)
 
 [1] B. Collins, I. Nechita, *Random matrix techniques in quantum information theory*, Journal of Mathematical Physics, 2016;57(1):015215.

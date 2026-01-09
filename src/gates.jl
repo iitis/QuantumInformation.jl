@@ -14,7 +14,7 @@ end
 
 
 """
-$(SIGNATURES)
+
 - `d`: dimension of operator.
 
 Prepares gate realized a [quantum Fourier transform](https://en.wikipedia.org/wiki/Quantum_Fourier_transform) of dimension `d`.
@@ -22,7 +22,7 @@ Prepares gate realized a [quantum Fourier transform](https://en.wikipedia.org/wi
 qft(d::Int) = [exp(2π*1im*i*j/d) for i=0:d-1, j=0:d-1]/sqrt(d)
 
 """
-$(SIGNATURES)
+
 - `d`: dimension of operator.
 
 Prepares [Grover operator](https://en.wikipedia.org/wiki/Grover%27s_algorithm) of dimension `d`.
@@ -30,7 +30,7 @@ Prepares [Grover operator](https://en.wikipedia.org/wiki/Grover%27s_algorithm) o
 grover(dim::Int) = ones(ComplexF64,dim,dim)*2/dim - I
 
 """
-$(SIGNATURES)
+
 - `d`: dimension of operator.
 
 Prepares [Hadamard operator](https://en.wikipedia.org/wiki/Hadamard_transform) of dimension `d`.

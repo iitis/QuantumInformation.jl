@@ -1,6 +1,6 @@
 export ptranspose
 """
-$(SIGNATURES)
+
 - `ρ`: quantum state.
 - `idims`: dimensins of subsystems.
 - `isystems`: transposed subsystems.
@@ -34,7 +34,7 @@ function ptranspose(ρ::AbstractMatrix, idims::Vector{Int}, isystems::Vector{Int
 end
 
 """
-$(SIGNATURES)
+
 - `ρ`: quantum state.
 - `idims`: dimensins of subsystems.
 - `sys`: transposed subsystem.

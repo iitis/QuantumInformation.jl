@@ -19,6 +19,7 @@ makedocs(
             "man/states.md",
             "man/functionals.md",
             "man/measurement.md",
+            "man/channels.md",
             "man/random.md"
         ],
         "Library" => "lib/QuantumInformation.md"

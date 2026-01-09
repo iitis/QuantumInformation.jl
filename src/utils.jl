@@ -2,6 +2,13 @@ export number2mixedradix, mixedradix2number,
     funcmh, funcmh!, renormalize!
     # realdiag, realdiag!
 
+"""
+
+- `n`: Number to be converted (integer).
+- `radices`: Vector of mixed radices.
+
+Returns the representation of `n` in the mixed radix system defined by `radices`.
+"""
 function number2mixedradix(n::Int, radices::Vector{Int})
     n >= prod(radices) ? throw(ArgumentError("number to big to transform")) : ()
 
@@ -12,6 +19,13 @@ function number2mixedradix(n::Int, radices::Vector{Int})
     digits
 end
 
+"""
+
+- `digits`: Vector of coefficients in mixed radix representation.
+- `radices`: Vector of mixed radices.
+
+Returns the integer number corresponding to the mixed radix representation.
+"""
 function mixedradix2number(digits::Vector{Int}, radices::Vector{Int})
     length(digits)>length(radices) ? throw(ArgumentError("more digits than radices")) : ()
 
@@ -24,6 +38,12 @@ function mixedradix2number(digits::Vector{Int}, radices::Vector{Int})
     res
 end
 
+"""
+
+- `ψ`: Input vector.
+
+Renormalizes the vector `ψ` in-place so that its norm is 1.
+"""
 function renormalize!(ψ::AbstractVector{<:Number})
     n = norm(ψ)
     for i=1:length(ψ)
@@ -31,6 +51,12 @@ function renormalize!(ψ::AbstractVector{<:Number})
     end
 end
 
+"""
+
+- `ρ`: Input matrix.
+
+Renormalizes the matrix `ρ` in-place so that its trace is 1.
+"""
 function renormalize!(ρ::AbstractMatrix{<:Number})
     t = tr(ρ)
     for i=1:length(ρ)
@@ -90,6 +116,13 @@ function funcmh(f::Function, h::Matrix{T}) where T<:Union{Real, Complex}
     ishermitian(h) ? funcmh(f, Hermitian(h)) : error("Non-hermitian matrix passed to funcmh")
 end
 
+"""
+
+- `ρ`: Input matrix.
+- `atol`: Absolute tolerance.
+
+Checks if the matrix `ρ` is approximately the identity matrix.
+"""
 function isidentity(ρ::AbstractMatrix{<:Number}; atol=1e-13)
     rows, cols = size(ρ)
     if rows!=cols
@@ -99,6 +132,13 @@ function isidentity(ρ::AbstractMatrix{<:Number}; atol=1e-13)
     isapprox(ρ, I, atol=atol)
 end
 
+"""
+
+- `ρ`: Input matrix.
+- `atol`: Absolute tolerance.
+
+Checks if the matrix `ρ` is positive semi-definite.
+"""
 function ispositive(ρ::AbstractMatrix{<:Number}; atol=1e-13)
     rows, cols = size(ρ)
     if rows!=cols

@@ -5,7 +5,7 @@ export norm_trace, trace_distance, norm_hs, hs_distance,
     log_negativity, ppt, concurrence
 
 """
-$(SIGNATURES)
+
 - `A`: matrix.
 
 Return [trace norm](https://www.quantiki.org/wiki/trace-norm) of matrix `A`.
@@ -13,7 +13,7 @@ Return [trace norm](https://www.quantiki.org/wiki/trace-norm) of matrix `A`.
 norm_trace(A::AbstractMatrix{<:Number}) = sum(svdvals(A))
 
 """
-$(SIGNATURES)
+
 - `A`: matrix.
 - `B`: matrix.
 
@@ -24,7 +24,7 @@ function trace_distance(A::AbstractMatrix{T1}, B::AbstractMatrix{T2}) where {T1<
 end
 
 """
-$(SIGNATURES)
+
 - `A`: matrix.
 
 Return [Hilbert–Schmidt norm](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Schmidt_operator) of matrix `A`.
@@ -32,7 +32,7 @@ Return [Hilbert–Schmidt norm](https://en.wikipedia.org/wiki/Hilbert%E2%80%93Sc
 norm_hs(A::AbstractMatrix{<:Number}) = sqrt(sum(abs2.(A)))
 
 """
-$(SIGNATURES)
+
 - `A`: matrix.
 - `B`: matrix.
 
@@ -43,7 +43,7 @@ function hs_distance(A::AbstractMatrix{<:Number}, B::AbstractMatrix{<:Number})
 end
 
 """
-$(SIGNATURES)
+
 - `ρ`: matrix.
 
 Return the purity of `ρ` ∈ [1/d, 1]
@@ -51,7 +51,7 @@ Return the purity of `ρ` ∈ [1/d, 1]
 purity(ρ::AbstractMatrix{<:Number}) = tr(ρ^2)
 
 """
-$(SIGNATURES)
+
 - `ρ`: matrix.
 - `σ`: matrix.
 
@@ -66,7 +66,7 @@ function fidelity_sqrt(ρ::AbstractMatrix{<:Number}, σ::AbstractMatrix{<:Number
 end
 
 """
-$(SIGNATURES)
+
 - `ρ`: matrix.
 - `σ`: matrix.
 
@@ -81,7 +81,7 @@ fidelity(ϕ::AbstractVector{<:Number}, ρ::AbstractMatrix{<:Number}) = real(ϕ' 
 fidelity(ρ::AbstractMatrix{<:Number}, ϕ::AbstractVector{<:Number}) = fidelity(ϕ, ρ)
 
 """
-$(SIGNATURES)
+
 - `U`: quantum gate.
 - `V`: quantum gate.
 
@@ -92,7 +92,7 @@ function gate_fidelity(U::AbstractMatrix{<:Number}, V::AbstractMatrix{<:Number})
 end
 
 """
-$(SIGNATURES)
+
 - `p`: vector.
 
 Return [Shannon entorpy](https://en.wikipedia.org/wiki/Entropy_(information_theory)) of vector `p`.
@@ -100,7 +100,7 @@ Return [Shannon entorpy](https://en.wikipedia.org/wiki/Entropy_(information_theo
 shannon_entropy(p::AbstractVector{<:Real}) = -sum(p .* log.(p))
 
 """
-$(SIGNATURES)
+
 - `x`: real number.
 
 Return binary [Shannon entorpy](https://en.wikipedia.org/wiki/Entropy_(information_theory)) given by \$-x  \\log(x) - (1 - x)  \\log(1 - x)\$.
@@ -108,7 +108,7 @@ Return binary [Shannon entorpy](https://en.wikipedia.org/wiki/Entropy_(informati
 shannon_entropy(x::Real) = x > 0 ? -x * log(x) - (1 - x) * log(1 - x) : error("Negative number passed to shannon_entropy")
 
 """
-$(SIGNATURES)
+
 - `ρ`: quantum state.
 
 Return [Von Neumann entropy](https://en.wikipedia.org/wiki/Von_Neumann_entropy) of quantum state `ρ`.
@@ -121,7 +121,15 @@ end
 vonneumann_entropy(H::AbstractMatrix{<:Number}) = ishermitian(H) ? vonneumann_entropy(Hermitian(H)) : error("Non-hermitian matrix passed to entropy")
 vonneumann_entropy(ϕ::AbstractVector{T}) where T<:Number = zero(T)
 
+"""
+
+- `ρ`: quantum state.
+- `α`: order of Renyi entropy.
+
+Return [Renyi entropy](https://en.wikipedia.org/wiki/R%C3%A9nyi_entropy) of quantum state `ρ`.
+"""
 function renyi_entropy(ρ::Hermitian{<:Number}, α::Real)
+
     α >= 0 && α!=1 ? () : throw(ArgumentError("Parameter α must be α ≥ 0 and α ≠ 1"))
     λ = eigvals(ρ)
     λ = λ[λ .> 0]
@@ -130,7 +138,7 @@ end
 
 renyi_entropy(ρ::AbstractMatrix{<:Number}, α::Real) = renyi_entropy(Hermitian(ρ), α)
 """
-$(SIGNATURES)
+
 - `ρ`: quantum state.
 - `σ`: quantum state.
 
@@ -142,7 +150,7 @@ function relative_entropy(ρ::AbstractMatrix{<:Number}, σ::AbstractMatrix{<:Num
 end
 
 """
-$(SIGNATURES)
+
 - `ρ`: quantum state.
 - `σ`: quantum state.
 
@@ -153,7 +161,7 @@ function kl_divergence(ρ::AbstractMatrix{<:Number}, σ::AbstractMatrix{<:Number
 end
 
 """
-$(SIGNATURES)
+
 - `ρ`: quantum state.
 - `σ`: quantum state.
 
@@ -164,7 +172,7 @@ function js_divergence(ρ::AbstractMatrix{<:Number}, σ::AbstractMatrix{<:Number
 end
 
 """
-$(SIGNATURES)
+
 - `ρ`: quantum state.
 - `σ`: quantum state.
 
@@ -175,7 +183,7 @@ function bures_distance(ρ::AbstractMatrix{<:Number}, σ::AbstractMatrix{<:Numbe
 end
 
 """
-$(SIGNATURES)
+
 - `ρ`: quantum state.
 - `σ`: quantum state.
 
@@ -186,7 +194,7 @@ function bures_angle(ρ::AbstractMatrix{<:Number}, σ::AbstractMatrix{<:Number})
 end
 
 """
-$(SIGNATURES)
+
 - `ρ`: quantum state.
 - `σ`: quantum state.
 
@@ -197,7 +205,7 @@ function superfidelity(ρ::AbstractMatrix{<:Number}, σ::AbstractMatrix{<:Number
 end
 
 """
-$(SIGNATURES)
+
 - `ρ`: quantum state.
 - `dims`: dimensions of subsystems.
 - `sys`: transposed subsystem.
@@ -211,7 +219,7 @@ function negativity(ρ::AbstractMatrix{<:Number}, dims::Vector{Int}, sys::Int)
 end
 
 """
-$(SIGNATURES)
+
 - `ρ`: quantum state.
 - `dims`: dimensions of subsystems.
 - `sys`: transposed subsystem.
@@ -224,7 +232,7 @@ function log_negativity(ρ::AbstractMatrix{<:Number}, dims::Vector{Int}, sys::In
 end
 
 """
-$(SIGNATURES)
+
 - `ρ`: quantum state.
 - `dims`: dimensions of subsystems.
 - `sys`: transposed subsystem.
@@ -237,7 +245,7 @@ function ppt(ρ::AbstractMatrix{<:Number}, dims::Vector{Int}, sys::Int)
 end
 
 """
-$(SIGNATURES)
+
 - `ρ`: quantum state.
 
 Calculates the [concurrence of a two-qubit system](https://en.wikipedia.org/wiki/Concurrence_(quantum_computing)) `ρ`.

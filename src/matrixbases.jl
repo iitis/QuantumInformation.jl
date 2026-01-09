@@ -41,7 +41,7 @@ end
 
 
 """
-$(SIGNATURES)
+
 - `dim`: dimensions of the matrix.
 Returns elementary hermitian matrices of dimension `dim` x `dim`.
 """
@@ -79,6 +79,13 @@ end
 
 length(itr::ElementaryBasisIterator) = itr.idim * itr.odim
 
+"""
+
+- `basis`: A basis represented by a sub-type of `AbstractMatrixBasis`.
+- `m`: Matrix to be represented in the `basis`.
+
+Returns a vector of coefficients of the matrix `m` in the basis `basis`.
+"""
 function represent(basis::T, m::Matrix{<:Number}) where T<:AbstractMatrixBasis
     real.(tr.([m] .* basis.iterator))
 end
@@ -88,12 +95,19 @@ function represent(basis::Type{T}, m::Matrix{<:Number}) where T<:AbstractMatrixB
     represent(basis{typeof(m)}(d), m)
 end
 
+"""
+
+- `basis`: A basis represented by a sub-type of `AbstractMatrixBasis`.
+- `v`: Vector of coefficients.
+
+Returns a matrix constructed from the basis elements weighted by the coefficients in `v`.
+"""
 function combine(basis::AbstractMatrixBasis{T}, v::Vector{<:Number}) where T<:AbstractMatrix{<:Number}
     sum(basis.iterator .* v)
 end
 
 """
-$(SIGNATURES)
+
 
 """
 struct ChannelBasisIterator{T} <: AbstractMatrixBasisIterator{T} 
@@ -112,6 +126,14 @@ struct ChannelBasis{T} <: AbstractChannelBasis{T}
         new(ChannelBasisIterator{T}(idim, odim)) 
     end
 end
+"""
+
+- `T`: Type of the matrices in the basis.
+- `idim`: Input dimension.
+- `odim`: Output dimension.
+
+Returns a basis for quantum channels.
+"""
 channelbasis(T::Type{<:AbstractMatrix{<:Number}}, idim::Int, odim::Int=idim) = ChannelBasis{T}(idim, odim)
 
 channelbasis(idim::Int, odim::Int=idim) = channelbasis(Matrix{ComplexF64}, idim, odim)

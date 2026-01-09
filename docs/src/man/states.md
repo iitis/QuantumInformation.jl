@@ -120,6 +120,21 @@ $\rho^R_{(m,\mu),(n,\nu)}=\rho_{(m,n),(\mu,\nu)}$.
 reshuffle(ρ ⊗ σ)
 ```
 
+### Bloch Vector
+The Bloch vector representation of a qubit state $\rho$ is a vector $\vec{r} = (r_x, r_y, r_z)$ such that $\rho = \frac{1}{2}(I + \vec{r} \cdot \vec{\sigma})$.
+```@repl QuantumInformation
+ρ = [0.5 0.5; 0.5 0.5]
+bloch_vector(ρ)
+```
+
+### System Permutation
+The `permutesystems` function allows permuting subsystems of a composite quantum state.
+```@repl QuantumInformation
+ρ = rand(4,4)
+permutesystems(ρ, [2, 2], [2, 1])
+```
+
+
 ## Channels
 
 Physical transformations of quantum states into quantum

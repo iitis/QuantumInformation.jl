@@ -110,6 +110,24 @@ eigenvalues of $\rho$, then $S(\rho)$ can be written as $S(\rho)=-\sum_{i=1}^{n}
 vonneumann_entropy(0.4 * ρ + 0.6 * σ)
 ```
 
+[*Renyi entropy*](https://en.wikipedia.org/wiki/R%C3%A9nyi_entropy) separates the class of homonyms entropies like Shannon, Hartley, collision, and min-entropy. It is defined as
+$H_{\alpha}(\rho) = \frac{1}{1-\alpha}\log \mathrm{Tr} \rho^{\alpha}$.
+The limit for $\alpha \to 1$ yields the von Neumann entropy.
+```@repl QuantumInformation
+renyi_entropy(ρ, 0.5)
+```
+
+### Gate Fidelity
+The average gate fidelity between a unitary channel $\mathcal{E}$ and a unitary operator $U$ is defined as
+$F_{\text{avg}}(\mathcal{E}, U) = \int d\psi \langle \psi | U^\dagger \mathcal{E}(|\psi\rangle\langle\psi|) U | \psi \rangle$.
+For two unitary operators $U$ and $V$, this simplifies to:
+```@repl QuantumInformation
+U = Matrix{ComplexF64}(I, 2, 2)
+V = [0 1; 1 0]
+gate_fidelity(U, V)
+```
+
+
 ### Distinguishability between two quantum states
 One of the measure of distinguishability between two quantum states is a [*qauntum relative entropy*](https://en.wikipedia.org/wiki/Quantum_relative_entropy), called also Kullback–Leibler divergence, defined as
 $S(\rho\|\sigma)=-\mathrm{Tr}\rho\log\sigma + \mathrm{Tr}\rho\log\rho$

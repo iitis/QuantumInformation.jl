@@ -1,7 +1,7 @@
 export ptrace
 
 """
-$(SIGNATURES)
+
 - `ρ`: quantum state.
 - `idims`: dimensins of subsystems.
 - `isystems`: traced subsystems.
@@ -33,7 +33,7 @@ function ptrace(ρ::AbstractMatrix, idims::Vector{Int}, isystems::Vector{Int})
 end
 
 """
-$(SIGNATURES)
+
 - `ρ`: quantum state.
 - `idims`: dimensins of subsystems.
 - `sys`: traced subsystem.
@@ -41,7 +41,7 @@ $(SIGNATURES)
 ptrace(ρ::AbstractMatrix, idims::Vector{Int}, sys::Int) = ptrace(ρ, idims, [sys])
 
 """
-$(SIGNATURES)
+
 - `ψ`: quantum state pure state (ket).
 - `idims`: dimensins of subsystems - only bipartite states accepted.
 - `sys`: traced subsystem.

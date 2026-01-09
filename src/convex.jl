@@ -3,7 +3,7 @@ export norm_diamond, diamond_distance
 const MOI = Convex.MOI
 
 """
-$(SIGNATURES)
+
 - `Φ`: DynamicalMatrix
 
 Return [diamond norm](https://arxiv.org/pdf/1207.5726.pdf) of dynamical matrix `Φ`.
@@ -67,7 +67,7 @@ end
 # end
 
 """
-$(SIGNATURES)
+
 - `Φ1`: DynamicalMatrix
 - `Φ2`: DynamicalMatrix
 
