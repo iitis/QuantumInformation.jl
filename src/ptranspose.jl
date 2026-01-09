@@ -1,6 +1,6 @@
 export ptranspose
 """
-$(SIGNATURES)
+
 - `ρ`: quantum state.
 - `idims`: dimensins of subsystems.
 - `isystems`: transposed subsystems.
@@ -34,7 +34,7 @@ function ptranspose(ρ::AbstractMatrix, idims::Vector{Int}, isystems::Vector{Int
 end
 
 """
-$(SIGNATURES)
+
 - `ρ`: quantum state.
 - `idims`: dimensins of subsystems.
 - `sys`: transposed subsystem.
@@ -55,7 +55,7 @@ function _ptranspose(ρ::AbstractMatrix{<:Number}, idims::Vector{Int}, isystems:
 
     r = Expr(:tuple)
     for (k, (i, j)) in enumerate(zip(K.args, L.args))
-        push!(r.args, :($i:$(idims[k])), :($j:$(idims[k])))
+        push!(r.args, :($i in 1:$(idims[k])), :($j in 1:$(idims[k])))
     end
     for s in isystems
         K.args[s], L.args[s] = L.args[s], K.args[s]

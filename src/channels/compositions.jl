@@ -97,10 +97,10 @@ function compose(::Type{UnitaryChannel{M}}, Φ1::UnitaryChannel{M1}, Φ2::Unitar
     UnitaryChannel{M}(convert(M, um), Φ1.idim, Φ2.odim)
 end
 
-function compose(Φ1::T, Φ2::T) where {T<:AbstractQuantumOperation{<:Number}}
+function compose(Φ1::T, Φ2::T) where {T<:AbstractQuantumOperation}
     compose(T, Φ1, Φ2)
 end
 
-function Base.:*(Φ1::T, Φ2::T) where {T<:AbstractQuantumOperation{<:Number}}
+function Base.:*(Φ1::T, Φ2::T) where {T<:AbstractQuantumOperation}
     compose(Φ1, Φ2)
 end

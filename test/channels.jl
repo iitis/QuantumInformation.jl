@@ -212,3 +212,128 @@ end
 
     @test represent(DynamicalMatrix(J_random, 3, 3)) == J_random
 end
+
+@testset "IO and Printers" begin
+    for kraus_list in kraus_set
+        MT = eltype(kraus_list)
+        Φ = KrausOperators(kraus_list)
+        @test_nowarn show(devnull, Φ)
+        @test_nowarn show(devnull, convert(SuperOperator{MT}, Φ))
+        @test_nowarn show(devnull, convert(DynamicalMatrix{MT}, Φ))
+        @test_nowarn show(devnull, convert(Stinespring{MT}, Φ))
+    end
+    @test_nowarn show(devnull, UnitaryChannel(Matrix(𝕀(2))))
+end
+
+@testset "Predicates" begin
+    @testset "iscp" begin
+        # SuperOperator and DynamicalMatrix are already partially covered, but let's be thorough
+        for kraus_list in kraus_set
+            MT = eltype(kraus_list)
+            Φ = KrausOperators(kraus_list)
+            @test iscp(Φ)
+            @test iscp(convert(SuperOperator{MT}, Φ))
+            @test iscp(convert(DynamicalMatrix{MT}, Φ))
+            @test iscp(convert(Stinespring{MT}, Φ))
+            @test iscp(UnitaryChannel(Matrix(𝕀(2))))
+        end
+    end
+
+    @testset "istni and istp" begin
+        for kraus_list in kraus_set
+            MT = eltype(kraus_list)
+            Φ = KrausOperators(kraus_list)
+            @test istni(Φ)
+            @test istp(Φ)
+            @test istni(convert(SuperOperator{MT}, Φ))
+            @test istp(convert(SuperOperator{MT}, Φ))
+            @test istni(convert(DynamicalMatrix{MT}, Φ))
+            @test istp(convert(DynamicalMatrix{MT}, Φ))
+            @test istni(convert(Stinespring{MT}, Φ))
+            @test istp(convert(Stinespring{MT}, Φ))
+            @test istni(UnitaryChannel(Matrix(𝕀(2))))
+            @test istp(UnitaryChannel(Matrix(𝕀(2))))
+        end
+    end
+
+    @testset "iscptp and iscptni" begin
+        for kraus_list in kraus_set
+            Φ = KrausOperators(kraus_list)
+            @test iscptp(Φ)
+            @test iscptni(Φ)
+        end
+    end
+
+    @testset "ispovm and iseffect" begin
+        # Valid POVM
+        p = POVMMeasurement([sz/2 + 𝕀(2)/2, -sz/2 + 𝕀(2)/2])
+        @test ispovm(p)
+        
+        # Invalid POVM
+        p_inv = POVMMeasurement([sz/2, -sz/2])
+        @test !ispovm(p_inv)
+
+        # Valid effect
+        eff = PostSelectionMeasurement([0.5 0; 0 0.5])
+        @test iseffect(eff)
+        
+        # Invalid effect (operator norm > 1)
+        eff_inv = PostSelectionMeasurement([2.0 0; 0 2.0])
+        @test !iseffect(eff_inv)
+    end
+end
+
+@testset "Compositions" begin
+    @testset "kron" begin
+        u = UnitaryChannel(Matrix(I, 2, 2))
+        id = IdentityChannel(2)
+        @test kron(u, id) isa UnitaryChannel
+        @test kron(id, u) isa UnitaryChannel
+        @test kron(u, u) isa UnitaryChannel
+        
+        ko = KrausOperators([Matrix(I, 2, 2)])
+        @test kron(ko, u) isa KrausOperators
+        @test kron(u, ko) isa KrausOperators
+    end
+
+    @testset "compose and *" begin
+        u1 = UnitaryChannel(sx)
+        u2 = UnitaryChannel(sy)
+        @test compose(u1, u2) ≈ UnitaryChannel(sy * sx)
+        @test u1 * u2 ≈ UnitaryChannel(sy * sx)
+        
+        ko1 = KrausOperators([sx])
+        ko2 = KrausOperators([sy])
+        target = convert(SuperOperator{Matrix{ComplexF64}}, UnitaryChannel(sy * sx))
+        @test compose(ko1, ko2) ≈ target
+        @test ko1 * ko2 ≈ target
+        
+        @test_throws ArgumentError compose(UnitaryChannel(Matrix(𝕀(2))), UnitaryChannel(Matrix(𝕀(3))))
+    end
+end
+
+@testset "Channels applications - Vectors" begin
+    u = UnitaryChannel(sx)
+    ψ = ket(1, 2)
+    @test u(ψ) ≈ sx * ψ
+    
+    id = IdentityChannel(2)
+    @test id(ψ) == ψ
+    
+    ko = KrausOperators([sx])
+    @test ko(ψ) ≈ proj(sx * ψ)
+end
+
+@testset "Misc functions" begin
+    u = UnitaryChannel(sx)
+    @test size(u) == (2, 2)
+    @test represent(u) == sx
+    
+    ko = KrausOperators([sx])
+    @test size(ko) == (2, 2)
+    @test represent(ko) == [sx]
+    
+    id = IdentityChannel(2)
+    @test size(id) == (2, 2)
+    @test represent(id) ≈ Matrix(𝕀(2))
+end

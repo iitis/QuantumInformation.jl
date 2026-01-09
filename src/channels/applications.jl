@@ -4,7 +4,7 @@ export applychannel
 # Application of channels
 ################################################################################
 """
-$(SIGNATURES)
+
 - `Φ`: dynamical matrix.
 - `ρ`: quantum state.
 
@@ -15,7 +15,7 @@ function applychannel(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}, ρ::Abstr
 end
 
 """
-$(SIGNATURES)
+
 - `Φ`: list of vectors.
 - `ρ`: input matrix.
 
@@ -29,7 +29,7 @@ function applychannel(Φ::KrausOperators{<:AbstractMatrix{<:Number}}, ρ::Abstra
 end
 
 """
-$(SIGNATURES)
+
 - `Φ`: super-operator matrix.
 - `ρ`: quantum state.
 
@@ -40,7 +40,7 @@ function applychannel(Φ::SuperOperator{<:AbstractMatrix{<:Number}}, ρ::Abstrac
 end
 
 """
-$(SIGNATURES)
+
 - `Φ`: Stinespring representation of quantum channel.
 - `ρ`: quantum state.
 - `dims`: dimensions of registers of `ρ`.
@@ -52,26 +52,61 @@ function applychannel(Φ::Stinespring{<:AbstractMatrix{<:Number}}, ρ::AbstractM
     ptrace(s, [Φ.odim, Φ.odim*Φ.idim], [2])
 end
 
+"""
+
+- `Φ`: Identity channel.
+- `ρ`: quantum state.
+
+Return application of Identity channel `Φ` on `ρ`.
+"""
 function applychannel(Φ::IdentityChannel{<:AbstractMatrix{<:Number}}, ρ::AbstractMatrix{<:Number})
     # TODO: promote type
     ρ
 end
 
+"""
+
+- `Φ`: Unitary channel.
+- `ρ`: quantum state.
+
+Return application of Unitary channel `Φ` on `ρ`.
+"""
 function applychannel(Φ::UnitaryChannel{<:AbstractMatrix{<:Number}}, ρ::AbstractMatrix{<:Number})
     # TODO: promote type
     Φ.matrix*ρ*Φ.matrix'
 end
 
+"""
+
+- `Φ`: quantum channel.
+- `ψ`: quantum state vector.
+
+Return application of channel `Φ` on state vector `ψ`.
+"""
 function applychannel(Φ::AbstractQuantumOperation, ψ::AbstractVector{<:Number})
     # TODO: promote type
     applychannel(Φ, proj(ψ))
 end
 
+"""
+
+- `Φ`: Unitary channel.
+- `ψ`: quantum state vector.
+
+Return application of Unitary channel `Φ` on state vector `ψ`.
+"""
 function applychannel(Φ::UnitaryChannel{<:AbstractMatrix{<:Number}}, ψ::AbstractVector{<:Number})
     # TODO: promote type
     Φ.matrix*ψ
 end
 
+"""
+
+- `Φ`: Identity channel.
+- `ψ`: quantum state vector.
+
+Return application of Identity channel `Φ` on state vector `ψ`.
+"""
 function applychannel(Φ::IdentityChannel{<:AbstractMatrix{<:Number}}, ψ::AbstractVector{<:Number})
     # TODO: promote type
     ψ
@@ -93,7 +128,7 @@ end
 # making channels callable
 ################################################################################
 for qop in (:KrausOperators, :SuperOperator, :DynamicalMatrix, :Stinespring,
-    :UnitaryChannel, :POVMMeasurement, :PostSelectionMeasurement)
+    :UnitaryChannel, :IdentityChannel, :POVMMeasurement, :PostSelectionMeasurement)
     @eval begin
         function (Φ::$qop)(ρ)
             applychannel(Φ, ρ)

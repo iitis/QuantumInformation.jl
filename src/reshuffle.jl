@@ -14,7 +14,7 @@ function reshuffle(ρ::AbstractMatrix, dims::Matrix{Int})
 end
 
 """
-  $(SIGNATURES)
+  
   - `ρ`: reshuffled matrix.
   Performs reshuffling of indices of a matrix.
   Given multiindexed matrix \$M_{(m,μ),(n,ν)}\$ it returns

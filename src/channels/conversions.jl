@@ -8,7 +8,7 @@ for qop in (:SuperOperator, :DynamicalMatrix, :Stinespring, :UnitaryChannel,
 end
 
 """
-$(SIGNATURES)
+
 - ?: type.
 - `Φ`: list of Kraus operators.
 
@@ -20,7 +20,7 @@ function Base.convert(::Type{SuperOperator{T1}}, Φ::KrausOperators{T2}) where {
 end
 
 """
-$(SIGNATURES)
+
 - ?: type.
 - `Φ`: list of Kraus operators.
 
@@ -34,7 +34,7 @@ function Base.convert(::Type{Stinespring{T1}}, Φ::KrausOperators{T2}) where {T1
 end
 
 """
-$(SIGNATURES)
+
 - ?: type.
 - `Φ`: list of Kraus operators.
 
@@ -46,7 +46,7 @@ function Base.convert(::Type{DynamicalMatrix{T1}}, Φ::KrausOperators{T2}) where
 end
 
 """
-$(SIGNATURES)
+
 - ?: type.
 - `Φ`: super-operator matrix.
 
@@ -57,7 +57,7 @@ function Base.convert(::Type{KrausOperators{T1}}, Φ::SuperOperator{T2}) where {
 end
 
 """
-$(SIGNATURES)
+
 - ?: type.
 - `Φ`: super-operator matrix.
 
@@ -69,7 +69,7 @@ function Base.convert(::Type{DynamicalMatrix{T1}}, Φ::SuperOperator{T2}) where 
 end
 
 """
-$(SIGNATURES)
+
 - ?: type.
 - `Φ`: super-operator matrix.
 
@@ -80,7 +80,7 @@ function Base.convert(::Type{Stinespring{T1}}, Φ::SuperOperator{T2}) where {T1<
 end
 
 """
-$(SIGNATURES)
+
 - ?: type.
 - `Φ`: dynamical matrix.
 
@@ -105,7 +105,7 @@ function Base.convert(::Type{KrausOperators{T1}}, Φ::DynamicalMatrix{T2}) where
 end
 
 """
-$(SIGNATURES)
+
 - ?: type.
 - `Φ`: dynamical matrix.
 
@@ -116,7 +116,7 @@ function Base.convert(::Type{Stinespring{T1}}, Φ::DynamicalMatrix{T2}) where {T
 end
 
 """
-$(SIGNATURES)
+
 - ?: type.
 - `Φ`: dynamical matrix.
 

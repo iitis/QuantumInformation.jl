@@ -1,17 +1,15 @@
 name = "QuantumInformation"
 uuid = "3c0b384b-479c-5684-b2ef-9d7a46dd931e"
 authors = ["Dariusz Kurzyk <dkurzyk@iitis.pl>", "Łukasz Pawela <lpawela@iitis.pl>", "Piotr Gawron <gawron@iitis.pl>", "Marcin Przewięźlikowski <m.przewie@gmail.com>"]
-version = "0.4.12"
+version = "0.5.0"
 
 [deps]
 Convex = "f65535da-76fb-5f13-bab9-19810c17039a"
 DocStringExtensions = "ffbed154-4ef7-542d-bbb7-c09d3a79fcae"
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 MatrixEnsembles = "c7015dd7-3fb7-4a4c-827e-526313618491"
-Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 SCS = "c946c3f1-0d1f-5ce8-9dea-7daa1f7e2d13"
-StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 TensorCast = "02d47bb6-7ce6-556a-be16-bb1710789e2b"
 TensorOperations = "6aa20fa7-93e2-5fca-9bc0-fbd0db3c71a2"
 
@@ -19,15 +17,28 @@ TensorOperations = "6aa20fa7-93e2-5fca-9bc0-fbd0db3c71a2"
 Convex = "0.13.7, 0.14, 0.15, 0.16"
 DocStringExtensions = "0.8.3, 0.9"
 MatrixEnsembles = "0.1"
-SCS = "1.1.0, 2"
+SCS = "1.1.0, 2, 3"
 StatsBase = "0.33.2, 0.34"
+PrecompileTools = "1"
 TensorCast = "0.4"
 TensorOperations = "4"
 julia = "1.7"
+Aqua = "0.8"
+JET = "0.9, 0.10, 0.11"
+SparseArrays = "1"
+Test = "1"
+LinearAlgebra = "1"
+Pkg = "1"
+Random = "1"
 
 [extras]
+Aqua = "4c88cf16-eb10-579e-8560-4a9242c79595"
+JET = "c3a54625-cd67-489e-a8e7-0a5a0ff4e31b"
+Pkg = "44cfe95a-1eb2-52ea-b672-e2afdf69b78f"
 SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
+StatsBase = "2913bbd2-ae8a-5f71-8c99-4fb6c76f3a91"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+PrecompileTools = "aea7be01-6a6a-4083-8856-8a6e6704d82a"
 
 [targets]
-test = ["SparseArrays", "Test"]
+test = ["Aqua", "JET", "Pkg", "SparseArrays", "StatsBase", "Test", "PrecompileTools"]
