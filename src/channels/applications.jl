@@ -93,7 +93,7 @@ end
 # making channels callable
 ################################################################################
 for qop in (:KrausOperators, :SuperOperator, :DynamicalMatrix, :Stinespring,
-    :UnitaryChannel, :POVMMeasurement, :PostSelectionMeasurement)
+    :UnitaryChannel, :IdentityChannel, :POVMMeasurement, :PostSelectionMeasurement)
     @eval begin
         function (Φ::$qop)(ρ)
             applychannel(Φ, ρ)

@@ -18,5 +18,5 @@ for qop in (:SuperOperator, :DynamicalMatrix, :Stinespring,
     @eval represent(Φ::$qop) = Φ.matrix
 end
 
-represent(Φ::IdentityChannel{T}) where T<:Matrix{<:Number} = Matrix{T}(I, Φ.idim, Φ.idim)
+represent(Φ::IdentityChannel{T}) where T<:Matrix{<:Number} = T(I, Φ.idim, Φ.idim)
 represent(Φ::IdentityChannel) = represent(IdentityChannel{Matrix{ComplexF64}}(Φ.idim))
