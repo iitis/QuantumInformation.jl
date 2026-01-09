@@ -14,25 +14,25 @@ Checks if an object is completely positive.
 """
 function iscp end
 
-function iscp(Φ::KrausOperators{<:AbstractMatrix{<:Number}}; atol=1e-13)
+function iscp(Φ::KrausOperators{<:AbstractMatrix{<:Number}}, atol=1e-13)
     # by definition Kraus operators represent a CP map
     true
 end
 
-function iscp(Φ::SuperOperator{T}; atol=1e-13) where T<:AbstractMatrix{<:Number}
-    iscp(convert(DynamicalMatrix{T}, Φ), atol=atol)
+function iscp(Φ::SuperOperator{T}, atol=1e-13) where T<:AbstractMatrix{<:Number}
+    iscp(convert(DynamicalMatrix{T}, Φ), atol)
 end
 
-function iscp(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}; atol=1e-13)
-    ispositive(Φ.matrix)
+function iscp(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}, atol=1e-13)
+    ispositive(Φ.matrix, atol)
 end
 
-function iscp(Φ::Stinespring{<:AbstractMatrix{<:Number}}; atol=1e-13)
+function iscp(Φ::Stinespring{<:AbstractMatrix{<:Number}}, atol=1e-13)
     # by definition Stinespring operator represents a CP map(?)
     true
 end
 
-function iscp(Φ::UnitaryChannel; atol=1e-13)
+function iscp(Φ::UnitaryChannel, atol=1e-13)
     # by definition Unitary operator represents a CP map
     true
 end
@@ -50,28 +50,28 @@ Checks if an object is trace non-increasing.
 """
 function istni end
 
-function istni(Φ::KrausOperators{<:AbstractMatrix{<:Number}}; atol=1e-13)
+function istni(Φ::KrausOperators{<:AbstractMatrix{<:Number}}, atol=1e-13)
     cr = sum(k'*k for k in Φ.matrices)
-    ispositive(one(cr) - cr, atol=atol)
+    ispositive(one(cr) - cr, atol)
 end
 
-function istni(Φ::SuperOperator{T}; atol=1e-13) where T<:AbstractMatrix{<:Number}
-    istni(convert(DynamicalMatrix{T}, Φ))
+function istni(Φ::SuperOperator{T}, atol=1e-13) where T<:AbstractMatrix{<:Number}
+    istni(convert(DynamicalMatrix{T}, Φ), atol)
 end
 
-function istni(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}; atol=1e-13)
+function istni(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}, atol=1e-13)
     pt = ptrace(Φ.matrix, [Φ.odim, Φ.idim], [1])
-    ispositive(one(pt) - pt, atol=atol)
+    ispositive(one(pt) - pt, atol)
 end
 
-function istni(Φ::Stinespring{<:AbstractMatrix{<:Number}}; atol=1e-13)
+function istni(Φ::Stinespring{<:AbstractMatrix{<:Number}}, atol=1e-13)
     u = Φ.matrix
     m = u'*u
-    ispositive(one(m) - m, atol=atol)
+    ispositive(one(m) - m, atol)
 end
 
-function istni(Φ::UnitaryChannel; atol=1e-13)
-    iscptp(Φ, atol=atol)
+function istni(Φ::UnitaryChannel, atol=1e-13)
+    iscptp(Φ, atol)
 end
 
 ################################################################################
@@ -86,28 +86,28 @@ Checks if an object is trace preserving.
 """
 function istp end
 
-function istp(Φ::KrausOperators{<:AbstractMatrix{<:Number}}; atol=1e-13)
+function istp(Φ::KrausOperators{<:AbstractMatrix{<:Number}}, atol=1e-13)
     cr = sum(k'*k for k in Φ.matrices)
-    isidentity(cr, atol=atol)
+    isidentity(cr, atol)
 end
 
-function istp(Φ::SuperOperator{T}; atol=1e-13) where T<:AbstractMatrix{<:Number}
-    istp(convert(DynamicalMatrix{T}, Φ), atol=atol)
+function istp(Φ::SuperOperator{T}, atol=1e-13) where T<:AbstractMatrix{<:Number}
+    istp(convert(DynamicalMatrix{T}, Φ), atol)
 end
 
-function istp(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}; atol=1e-13)
+function istp(Φ::DynamicalMatrix{<:AbstractMatrix{<:Number}}, atol=1e-13)
     pt = ptrace(Φ.matrix, [Φ.odim, Φ.idim], [1])
-    isidentity(pt, atol=atol)
+    isidentity(pt, atol)
 end
 
-function istp(Φ::Stinespring{<:AbstractMatrix{<:Number}}; atol=1e-13)
+function istp(Φ::Stinespring{<:AbstractMatrix{<:Number}}, atol=1e-13)
     u = Φ.matrix
-    isidentity(u'*u, atol=atol)
+    isidentity(u'*u, atol)
 end
 
-function istp(Φ::UnitaryChannel; atol=1e-13)
+function istp(Φ::UnitaryChannel, atol=1e-13)
     u = Φ.matrix
-    isidentity(u'*u, atol=atol) && isidentity(u*u', atol=atol)
+    isidentity(u'*u, atol) && isidentity(u*u', atol)
 end
 
 ################################################################################
@@ -120,8 +120,8 @@ end
 
 Checks if an object is completely positive and trace preserving.
 """
-function iscptp(Φ::AbstractQuantumOperation; atol=1e-13)
-    iscp(Φ, atol=atol) && istp(Φ, atol=atol)
+function iscptp(Φ::AbstractQuantumOperation, atol=1e-13)
+    iscp(Φ, atol) && istp(Φ, atol)
 end
 
 """
@@ -131,8 +131,8 @@ end
 
 Checks if an object is completely positive and trace non-increasing.
 """
-function iscptni(Φ::AbstractQuantumOperation; atol=1e-13)
-    iscp(Φ, atol=atol) && istni(Φ, atol=atol)
+function iscptni(Φ::AbstractQuantumOperation, atol=1e-13)
+    iscp(Φ, atol) && istni(Φ, atol)
 end
 
 ################################################################################

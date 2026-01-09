@@ -123,7 +123,7 @@ end
 
 Checks if the matrix `ρ` is approximately the identity matrix.
 """
-function isidentity(ρ::AbstractMatrix{<:Number}; atol=1e-13)
+function isidentity(ρ::AbstractMatrix{<:Number}, atol=1e-13)
     rows, cols = size(ρ)
     if rows!=cols
         return false
@@ -139,7 +139,7 @@ end
 
 Checks if the matrix `ρ` is positive semi-definite.
 """
-function ispositive(ρ::AbstractMatrix{<:Number}; atol=1e-13)
+function ispositive(ρ::AbstractMatrix{<:Number}, atol=1e-13)
     rows, cols = size(ρ)
     if rows!=cols
         return false

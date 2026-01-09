@@ -96,7 +96,7 @@ end
 Returns `vec(ρ.T)`. Reshaping maps
     matrix `ρ` into a vector row by row.
 """
-res(ρ::AbstractMatrix{<:Number}) = @cast x[(j, i)] := ρ[i, j]
+res(ρ::AbstractMatrix{<:Number}) = @cast x[(j, i)] := ρ[i, j] i in 1:size(ρ, 1), j in 1:size(ρ, 2)
 
 unres(ϕ::AbstractVector{<:Number}, cols::Int) = @cast x[i, j] := ϕ[(j, i)] j in 1:cols
 

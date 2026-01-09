@@ -21,16 +21,19 @@ function norm_diamond(Φ::DynamicalMatrix, ::Val{:primal}, eps)
     ρ₀ = ComplexVariable(d1, d1)
     ρ₁ = ComplexVariable(d1, d1)
 
-    constraints = [ρ₀ in :SDP, ρ₁ in :SDP]
-    constraints += tr(ρ₀) == 1
-    constraints += tr(ρ₁) == 1
-    constraints += [𝕀(d2) ⊗ ρ₀ X; X' 𝕀(d2) ⊗ ρ₁] in :SDP
+    constraints = [
+        isposdef(ρ₀),
+        isposdef(ρ₁),
+        tr(ρ₀) == 1,
+        tr(ρ₁) == 1,
+        isposdef(vcat(hcat(𝕀(d2) ⊗ ρ₀, X), hcat(X', 𝕀(d2) ⊗ ρ₁)))
+    ]
 
     problem = maximize(t, constraints)
     solve!(
         problem,
         MOI.OptimizerWithAttributes(SCS.Optimizer, "eps_abs" => eps);
-        silent_solver = true
+        silent = true
     )
     problem.optval
 end
@@ -46,16 +49,18 @@ function norm_diamond(Φ::DynamicalMatrix, ::Val{:dual}, eps)
 
 	t = 0.5*sigmamax(partialtrace(Y₀, 1, [d2,d1])) +
 		0.5*sigmamax(partialtrace(Y₁, 1, [d2,d1]))
-	Z = [Y₀ -J; -J' Y₁ ]
-
-    constraints = [Y₀ in :SDP, Y₁ in :SDP]
-    constraints += Z+Z' in :SDP
+    Z = vcat(hcat(Y₀, -J), hcat(-J', Y₁))
+    constraints = [
+        isposdef(Y₀),
+        isposdef(Y₁),
+        isposdef(Z+Z')
+    ]
 
     problem = minimize(t, constraints)
     solve!(
         problem,
         MOI.OptimizerWithAttributes(SCS.Optimizer, "eps_abs" => eps);
-        silent_solver = true
+        silent = true
     )
     problem.optval
 end

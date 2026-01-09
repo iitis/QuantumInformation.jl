@@ -33,6 +33,6 @@ using JET
     end
 
     @testset "JET.jl" begin
-        JET.test_package(QuantumInformation; target_defined_modules=true)
+        JET.test_package(QuantumInformation; target_modules=(QuantumInformation,))
     end
 end
