@@ -171,11 +171,11 @@
             ρ1 = proj(ket(SparseVector{ComplexF64, Int}, 1, d))
             ρ2 = proj(ket(SparseVector{ComplexF64, Int}, 2, d))
             σ = 0.6 * ρ1 + 0.4 * ρ2
-            
+
             @test norm_trace(σ) ≈ 1.0 atol=1e-7
             @test vonneumann_entropy(Hermitian(σ)) ≈ vonneumann_entropy(Hermitian(Array(σ))) atol=1e-7
             @test renyi_entropy(Hermitian(σ), 2) ≈ renyi_entropy(Hermitian(Array(σ)), 2) atol=1e-7
-            
+
             # Negativity test with maximally entangled state
             ψ = max_entangled(SparseVector{ComplexF64, Int}, d)
             ρ_ent = proj(ψ)
@@ -187,11 +187,11 @@
     @testset "Error Handling" begin
         @test_throws ErrorException vonneumann_entropy(rand(2, 2) + [0 1; 0 0]) # Non-hermitian
         @test_throws ErrorException shannon_entropy(-0.5)
-    
+
         # fidelity_sqrt non-square
         @test_throws ArgumentError fidelity_sqrt(rand(2, 3), rand(2, 2))
         @test_throws ArgumentError fidelity_sqrt(sparse(rand(2, 3)), sparse(rand(2, 2)))
-    
+
         # concurrence non 4x4
         @test_throws ArgumentError concurrence(rand(2, 2))
     end

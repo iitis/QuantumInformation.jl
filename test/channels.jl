@@ -141,10 +141,10 @@
     @testset verbose=true "UnitaryChannel" begin
         @test_throws ArgumentError UnitaryChannel(ones(4, 5))
         @test_throws ArgumentError UnitaryChannel(ones(4, 4), 4, 5)
-        
+
         # Stinespring error
         @test_throws ArgumentError Stinespring(rand(4, 4), 2, 2) # 8x2 expected
-        
+
         # PostSelectionMeasurement error
         @test_throws ArgumentError PostSelectionMeasurement(rand(2, 2), 3, 3)
 
@@ -321,7 +321,7 @@ end
         # iscp false
         ρ_neg = DynamicalMatrix(ComplexF64[1 0 0 1; 0 0 0 0; 0 0 0 0; 1 0 0 -1], 2, 2)
         @test iscp(ρ_neg) == false
-        
+
         # istp false
         ko_not_tp = KrausOperators([0.5 * I(2)])
         @test istp(ko_not_tp) == false

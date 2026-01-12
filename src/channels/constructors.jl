@@ -278,11 +278,7 @@ for qop in (:SuperOperator, :UnitaryChannel, :PostSelectionMeasurement)
     end
 end
 
-function SuperOperator(
-    channel::Function,
-    idim::Int,
-    odim::Int,
-)
+function SuperOperator(channel::Function, idim::Int, odim::Int)
     return SuperOperator{Matrix{ComplexF64}}(channel, idim, odim)
 end
 

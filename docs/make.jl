@@ -34,7 +34,4 @@ makedocs(
     ],
 )
 
-deploydocs(
-    target="build",
-    repo="github.com/iitis/QuantumInformation.jl.git",
-)
+deploydocs(target="build", repo="github.com/iitis/QuantumInformation.jl.git")
