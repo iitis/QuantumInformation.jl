@@ -1,6 +1,6 @@
 name = "QuantumInformation"
 uuid = "3c0b384b-479c-5684-b2ef-9d7a46dd931e"
-version = "0.7.0"
+version = "0.5.1"
 authors = ["Dariusz Kurzyk <dkurzyk@iitis.pl>", "Łukasz Pawela <lpawela@iitis.pl>", "Piotr Gawron <gawron@iitis.pl>", "Marcin Przewięźlikowski <m.przewie@gmail.com>"]
 
 [deps]
