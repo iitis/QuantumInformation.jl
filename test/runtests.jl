@@ -20,7 +20,7 @@ using JET
         "matrixbases.jl",
         "permute_systems.jl",
         "randomqobjects.jl",
-        "convex.jl"
+        "convex.jl",
     ]
     for my_test in my_tests
         @testset verbose=true "$my_test" begin
