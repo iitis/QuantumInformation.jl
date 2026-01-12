@@ -72,5 +72,10 @@
 
         # Positive check (might covert to dense)
         @test ispositive(sparse(I, 4, 4))
+        @test ispositive(sparse([-1.0 0; 0 1.0])) == false
+
+        # Identity check edge cases
+        @test isidentity([1.1 0; 0 1.0]) == false
+        @test isidentity(rand(2, 3)) == false
     end
 end

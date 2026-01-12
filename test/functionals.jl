@@ -75,6 +75,7 @@
         ρ = 𝕀(d)/d
         @test renyi_entropy(ρ, 2) == log(d)
         @test renyi_entropy(ρ, 3) == log(d)
+        @test_throws ArgumentError renyi_entropy(Hermitian(ρ), 1)
     end
 
     @testset verbose=true "relative entropy, js divergence" begin
@@ -162,5 +163,36 @@
         s1 = s1 + s1'
         # fidelity_sqrt handles sparse via convert
         @test fidelity(s1, s1) ≈ fidelity(Array(s1), Array(s1))
+
+        @testset "Large Sparse (d > 32)" begin
+            n = 6
+            d = n^2
+            # Use a rank-2 state for stability with eigs
+            ρ1 = proj(ket(SparseVector{ComplexF64, Int}, 1, d))
+            ρ2 = proj(ket(SparseVector{ComplexF64, Int}, 2, d))
+            σ = 0.6 * ρ1 + 0.4 * ρ2
+            
+            @test norm_trace(σ) ≈ 1.0 atol=1e-7
+            @test vonneumann_entropy(Hermitian(σ)) ≈ vonneumann_entropy(Hermitian(Array(σ))) atol=1e-7
+            @test renyi_entropy(Hermitian(σ), 2) ≈ renyi_entropy(Hermitian(Array(σ)), 2) atol=1e-7
+            
+            # Negativity test with maximally entangled state
+            ψ = max_entangled(SparseVector{ComplexF64, Int}, d)
+            ρ_ent = proj(ψ)
+            @test negativity(ρ_ent, [n, n], 1) ≈ (n - 1) / 2 atol=1e-7
+            @test fidelity_sqrt(ρ_ent, σ) ≈ fidelity_sqrt(Array(ρ_ent), Array(σ)) atol=1e-7
+        end
+    end
+
+    @testset "Error Handling" begin
+        @test_throws ErrorException vonneumann_entropy(rand(2, 2) + [0 1; 0 0]) # Non-hermitian
+        @test_throws ErrorException shannon_entropy(-0.5)
+    
+        # fidelity_sqrt non-square
+        @test_throws ArgumentError fidelity_sqrt(rand(2, 3), rand(2, 2))
+        @test_throws ArgumentError fidelity_sqrt(sparse(rand(2, 3)), sparse(rand(2, 2)))
+    
+        # concurrence non 4x4
+        @test_throws ArgumentError concurrence(rand(2, 2))
     end
 end

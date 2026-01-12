@@ -13,6 +13,7 @@
         @test typeof(ket(Float32, 1, 4)) == Vector{Float32}
 
         @test_throws ArgumentError ket(4, 3)
+        @test_throws ArgumentError ket(-1, 2)
     end
 
     @testset verbose=true "bra" begin
@@ -41,6 +42,8 @@
         @test ψ[3] ≈ 1
 
         @test_throws ArgumentError ketbra(4, 4, 3)
+        @test_throws ArgumentError ketbra(1, 1, -1)
+        @test_throws ArgumentError ketbra(3, 1, 2)
 
         @test typeof(ketbra(Float32, 1, 1, 4)) == Matrix{Float32}
 
@@ -124,6 +127,7 @@
         @test ishermitian(ρ)
 
         @test_throws ArgumentError werner_state(4, 1.2)
+        @test_throws ArgumentError werner_state(4, -0.1)
     end
     @testset verbose=true "Double64 Support" begin
         @testset verbose=true "ket" begin

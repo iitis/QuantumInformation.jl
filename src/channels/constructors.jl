@@ -278,6 +278,14 @@ for qop in (:SuperOperator, :UnitaryChannel, :PostSelectionMeasurement)
     end
 end
 
+function SuperOperator(
+    channel::Function,
+    idim::Int,
+    odim::Int,
+)
+    return SuperOperator{Matrix{ComplexF64}}(channel, idim, odim)
+end
+
 for qop in (:DynamicalMatrix, :Stinespring)
     @eval begin
         function $qop(m::T, idim::Int, odim::Int) where {T <: AbstractMatrix{<:Number}}
@@ -297,7 +305,7 @@ for qop in (:KrausOperators, :POVMMeasurement)
             idim::Int,
             odim::Int,
         ) where {T <: Vector{M}} where {M <: AbstractMatrix{<:Number}}
-            return $qop{M}(v)
+            return $qop{M}(v, idim, odim)
         end
     end
 end

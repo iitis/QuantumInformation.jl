@@ -8,6 +8,7 @@
         @testset verbose=true "construction" begin
             kl = [[1 0; 0 1], [1 0 0; 1 0 0; 0 0 1], [1 0; 0 1]]
             @test_throws ArgumentError KrausOperators(kl)
+            @test_throws ArgumentError KrausOperators([rand(2, 2)], 3, 2)
         end
 
         @testset verbose=true "iscptp" begin
@@ -60,6 +61,10 @@
             t = hcat([ComplexF64[0.25, 0.25im, -0.25im, 0.75] for i in 1:4]...) #stack res ρ
             m = SuperOperator{Matrix{ComplexF64}}(x -> ρ, 2, 2).matrix
             @test norm(t-m) ≈ 0.0 atol=1e-15
+
+            @test_throws ArgumentError SuperOperator(rand(3, 3)) # Not square of something
+            @test_throws ArgumentError SuperOperator(rand(4, 4), 3, 2)
+            @test_throws ArgumentError SuperOperator(x->x, -1, 2)
         end
 
         @testset verbose=true "convert to KrausOperators" begin
@@ -129,12 +134,19 @@
                 @test s1.matrix ≈ s2.matrix
             end
         end
+        @test_throws ArgumentError DynamicalMatrix(rand(4, 3), 2, 2)
         @test_throws ArgumentError DynamicalMatrix(rand(4, 5), 4, 5)
     end
 
     @testset verbose=true "UnitaryChannel" begin
         @test_throws ArgumentError UnitaryChannel(ones(4, 5))
         @test_throws ArgumentError UnitaryChannel(ones(4, 4), 4, 5)
+        
+        # Stinespring error
+        @test_throws ArgumentError Stinespring(rand(4, 4), 2, 2) # 8x2 expected
+        
+        # PostSelectionMeasurement error
+        @test_throws ArgumentError PostSelectionMeasurement(rand(2, 2), 3, 3)
 
         c = UnitaryChannel(Diagonal(ComplexF64[1 -1.0im]))
         @test c isa UnitaryChannel{<:Diagonal}
@@ -303,6 +315,21 @@ end
         # Invalid effect (operator norm > 1)
         eff_inv = PostSelectionMeasurement([2.0 0; 0 2.0])
         @test !iseffect(eff_inv)
+    end
+
+    @testset verbose=true "Edge cases" begin
+        # iscp false
+        ρ_neg = DynamicalMatrix(ComplexF64[1 0 0 1; 0 0 0 0; 0 0 0 0; 1 0 0 -1], 2, 2)
+        @test iscp(ρ_neg) == false
+        
+        # istp false
+        ko_not_tp = KrausOperators([0.5 * I(2)])
+        @test istp(ko_not_tp) == false
+
+        # POVMMeasurement error
+        @test_throws ArgumentError POVMMeasurement([rand(2, 2), rand(2, 3)])
+        @test_throws ArgumentError POVMMeasurement([rand(2, 2)], 3, 1)
+        @test_throws ArgumentError POVMMeasurement([rand(2, 2)], 2, 2)
     end
 end
 

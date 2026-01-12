@@ -29,7 +29,7 @@ Return [trace norm](https://www.quantiki.org/wiki/trace-norm) of matrix `A`.
 """
 norm_trace(A::AbstractMatrix{<:Number}) = sum(svdvals(A))
 function norm_trace(A::AbstractSparseMatrix{<:Number})
-    return size(A, 1) > 16 ? sum(svds(A; nsv=max(1, size(A, 1)-1))[1].S) :
+    return size(A, 1) > 32 ? sum(svds(A; nsv=min(size(A, 1) - 1, 32))[1].S) :
            norm_trace(Array(A))
 end
 
@@ -161,8 +161,8 @@ Return [Von Neumann entropy](https://en.wikipedia.org/wiki/Von_Neumann_entropy) 
 """
 function vonneumann_entropy(ρ::Hermitian{<:Number, <:AbstractSparseMatrix})
     n = size(ρ.data, 1)
-    if n > 16
-        λ, _ = eigs(ρ; nev=n - 1, which=:LM)
+    if n > 32
+        λ, _ = eigs(ρ; nev=min(n - 1, 32), which=:LM)
         return shannon_entropy(real(λ[real(λ) .> 0]))
     end
     return vonneumann_entropy(Hermitian(Array(ρ.data)))
@@ -188,8 +188,8 @@ Return [Renyi entropy](https://en.wikipedia.org/wiki/R%C3%A9nyi_entropy) of quan
 function renyi_entropy(ρ::Hermitian{<:Number, <:AbstractSparseMatrix}, α::Real)
     α >= 0 && α != 1 ? () : throw(ArgumentError("Parameter α must be α ≥ 0 and α ≠ 1"))
     n = size(ρ.data, 1)
-    if n > 16
-        λ, _ = eigs(ρ; nev=n - 1, which=:LM)
+    if n > 32
+        λ, _ = eigs(ρ; nev=min(n - 1, 32), which=:LM)
         λ = real(λ[real(λ) .> 0])
         return 1 / (1 - α) * log(sum(λ .^ α))
     end
@@ -302,8 +302,8 @@ end
 
 function negativity(ρ::AbstractSparseMatrix{<:Number}, dims::Vector{Int}, sys::Int)
     ρ_s = ptranspose(ρ, dims, sys)
-    if size(ρ_s, 1) > 16
-        λ, _ = eigs(ρ_s; nev=size(ρ_s, 1) - 1, which=:LM)
+    if size(ρ_s, 1) > 32
+        λ, _ = eigs(ρ_s; nev=min(size(ρ_s, 1) - 1, 32), which=:SR)
         λ = real(λ)
         return -real(sum(λ[λ .< 0]))
     end
