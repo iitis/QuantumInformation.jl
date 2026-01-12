@@ -61,6 +61,12 @@ max_mixed(4)
 werner_state(4, 0.4)
 ```
 
+For identity transformations, the library provides the `𝕀` (or `identity_gate`) function:
+```@repl QuantumInformation
+𝕀(2)
+```
+
+
 ## Non-standard matrix transformations
 We will now introduce
 reshaping operators, which map matrices to vectors and vice versa. We start with
@@ -133,6 +139,11 @@ The `permutesystems` function allows permuting subsystems of a composite quantum
 ρ = rand(4,4)
 permutesystems(ρ, [2, 2], [2, 1])
 ```
+
+## Sparse matrix support
+
+Many of these transformations natively support sparse matrices from the `SparseArrays` library. Functions such as `ptrace`, `ptranspose`, `reshuffle`, and `permutesystems` have been optimized to return sparse results when given sparse inputs, preserving memory for large quantum systems.
+
 
 
 ## Channels

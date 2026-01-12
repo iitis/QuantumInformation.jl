@@ -25,6 +25,13 @@ Also, channels object are callable
 Φ(ρ)
 ```
 
+Additionally, `SuperOperator` can be constructed directly from a Julia function:
+```@repl QuantumInformation
+ρ = [0.25 0.25im; -0.25im 0.75]
+Ψ = SuperOperator(x -> ρ*x*ρ, 2, 2)
+```
+
+
 ## Channel Representations
 
 Channels can be represented in various bases. The `channelbasis` function generates a basis for quantum channels, which can then be used with `represent` to find the coefficients of a channel in that basis, or `combine` to reconstruct the channel from coefficients.
