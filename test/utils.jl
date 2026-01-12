@@ -1,5 +1,6 @@
 @testset verbose=true "Utility functions" begin
 using DoubleFloats: Double64, ComplexDF64
+using SparseArrays
 
 @testset verbose=true "number2mixedradix" begin
    number = 486
@@ -53,5 +54,23 @@ end
         renormalize!(m)
         @test tr(m) ≈ 1.0 atol=1e-25
         @test m[1,1] isa Double64
+    end
+    
+    @testset verbose=true "Sparse Support" begin
+        v = sparsevec([1], [2.0], 4)
+        renormalize!(v)
+        @test norm(v) ≈ 1.0
+        @test v[1] ≈ 1.0
+        
+        m = sparse([1], [1], [2.0], 4, 4)
+        renormalize!(m)
+        @test tr(m) ≈ 1.0
+        @test m[1,1] ≈ 1.0
+        
+        # Identity check
+        @test isidentity(sparse(I, 4, 4))
+        
+        # Positive check (might covert to dense)
+        @test ispositive(sparse(I, 4, 4))
     end
 end

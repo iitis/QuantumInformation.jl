@@ -1,6 +1,7 @@
 @testset verbose=true "Channels" begin
 
 using DoubleFloats: Double64, ComplexDF64
+using SparseArrays
 
 include("test_channels.jl")
 
@@ -359,4 +360,40 @@ end
     id = IdentityChannel(2)
     @test size(id) == (2, 2)
     @test represent(id) ≈ Matrix(𝕀(2))
+end
+
+@testset verbose=true "Sparse Support" begin
+    # 1. KrausOperators with Sparse Matrices
+    K1 = sparse([1.0 0.0; 0.0 1.0]) # Identity
+    K2 = sparse([0.0 1.0; 1.0 0.0]) # SX
+    ko = KrausOperators([K1, K2])
+    @test ko.matrices[1] isa SparseMatrixCSC
+    @test ko isa KrausOperators{SparseMatrixCSC{Float64, Int64}}
+    
+    # 2. Application to Dense
+    ρ = [1.0 0.0; 0.0 0.0]
+    out = ko(ρ)
+    @test out ≈ K1*ρ*K1' + K2*ρ*K2'
+    
+    # 3. Application to Sparse
+    ρ_sparse = sparse(ρ)
+    out_sparse = ko(ρ_sparse)
+    @test out_sparse isa AbstractSparseMatrix
+    @test out_sparse ≈ out
+    
+    # 4. UnitaryChannel
+    U = sparse([0.0 1.0; 1.0 0.0])
+    uc = UnitaryChannel(U)
+    @test uc.matrix isa SparseMatrixCSC
+    @test uc(ρ_sparse) ≈ U*ρ_sparse*U'
+    
+    # 5. IdentityChannel
+    id = IdentityChannel(2)
+    @test id(ρ_sparse) === ρ_sparse
+    
+    # 6. ISC PTP
+    # ko is not trace preserving sum(Ki' Ki) = I + I = 2I.
+    # ko normalized:
+    ko_norm = KrausOperators([K1/sqrt(2), K2/sqrt(2)])
+    @test iscptp(ko_norm)
 end

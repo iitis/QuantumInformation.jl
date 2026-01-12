@@ -1,5 +1,6 @@
 export ket, bra, ketbra, proj, bloch_vector, res, unres, max_mixed, max_entangled,
     werner_state, permutesystems
+using SparseArrays
 
 function ket(::Type{T}, val::Int, dim::Int) where T<:AbstractVector{<:Number}
     dim > 0 ? () : throw(ArgumentError("Vector dimension has to be nonnegative"))
@@ -9,6 +10,8 @@ function ket(::Type{T}, val::Int, dim::Int) where T<:AbstractVector{<:Number}
     ψ[val] = one(eltype(T))
     ψ
 end
+
+ket(::Type{<:AbstractSparseVector{T}}, val::Int, dim::Int) where T<:Number = sparsevec([val], [one(T)], dim)
 
 ket(::Type{T}, val::Int, dim::Int) where T<:Number = ket(Vector{T}, val, dim)
 
@@ -42,6 +45,8 @@ function ketbra(::Type{T}, valk::Int, valb::Int, idim::Int, odim::Int) where T<:
     ρ[valk,valb] = one(eltype(T))
     ρ
 end
+
+ketbra(::Type{<:AbstractSparseMatrix{T}}, valk::Int, valb::Int, idim::Int, odim::Int) where T<:Number = sparse([valb], [valk], [one(T)], odim, idim)
 
 ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:AbstractMatrix{<:Number} = ketbra(T, valk, valb, dim, dim)
 ketbra(::Type{T}, valk::Int, valb::Int, dim::Int) where T<:Number = ketbra(Matrix{T}, valk, valb, dim)
@@ -135,6 +140,19 @@ function max_entangled(::Type{T}, d::Int) where T<:Number
     poster
 end
 
+function max_entangled(::Type{<:AbstractSparseVector{T}}, d::Int) where T<:Number
+    sd = isqrt(d)
+    # sum |ii> for i=0..sd-1
+    # |ii> -> index i*sd + i + 1 (1-based)
+    # e.g. d=4, sd=2. |00>->1, |11>->4.
+    indices = [i*sd + i + 1 for i in 0:sd-1]
+    vals = fill(one(T), sd)
+    
+    vec = sparsevec(indices, vals, d)
+    renormalize!(vec)
+    vec
+end
+
 max_entangled(d::Int) = max_entangled(ComplexF64, d)
 
 """
@@ -183,4 +201,57 @@ function permutesystems(ρ::AbstractMatrix{T}, dims::Vector{Int}, systems::Vecto
     reversed_transposed_tensor = permutedims(reversed_tensor, perm)
     transposed_tensor = permutedims(reversed_transposed_tensor, reversed_indices)
     return reshape(transposed_tensor, size(ρ))
+end
+
+function permutesystems(ρ::AbstractSparseMatrix{T}, dims::Vector{Int}, systems::Vector{Int}) where T<:Number
+    if size(ρ,1) != size(ρ,2)
+        throw(ArgumentError("Non square matrix passed to permutesystems"))
+    end
+    if prod(dims) != size(ρ,1)
+        throw(ArgumentError("Product of dimensions does not match the shape of matrix."))
+    end
+    N = length(dims)
+    if maximum(systems) > N || minimum(systems) < 1
+        throw(ArgumentError("System index out of range"))
+    end
+
+    rev_dims = reverse(dims)
+    
+    I, J, V = findnz(ρ)
+    new_I = Vector{Int}(undef, length(I))
+    new_J = Vector{Int}(undef, length(J))
+    
+    # Temporary buffers
+    sys_indices = Vector{Int}(undef, N)
+    
+    for k in 1:length(V)
+        for (idx_arr, val_ptr) in ((new_I, I[k]), (new_J, J[k]))
+            val = val_ptr - 1
+            for step in 1:N
+                d = rev_dims[step]
+                rem = val % d
+                val = div(val, d)
+                sys_id = N - step + 1
+                sys_indices[sys_id] = rem
+            end
+            
+            new_val = 0
+            current_stride = 1
+            
+            new_dims = dims[systems]
+            rev_new_dims = reverse(new_dims)
+            
+            for step in 1:N
+                target_sys = systems[N - step + 1]
+                idx_val = sys_indices[target_sys]
+                
+                new_val += idx_val * current_stride
+                current_stride *= rev_new_dims[step]
+            end
+            
+            idx_arr[k] = new_val + 1
+        end
+    end
+    
+    sparse(new_I, new_J, V, size(ρ, 1), size(ρ, 2))
 end

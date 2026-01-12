@@ -1,5 +1,6 @@
 @testset verbose=true "Basic functions" begin
 using DoubleFloats: Double64, ComplexDF64
+using SparseArrays
 
 @testset verbose=true "ket" begin
     ϕ = ket(1, 4)
@@ -146,6 +147,31 @@ end
         ρ = werner_state(4, Double64(0.2))
         @test eltype(ρ) == ComplexDF64
         @test tr(ρ) ≈ 1.0
+    end
+end
+
+@testset verbose=true "Sparse Support" begin
+    @testset verbose=true "ket" begin
+        ϕ = ket(SparseVector{ComplexF64, Int}, 1, 4)
+        @test ϕ isa SparseVector
+        @test ϕ[1] == 1.0 + 0.0im
+    end
+
+    @testset verbose=true "bra" begin
+        ϕ = bra(SparseVector{ComplexF64, Int}, 1, 4)
+        @test ϕ' isa SparseVector # bra returns Adjoint, transpose is the vector
+    end
+
+    @testset verbose=true "ketbra" begin
+        ρ = ketbra(SparseMatrixCSC{ComplexF64, Int}, 1, 1, 2)
+        @test ρ isa SparseMatrixCSC
+        @test ρ[1,1] == 1.0 + 0.0im
+    end
+
+    @testset verbose=true "max_entangled" begin
+        ϕ = max_entangled(SparseVector{ComplexF64, Int}, 4)
+        @test ϕ isa SparseVector
+        @test norm(ϕ) ≈ 1.0
     end
 end
 

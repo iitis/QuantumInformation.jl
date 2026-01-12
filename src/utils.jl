@@ -1,6 +1,7 @@
 export number2mixedradix, mixedradix2number,
     funcmh, funcmh!, renormalize!
     # realdiag, realdiag!
+using SparseArrays
 
 """
 
@@ -61,6 +62,22 @@ function renormalize!(ρ::AbstractMatrix{<:Number})
     t = tr(ρ)
     for i=1:length(ρ)
         ρ[i] = ρ[i]/t
+    end
+end
+
+function renormalize!(ψ::AbstractSparseVector{<:Number})
+    n = norm(ψ)
+    nz = nonzeros(ψ)
+    for i in 1:length(nz)
+        nz[i] /= n
+    end
+end
+
+function renormalize!(ρ::AbstractSparseMatrix{<:Number})
+    t = tr(ρ)
+    nz = nonzeros(ρ)
+    for i in 1:length(nz)
+        nz[i] /= t
     end
 end
 
@@ -144,6 +161,11 @@ function ispositive(ρ::AbstractMatrix{<:Number}, atol=1e-13)
     if rows!=cols
         return false
     end
+    
+    if issparse(ρ)
+        ρ = Array(ρ)
+    end
+    
     # if !ishermitian(ρ) # TODO: ishermitian function has no tolerance
     #     return false
     # end

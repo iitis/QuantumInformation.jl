@@ -1,4 +1,5 @@
 import .Base: length, iterate
+using SparseArrays
 
 export AbstractMatrixBasisIterator, HermitianBasisIterator, ElementaryBasisIterator, AbstractBasis,
     AbstractMatrixBasis, HermitianBasis, ElementaryBasis,
@@ -86,11 +87,11 @@ length(itr::ElementaryBasisIterator) = itr.idim * itr.odim
 
 Returns a vector of coefficients of the matrix `m` in the basis `basis`.
 """
-function represent(basis::T, m::Matrix{<:Number}) where T<:AbstractMatrixBasis
+function represent(basis::T, m::AbstractMatrix{<:Number}) where T<:AbstractMatrixBasis
     real.(tr.([m] .* basis.iterator))
 end
 
-function represent(basis::Type{T}, m::Matrix{<:Number}) where T<:AbstractMatrixBasis
+function represent(basis::Type{T}, m::AbstractMatrix{<:Number}) where T<:AbstractMatrixBasis
     d = size(m, 1)
     represent(basis{typeof(m)}(d), m)
 end
@@ -155,9 +156,22 @@ function iterate(itr::ChannelBasisIterator{T}, state=(1,1,1,1)) where T<:Abstrac
             throw(ErrorException("Unexpected nothing from iterate"))
         end
         H = it_res[1]
-        x = (diagm(0 => vcat(ones(Tn, a), Tn[-a], zeros(Tn, odim - a-1))) ⊗ H) / sqrt(Tn(a + a^2))
+        
+        # Construct D
+        D_vec = vcat(ones(Tn, a), Tn[-a], zeros(Tn, odim - a - 1))
+        if T <: AbstractSparseMatrix
+            D = spdiagm(0 => D_vec)
+        else
+            D = diagm(0 => D_vec)
+        end
+
+        x = (D ⊗ H) / sqrt(Tn(a + a^2))
     else 
-        x = Matrix{Tn}(I, idim * odim, idim * odim) / sqrt(Tn(idim * odim))
+        if T <: AbstractSparseMatrix
+             x = sparse(I, idim * odim, idim * odim) / sqrt(Tn(idim * odim))
+        else
+             x = Matrix{Tn}(I, idim * odim, idim * odim) / sqrt(Tn(idim * odim))
+        end
     end
     if d < idim
         newstate = (a, c, b, d+1)

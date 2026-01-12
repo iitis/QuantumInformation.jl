@@ -137,6 +137,30 @@ end
         
         c = Complex{Double64}(1, 1)
         σ = Double64[0.5 0; 0 0.5]
-        @test trace_distance(ρ, σ) isa Double64
+    @test trace_distance(ρ, σ) isa Double64
     end
+
+@testset verbose=true "Sparse Support" begin
+    ρ = sparse([0.25 0.25im; -0.25im 0.75])
+    σ = sparse([0.4 0.1im; -0.1im 0.6])
+    
+    @test norm_trace(ρ) ≈ 1
+    @test purity(ρ) ≈ 0.75
+    @test fidelity(ρ, ρ) ≈ 1
+    
+    # Entropy
+    p = sparse([0.5, 0.5, 0.0, 0.0])
+    @test shannon_entropy(p) ≈ log(2)
+    @test vonneumann_entropy(ρ) ≈ 0.25(log(64)-2sqrt(2)*acoth(sqrt(2)))
+    
+    # Negativity
+    rho_sep = sparse(proj(ket(1, 2)) ⊗ proj(ket(1, 2)))
+    @test negativity(rho_sep, [2, 2], 2) ≈ 0 atol=1e-10
+    
+    # Random sparse
+    s1 = sprand(4, 4, 0.5)
+    s1 = s1 + s1'
+    # fidelity_sqrt handles sparse via convert
+    @test fidelity(s1, s1) ≈ fidelity(Array(s1), Array(s1))
+end
 end

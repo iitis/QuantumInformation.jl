@@ -1,5 +1,6 @@
 @testset verbose=true "Reshuffle" begin
 using DoubleFloats: Double64, ComplexDF64
+using SparseArrays
 @testset verbose=true "Dense matrices" begin
     X = reshape([1:16;], 4, 4)'
     T = [1 2 5 6; 3 4 7 8; 9 10 13 14; 11 12 15 16]
@@ -29,5 +30,15 @@ end
     res = reshuffle(X)
     @test eltype(res) == Double64
     @test res == T
+end
+
+@testset verbose=true "Sparse Support" begin
+    row = [1, 5, 12, 16] # Indices from 1-based [1:16]' reshaped to 4x4
+    S = sparse([1, 2, 3, 4], [1, 2, 3, 4], [1.0, 1.0, 1.0, 1.0], 4, 4)
+    S_res = reshuffle(S)
+    dense_res = reshuffle(Matrix(S))
+    
+    @test S_res isa SparseMatrixCSC
+    @test S_res ≈ dense_res
 end
 end

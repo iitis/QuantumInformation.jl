@@ -1,5 +1,6 @@
 @testset verbose=true "Partial transpose" begin
 using DoubleFloats: Double64, ComplexDF64
+using SparseArrays
 
 @testset verbose=true "Dense matrices" begin
   ρ =  [1 2 3 4; 5 6 7 8; 9 10 11 12; 13 14 15 16]
@@ -49,5 +50,28 @@ end
     # [1 2; 5 6] (Top left block of input) -> [1 5; 2 6] (Expected top left block of output)
     block1_expected = [1 5; 2 6]
     @test res[1:2, 1:2] == block1_expected
+end
+
+@testset verbose=true "Sparse Support" begin
+     # 4x4 matrix, 2 subsystems of dim 2
+    # State |01> corresponds to index 2 (1-based: 0*2 + 1 + 1 = 2)
+    # ρ = |01><01|
+    ρ = sparse([2], [2], [1.0], 4, 4)
+    # Transpose system 2 (dim 2). |01> -> |01> unchanged?
+    # |ij><kl| -> |il><kj|
+    # |01><01| -> |01><01|
+    
+    pt = ptranspose(ρ, [2, 2], [2])
+    @test pt isa SparseMatrixCSC
+    @test pt ≈ ρ
+    
+    # State |01><10|
+    # |01> -> 2
+    # |10> -> 3
+    ρ2 = sparse([2], [3], [1.0], 4, 4)
+    # Transpose sys 2:
+    # |01><10| -> |00><11| (indices 1, 4)
+    pt2 = ptranspose(ρ2, [2, 2], [2])
+    @test pt2 ≈ sparse([1], [4], [1.0], 4, 4)
 end
 end

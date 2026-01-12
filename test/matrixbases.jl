@@ -1,5 +1,6 @@
 @testset verbose=true "MatrixBases" begin
 using DoubleFloats: Double64, ComplexDF64
+using SparseArrays
 
 @testset verbose=true "HermitianBasisIterator" begin
     d = 4
@@ -77,6 +78,47 @@ end
     @test eltype(v) == Double64
     combined = combine(HermitianBasis{Matrix{ComplexDF64}}(d), v)
     @test combined ≈ m[1] atol=1e-25
+    v = represent(HermitianBasis{Matrix{ComplexDF64}}(d), m[1])
+    @test eltype(v) == Double64
+    combined = combine(HermitianBasis{Matrix{ComplexDF64}}(d), v)
+    @test combined ≈ m[1] atol=1e-25
+end
+
+@testset verbose=true "Sparse Support" begin
+    d = 2
+    # Check HermitianBasis with SparseMatrixCSC
+    basis = HermitianBasis{SparseMatrixCSC{ComplexF64, Int}}(d)
+    m = collect(basis.iterator)
+    @test m[1] isa SparseMatrixCSC
+    @test [real(tr(m[i]' * m[j])) for i=1:d^2, j=1:d^2] ≈ Matrix{Float64}(I, d^2, d^2)
+
+    # Represent sparse matrix
+    A = sparse([0. 1.; 1. 0.])
+    vA = represent(basis, A)
+    Ap = combine(basis, vA)
+    @test Ap isa SparseMatrixCSC
+    @test A ≈ Ap
+
+    # ChannelBasis
+    idim, odim = 2, 2
+    cbasis = channelbasis(SparseMatrixCSC{ComplexF64, Int}, idim, odim)
+    m_chan = collect(cbasis.iterator)
+    @test m_chan[1] isa SparseMatrixCSC
+    
+    # Check orthonormality
+    n = length(cbasis.iterator)
+    # This might be slow if n is large, d=2 -> n = 4*4 - 4 + 1 = 13. manageable.
+    @test [real(tr(m_chan[i]' * m_chan[j])) for i=1:n, j=1:n] ≈ Matrix{Float64}(I, n, n)
+    
+    # Represent sparse channel (Process Matrix)
+    # A simple channel: Identity channel. J = sum |ii><jj| ⊗ |i><j|?
+    # Or just random sparse
+    S = sparse(Matrix(I, idim*odim, idim*odim))
+    vS = represent(cbasis, S)
+    Sp = combine(cbasis, vS)
+    
+    @test Sp.matrix isa SparseMatrixCSC
+    @test Sp.matrix ≈ S # limit_type removes nearly zero values
 end
 
 end

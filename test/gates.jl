@@ -1,5 +1,6 @@
 @testset verbose=true "Gates" begin
 using DoubleFloats: Double64, ComplexDF64
+using SparseArrays
 
 @testset verbose=true "QFT" begin
     d = 10
@@ -55,4 +56,31 @@ end
     end
 end
 
+end
+
+@testset verbose=true "Sparse Support" begin
+    d = 4
+    @testset verbose=true "Identity" begin
+        id = 𝕀(SparseMatrixCSC{ComplexF64, Int}, d)
+        @test id isa SparseMatrixCSC
+        @test isapprox(id, I(d))
+    end
+
+    @testset verbose=true "QFT" begin
+        F = qft(SparseMatrixCSC{ComplexF64, Int}, d)
+        @test F isa SparseMatrixCSC
+        @test F'*F ≈ I atol=1e-13
+    end
+
+    @testset verbose=true "Grover" begin
+        G = grover(SparseMatrixCSC{ComplexF64, Int}, d)
+        @test G isa SparseMatrixCSC
+        @test G'*G ≈ I atol=1e-13
+    end
+
+    @testset verbose=true "Hadamard" begin
+        H = hadamard(SparseMatrixCSC{Float64, Int}, 4)
+        @test H isa SparseMatrixCSC
+        @test H'*H ≈ I atol=1e-13
+    end
 end

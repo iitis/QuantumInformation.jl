@@ -1,4 +1,5 @@
 export ptranspose
+using SparseArrays
 """
 
 - `ρ`: quantum state.
@@ -31,6 +32,65 @@ function ptranspose(ρ::AbstractMatrix, idims::Vector{Int}, isystems::Vector{Int
     end
     tensor = permutedims(tensor, invperm(perm))
     reshape(tensor, size(ρ))
+end
+
+function ptranspose(ρ::AbstractSparseMatrix, idims::Vector{Int}, isystems::Vector{Int})
+    size(ρ, 1) != size(ρ, 2) && throw(ArgumentError("Non-square matrix"))
+    
+    dims = reverse(idims)
+    systems = length(idims) .- isystems .+ 1
+    
+    prod(dims) != size(ρ, 1) && throw(ArgumentError("Dimensions mismatch"))
+
+    n_sys = length(dims)
+    
+    # Calculate strides
+    strides = [1]
+    for d in dims[1:end-1]
+        push!(strides, strides[end] * d)
+    end
+    
+    I, J, V = findnz(ρ)
+    
+    new_I = copy(I)
+    new_J = copy(J)
+    
+    for k in 1:length(V)
+        r = I[k] - 1
+        c = J[k] - 1
+        
+        r_digits = zeros(Int, n_sys)
+        c_digits = zeros(Int, n_sys)
+        
+        curr_r = r
+        curr_c = c
+        
+        for i in 1:n_sys
+            r_digits[i] = curr_r % dims[i]
+            curr_r ÷= dims[i]
+            
+            c_digits[i] = curr_c % dims[i]
+            curr_c ÷= dims[i]
+        end
+        
+        # Swap indices for transposed systems
+        for sys in systems
+             r_digits[sys], c_digits[sys] = c_digits[sys], r_digits[sys]
+        end
+        
+        # Reconstruct indices
+        new_r = 0
+        new_c = 0
+        for i in 1:n_sys
+            new_r += r_digits[i] * strides[i]
+            new_c += c_digits[i] * strides[i]
+        end
+        
+        new_I[k] = new_r + 1
+        new_J[k] = new_c + 1
+    end
+    
+    sparse(new_I, new_J, V, size(ρ, 1), size(ρ, 2))
 end
 
 """

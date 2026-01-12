@@ -43,4 +43,32 @@ using DoubleFloats: Double64, ComplexDF64
         @test eltype(res) == Double64
         @test sum(res - permuted) ≈ 0.0 atol=1e-25
     end
+
+    @testset verbose=true "Sparse Support" begin
+        using SparseArrays
+        # 1. Identity permutation
+        s_id = sparse(I, 4, 4)
+        @test permutesystems(s_id, [2, 2], [1, 2]) ≈ s_id
+        @test permutesystems(s_id, [2, 2], [1, 2]) isa AbstractSparseMatrix
+
+        # 2. Swap systems
+        initial = sparse(Diagonal([0,0,1, 0,0,1, 0,0,1]))
+        permuted = sparse(Diagonal([0,0,0,0,0,0,1,1,1]))
+        s_out = permutesystems(initial, [3,3], [2,1])
+        @test s_out isa AbstractSparseMatrix
+        @test s_out ≈ permuted
+
+        # 3. Different dimensions
+        # From dense test:
+        initial_dense = diagm(0=>1:24)
+        permuted_dense = diagm(0=>[1,13,2,14,3,15,4,16,5,17,6,18,7,19,8,20,9,21,10,22,11,23,12,24])
+        
+        s_init = sparse(initial_dense)
+        s_perm = permutesystems(s_init, [2,3,4], [2,3,1])
+        @test s_perm isa AbstractSparseMatrix
+        @test s_perm ≈ permuted_dense
+        
+        # 4. Error checks
+        @test_throws ArgumentError permutesystems(sparse(ones(4,4)), [2,2], [3])
+    end
 end
