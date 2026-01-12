@@ -1,57 +1,76 @@
-export AbstractQuantumOperation, KrausOperators, SuperOperator, DynamicalMatrix,
-    Stinespring, UnitaryChannel, IdentityChannel, POVMMeasurement,
+export AbstractQuantumOperation,
+    KrausOperators,
+    SuperOperator,
+    DynamicalMatrix,
+    Stinespring,
+    UnitaryChannel,
+    IdentityChannel,
+    POVMMeasurement,
     PostSelectionMeasurement
-    
+
 ################################################################################
 # Channels definitions and constructors
 ################################################################################
 
-abstract type AbstractQuantumOperation{T<:AbstractMatrix{<:Number}} end
+abstract type AbstractQuantumOperation{T <: AbstractMatrix{<:Number}} end
+Base.eltype(::AbstractQuantumOperation{T}) where {T} = eltype(T)
+Base.eltype(::Type{<:AbstractQuantumOperation{T}}) where {T} = eltype(T)
 
 """
-
-- `T`: quantum channel map.
+  - `T`: quantum channel map.
 
 Representation of quantum channel by Kraus operators.
 """
-struct KrausOperators{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
+struct KrausOperators{T <: AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     matrices::Vector{T}
     idim::Int
     odim::Int
-    function KrausOperators{T1}(v::Vector{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+    function KrausOperators{T1}(
+        v::Vector{T2},
+    ) where {T1 <: AbstractMatrix{<:Number}, T2 <: AbstractMatrix{<:Number}}
         sizes = [size(k) for k in v]
         for s in sizes[2:end]
             if s!=sizes[1]
-                throw(ArgumentError("Kraus operators list contains matrices of different dimension"))
+                throw(
+                    ArgumentError(
+                        "Kraus operators list contains matrices of different dimension",
+                    ),
+                )
             end
         end
         odim, idim = sizes[1]
-        new{T1}(map(T1, v), idim, odim)
+        return new{T1}(map(T1, v), idim, odim)
     end
 end
 
-function KrausOperators{T1}(v::Vector{T2}, idim::Int, odim::Int) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-    all((odim, idim) == size(k) for k in v) ? () : throw(ArgumentError("Matrix size and operator dimensions mismatch"))
-    KrausOperators{T1}(v)
+function KrausOperators{T1}(
+    v::Vector{T2},
+    idim::Int,
+    odim::Int,
+) where {T1 <: AbstractMatrix{<:Number}, T2 <: AbstractMatrix{<:Number}}
+    all((odim, idim) == size(k) for k in v) ? () :
+    throw(ArgumentError("Matrix size and operator dimensions mismatch"))
+    return KrausOperators{T1}(v)
 end
 
 length(Φ::KrausOperators) = length(Φ.matrices)
 
-function orthogonalize(Φ::KrausOperators{T}) where {T<:AbstractMatrix{<:Number}}
-    convert(KrausOperators{T}, convert(DynamicalMatrix{T}, Φ))
+function orthogonalize(Φ::KrausOperators{T}) where {T <: AbstractMatrix{<:Number}}
+    return convert(KrausOperators{T}, convert(DynamicalMatrix{T}, Φ))
 end
 
 """
-
-- `T`: quantum channel map.
+  - `T`: quantum channel map.
 
 Representation of quantum channel by super-operator.
 """
-struct SuperOperator{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
+struct SuperOperator{T <: AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     matrix::T
     idim::Int
     odim::Int
-    function SuperOperator{T1}(m::T2) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+    function SuperOperator{T1}(
+        m::T2,
+    ) where {T1 <: AbstractMatrix{<:Number}, T2 <: AbstractMatrix{<:Number}}
         r, c = size(m)
         sr = isqrt(r)
         sc = isqrt(c)
@@ -59,149 +78,189 @@ struct SuperOperator{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
             throw(ArgumentError("Superoperator matrix has invalid dimensions"))
         end
         odim, idim = sr, sc
-        new{T1}(convert(T1, m), idim, odim)
+        return new{T1}(convert(T1, m), idim, odim)
     end
 end
 
-function SuperOperator{T1}(m::T2, idim::Int, odim::Int) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-    (odim^2, idim^2) == size(m) ? () : throw(ArgumentError("Matrix size and operator dimensions mismatch"))
-    SuperOperator{T1}(m)
+function SuperOperator{T1}(
+    m::T2,
+    idim::Int,
+    odim::Int,
+) where {T1 <: AbstractMatrix{<:Number}, T2 <: AbstractMatrix{<:Number}}
+    (odim^2, idim^2) == size(m) ? () :
+    throw(ArgumentError("Matrix size and operator dimensions mismatch"))
+    return SuperOperator{T1}(m)
 end
 
 """
-
-- `channel`: quantum channel map.
-- `idim`: square root of the [super-operator](https://en.wikipedia.org/wiki/Superoperator) matrix input dimension.
-- `odim`: square root of the [super-operator](https://en.wikipedia.org/wiki/Superoperator) matrix output dimension.
+  - `channel`: quantum channel map.
+  - `idim`: square root of the [super-operator](https://en.wikipedia.org/wiki/Superoperator) matrix input dimension.
+  - `odim`: square root of the [super-operator](https://en.wikipedia.org/wiki/Superoperator) matrix output dimension.
 
 Transforms quntum channel into super-operator matrix.
 """
-function SuperOperator{T}(channel::Function, idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
-    odim > 0 && idim > 0 ? () : throw(ArgumentError("Channel dimensions have to be nonnegative"))
+function SuperOperator{T}(
+    channel::Function,
+    idim::Int,
+    odim::Int,
+) where {T <: AbstractMatrix{<:Number}}
+    odim > 0 && idim > 0 ? () :
+    throw(ArgumentError("Channel dimensions have to be nonnegative"))
 
     m = zeros(eltype(T), idim^2, odim^2)
     for (i, e) in enumerate(ElementaryBasisIterator{Matrix{Int}}(idim, odim))
         m[:, i] = res(channel(e))
     end
-    SuperOperator(m, idim, odim)
+    return SuperOperator(m, idim, odim)
 end
 
 """
-
-- `T`: quantum channel map.
+  - `T`: quantum channel map.
 
 Representation of quantum channel by Dynamical matrix operators.
 """
-struct DynamicalMatrix{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
+struct DynamicalMatrix{T <: AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     matrix::T
     idim::Int
     odim::Int
-    function DynamicalMatrix{T1}(m, idim, odim) where {T1<:AbstractMatrix{<:Number}}
+    function DynamicalMatrix{T1}(m, idim, odim) where {T1 <: AbstractMatrix{<:Number}}
         r, c = size(m)
         if r!=c || r!=idim*odim
             throw(ArgumentError("DynamicalMatrix matrix has invalid dimensions"))
         end
-        new(convert(T1, m), idim, odim)
+        return new(convert(T1, m), idim, odim)
     end
 end
 
 """
-
-- `T`: quantum channel map.
+  - `T`: quantum channel map.
 
 Stinespring representation of quantum channel.
 """
-struct Stinespring{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
+struct Stinespring{T <: AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     matrix::T
     idim::Int
     odim::Int
-    function Stinespring{T1}(m, idim, odim) where {T1<:AbstractMatrix{<:Number}}
+    function Stinespring{T1}(m, idim, odim) where {T1 <: AbstractMatrix{<:Number}}
         r, c = size(m)
         if r!=idim * (odim^2) || c!=idim
             throw(ArgumentError("Stinespring matrix has invalid dimensions"))
         end
-        new(T1(m), idim, odim)
+        return new(T1(m), idim, odim)
     end
 end
 
 """
-
-- `T`: quantum channel map.
+  - `T`: quantum channel map.
 
 Representation of unitary channel.
 """
-struct UnitaryChannel{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
+struct UnitaryChannel{T <: AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     matrix::T
     idim::Int
     odim::Int
-    function UnitaryChannel{T1}(m::T2) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+    function UnitaryChannel{T1}(
+        m::T2,
+    ) where {T1 <: AbstractMatrix{<:Number}, T2 <: AbstractMatrix{<:Number}}
         odim, idim = size(m)
         idim == odim ? () : throw(ArgumentError("UnitaryChannel matrix has to be square"))
-        new{T1}(convert(T1,m), idim, odim)
+        return new{T1}(convert(T1, m), idim, odim)
     end
 end
 
-function UnitaryChannel{T1}(m::T2, idim::Int, odim::Int) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-    (odim, idim) == size(m) ? () : throw(ArgumentError("Matrix size and operator dimensions mismatch"))
-    UnitaryChannel{T1}(convert(T1,m))
+function UnitaryChannel{T1}(
+    m::T2,
+    idim::Int,
+    odim::Int,
+) where {T1 <: AbstractMatrix{<:Number}, T2 <: AbstractMatrix{<:Number}}
+    (odim, idim) == size(m) ? () :
+    throw(ArgumentError("Matrix size and operator dimensions mismatch"))
+    return UnitaryChannel{T1}(convert(T1, m))
 end
 
 """
-
-- `T`: quantum channel map.
+  - `T`: quantum channel map.
 
 Representation of identity channel.
 """
-struct IdentityChannel{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
+struct IdentityChannel{T <: AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     idim::Int
     odim::Int
-    function IdentityChannel{T}(dim::Int) where T<:AbstractMatrix{<:Number}
-         new{T}(dim, dim)
+    function IdentityChannel{T}(dim::Int) where {T <: AbstractMatrix{<:Number}}
+        return new{T}(dim, dim)
     end
 end
 
+function IdentityChannel(::Type{T}, dim::Int) where {T <: AbstractMatrix{<:Number}}
+    return IdentityChannel{T}(dim)
+end
 IdentityChannel(dim::Int) = IdentityChannel{Matrix{ComplexF64}}(dim)
 
 ################################################################################
 # measurements
 ################################################################################
-struct POVMMeasurement{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
+struct POVMMeasurement{T <: AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
     matrices::Vector{T}
     idim::Int
     odim::Int
-    function POVMMeasurement{T1}(v::Vector{T2}) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+    function POVMMeasurement{T1}(
+        v::Vector{T2},
+    ) where {T1 <: AbstractMatrix{<:Number}, T2 <: AbstractMatrix{<:Number}}
         sizes = [size(p) for p in v]
         for s in sizes[2:end]
             if s!=sizes[1]
-                throw(ArgumentError("POVM operators list contains matrices of different dimension"))
+                throw(
+                    ArgumentError(
+                        "POVM operators list contains matrices of different dimension",
+                    ),
+                )
             end
         end
-        idim = size(v[1], 1) 
+        idim = size(v[1], 1)
         odim = length(v)
 
-        new{T1}(map(T1, v), idim, odim)
+        return new{T1}(map(T1, v), idim, odim)
     end
 end
 
-function POVMMeasurement{T1}(v::Vector{T2}, idim::Int, odim::Int) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-    all((idim, idim) == size(p) for p in v) ? () : throw(ArgumentError("POVMs must be square matrices of size equal to operator inupt dimension"))
-    odim == length(v) ? () : throw(ArgumentError("Operator output dimension must match number of POVM operators"))
-    POVMMeasurement{T1}(v)
+function POVMMeasurement{T1}(
+    v::Vector{T2},
+    idim::Int,
+    odim::Int,
+) where {T1 <: AbstractMatrix{<:Number}, T2 <: AbstractMatrix{<:Number}}
+    all((idim, idim) == size(p) for p in v) ? () :
+    throw(
+        ArgumentError(
+            "POVMs must be square matrices of size equal to operator inupt dimension",
+        ),
+    )
+    odim == length(v) ? () :
+    throw(ArgumentError("Operator output dimension must match number of POVM operators"))
+    return POVMMeasurement{T1}(v)
 end
 
-struct PostSelectionMeasurement{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{T}
+struct PostSelectionMeasurement{T <: AbstractMatrix{<:Number}} <:
+       AbstractQuantumOperation{T}
     matrix::T
     idim::Int
     odim::Int
-    function PostSelectionMeasurement{T1}(m::T2) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
+    function PostSelectionMeasurement{T1}(
+        m::T2,
+    ) where {T1 <: AbstractMatrix{<:Number}, T2 <: AbstractMatrix{<:Number}}
         odim, idim = size(m)
-        new{T1}(convert(T1,m), idim, odim)
+        return new{T1}(convert(T1, m), idim, odim)
     end
 end
 
-function PostSelectionMeasurement{T1}(m::T2, idim::Int, odim::Int) where {T1<:AbstractMatrix{<:Number}, T2<:AbstractMatrix{<:Number}}
-    odim, idim == size(m) ? () : throw(ArgumentError("Matrix size and operator dimensions mismatch"))
-    PostSelectionMeasurement{T1}(m)
+function PostSelectionMeasurement{T1}(
+    m::T2,
+    idim::Int,
+    odim::Int,
+) where {T1 <: AbstractMatrix{<:Number}, T2 <: AbstractMatrix{<:Number}}
+    odim,
+    idim == size(m) ? () :
+    throw(ArgumentError("Matrix size and operator dimensions mismatch"))
+    return PostSelectionMeasurement{T1}(m)
 end
 
 ################################################################################
@@ -209,32 +268,40 @@ end
 ################################################################################
 for qop in (:SuperOperator, :UnitaryChannel, :PostSelectionMeasurement)
     @eval begin
-        function $qop(m::T) where T<:AbstractMatrix{<:Number}
-            $qop{T}(m)
+        function $qop(m::T) where {T <: AbstractMatrix{<:Number}}
+            return $qop{T}(m)
         end
 
-        function $qop(m::T, idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
-            $qop{T}(m, idim, odim)
+        function $qop(m::T, idim::Int, odim::Int) where {T <: AbstractMatrix{<:Number}}
+            return $qop{T}(m, idim, odim)
         end
     end
 end
 
+function SuperOperator(channel::Function, idim::Int, odim::Int)
+    return SuperOperator{Matrix{ComplexF64}}(channel, idim, odim)
+end
+
 for qop in (:DynamicalMatrix, :Stinespring)
     @eval begin
-        function $qop(m::T, idim::Int, odim::Int) where T<:AbstractMatrix{<:Number}
-            $qop{T}(m, idim, odim)
+        function $qop(m::T, idim::Int, odim::Int) where {T <: AbstractMatrix{<:Number}}
+            return $qop{T}(m, idim, odim)
         end
     end
 end
 
 for qop in (:KrausOperators, :POVMMeasurement)
     @eval begin
-        function $qop(v::T) where T<:Vector{M} where M<:AbstractMatrix{<:Number}
-            $qop{M}(v)
+        function $qop(v::T) where {T <: Vector{M}} where {M <: AbstractMatrix{<:Number}}
+            return $qop{M}(v)
         end
 
-        function $qop(v::T, idim::Int, odim::Int) where  T<:Vector{M} where M<:AbstractMatrix{<:Number}
-            $qop{M}(v)
+        function $qop(
+            v::T,
+            idim::Int,
+            odim::Int,
+        ) where {T <: Vector{M}} where {M <: AbstractMatrix{<:Number}}
+            return $qop{M}(v, idim, odim)
         end
     end
 end

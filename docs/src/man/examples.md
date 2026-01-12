@@ -32,13 +32,14 @@ $100$ random pure initial states. We also check how the parameter $\gamma$
 influences this fidelity.
 
 ```@repl QuantumInformation
+using Statistics
 steps = 100
 haar = HaarKet(2)
-ψ = (ket(0, 4) + ket(3, 4))/sqrt(2)
+ψ = (ket(1, 4) + ket(4, 4))/sqrt(2)
 γs = 0.0:0.01:1.0
 Φ = KrausOperators([[1 0; 0 sqrt(1-γ)], [0 sqrt(γ); 0 0]])
-post = [PostSelectionMeasurement(proj(ket(i, 4)) ⊗ eye(2)) for i=0:3]
-rots = [UnitaryChannel(eye(2)), UnitaryChannel(sx), UnitaryChannel(sz),
+post = [PostSelectionMeasurement(proj(ket(i, 4)) ⊗ 𝕀(2)) for i=1:4]
+rots = [UnitaryChannel(𝕀(2)), UnitaryChannel(sx), UnitaryChannel(sz),
 UnitaryChannel(sx*sz)]
 had = UnitaryChannel{Matrix{ComplexF64}}(hadamard(2))
 cnot = UnitaryChannel{Matrix{ComplexF64}}([1 0 0 0; 0 1 0 0; 0 0 0 1; 0 0 1 0])
@@ -55,5 +56,5 @@ IdentityChannel(2))∘(IdentityChannel(4) ⊗ Φ))(ξ)
         end
     end
 end
-mean(r, 1)
+mean(r, dims=1)
 ```

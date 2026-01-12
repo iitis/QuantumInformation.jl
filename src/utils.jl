@@ -1,11 +1,10 @@
-export number2mixedradix, mixedradix2number,
-    funcmh, funcmh!, renormalize!
-    # realdiag, realdiag!
+export number2mixedradix, mixedradix2number, funcmh, funcmh!, renormalize!
+# realdiag, realdiag!
+using SparseArrays
 
 """
-
-- `n`: Number to be converted (integer).
-- `radices`: Vector of mixed radices.
+  - `n`: Number to be converted (integer).
+  - `radices`: Vector of mixed radices.
 
 Returns the representation of `n` in the mixed radix system defined by `radices`.
 """
@@ -14,15 +13,14 @@ function number2mixedradix(n::Int, radices::Vector{Int})
 
     digits = Array{Int}(undef, length(radices))
     for (i, radix) in enumerate(reverse(radices))
-        n, digits[end-i+1] = divrem(n, radix)
+        n, digits[end - i + 1] = divrem(n, radix)
     end
-    digits
+    return digits
 end
 
 """
-
-- `digits`: Vector of coefficients in mixed radix representation.
-- `radices`: Vector of mixed radices.
+  - `digits`: Vector of coefficients in mixed radix representation.
+  - `radices`: Vector of mixed radices.
 
 Returns the integer number corresponding to the mixed radix representation.
 """
@@ -31,36 +29,50 @@ function mixedradix2number(digits::Vector{Int}, radices::Vector{Int})
 
     res = 0
     digitsreversed = reverse(digits)
-    for (digit, radix) = zip(digits, radices)
+    for (digit, radix) in zip(digits, radices)
         digit >= radix ? throw(ArgumentError("digit larger or equal to base")) : ()
         res = res * radix + digit
     end
-    res
+    return res
 end
 
 """
-
-- `ψ`: Input vector.
+  - `ψ`: Input vector.
 
 Renormalizes the vector `ψ` in-place so that its norm is 1.
 """
 function renormalize!(ψ::AbstractVector{<:Number})
     n = norm(ψ)
-    for i=1:length(ψ)
+    for i in 1:length(ψ)
         ψ[i] = ψ[i]/n
     end
 end
 
 """
-
-- `ρ`: Input matrix.
+  - `ρ`: Input matrix.
 
 Renormalizes the matrix `ρ` in-place so that its trace is 1.
 """
 function renormalize!(ρ::AbstractMatrix{<:Number})
     t = tr(ρ)
-    for i=1:length(ρ)
+    for i in 1:length(ρ)
         ρ[i] = ρ[i]/t
+    end
+end
+
+function renormalize!(ψ::AbstractSparseVector{<:Number})
+    n = norm(ψ)
+    nz = nonzeros(ψ)
+    for i in 1:length(nz)
+        nz[i] /= n
+    end
+end
+
+function renormalize!(ρ::AbstractSparseMatrix{<:Number})
+    t = tr(ρ)
+    nz = nonzeros(ρ)
+    for i in 1:length(nz)
+        nz[i] /= t
     end
 end
 
@@ -83,43 +95,49 @@ end
 #     a
 # end
 
-function funcmh!(f::Function, h::Hermitian{T}, r::Matrix{T})  where T<:Union{Real, Complex}
+function funcmh!(
+    f::Function,
+    h::Hermitian{T},
+    r::Matrix{T},
+) where {T <: Union{Real, Complex}}
     fact = eigen!(h)
     times_diag = zero(fact.vectors)
-    for i=1:size(fact.vectors, 2)
+    for i in 1:size(fact.vectors, 2)
         times_diag[:, i] = fact.vectors[:, i] * f(fact.values[i])
     end
-    r[:] = times_diag * fact.vectors'
+    return r[:] = times_diag * fact.vectors'
 end
 
-function funcmh!(f::Function, h::Hermitian{T}) where T<:Union{Real, Complex}
+function funcmh!(f::Function, h::Hermitian{T}) where {T <: Union{Real, Complex}}
     r = zeros(T, size(h))
     funcmh!(f, h, r)
-    r
+    return r
 end
 
-function funcmh(f::Function, h::Hermitian{T}) where T<:Union{Real, Complex}
+function funcmh(f::Function, h::Hermitian{T}) where {T <: Union{Real, Complex}}
     r = zeros(T, size(h))
     funcmh!(f, copy(h), r)
-    r
+    return r
 end
 
-function funcmh!(f::Function, h::Matrix{T}, r::Matrix{T}) where T<:Union{Real, Complex}
-    ishermitian(h) ? funcmh!(f, Hermitian(h), r) : error("Non-hermitian matrix passed to funcmh")
+function funcmh!(f::Function, h::Matrix{T}, r::Matrix{T}) where {T <: Union{Real, Complex}}
+    return ishermitian(h) ? funcmh!(f, Hermitian(h), r) :
+           error("Non-hermitian matrix passed to funcmh")
 end
 
-function funcmh!(f::Function, h::Matrix{T}) where T<:Union{Real, Complex}
-    ishermitian(h) ? funcmh!(f, Hermitian(h)) : error("Non-hermitian matrix passed to funcmh")
+function funcmh!(f::Function, h::Matrix{T}) where {T <: Union{Real, Complex}}
+    return ishermitian(h) ? funcmh!(f, Hermitian(h)) :
+           error("Non-hermitian matrix passed to funcmh")
 end
 
-function funcmh(f::Function, h::Matrix{T}) where T<:Union{Real, Complex}
-    ishermitian(h) ? funcmh(f, Hermitian(h)) : error("Non-hermitian matrix passed to funcmh")
+function funcmh(f::Function, h::Matrix{T}) where {T <: Union{Real, Complex}}
+    return ishermitian(h) ? funcmh(f, Hermitian(h)) :
+           error("Non-hermitian matrix passed to funcmh")
 end
 
 """
-
-- `ρ`: Input matrix.
-- `atol`: Absolute tolerance.
+  - `ρ`: Input matrix.
+  - `atol`: Absolute tolerance.
 
 Checks if the matrix `ρ` is approximately the identity matrix.
 """
@@ -129,13 +147,12 @@ function isidentity(ρ::AbstractMatrix{<:Number}, atol=1e-13)
         return false
     end
 
-    isapprox(ρ, I, atol=atol)
+    return isapprox(ρ, I, atol=atol)
 end
 
 """
-
-- `ρ`: Input matrix.
-- `atol`: Absolute tolerance.
+  - `ρ`: Input matrix.
+  - `atol`: Absolute tolerance.
 
 Checks if the matrix `ρ` is positive semi-definite.
 """
@@ -144,14 +161,18 @@ function ispositive(ρ::AbstractMatrix{<:Number}, atol=1e-13)
     if rows!=cols
         return false
     end
+
+    if issparse(ρ)
+        ρ = Array(ρ)
+    end
+
     # if !ishermitian(ρ) # TODO: ishermitian function has no tolerance
     #     return false
     # end
     h = Hermitian(ρ)
     fact = eigen(h)
-    all(fact.values .> -atol)
+    return all(fact.values .> -atol)
 end
-
 
 isnumbernotint(T::Type) = ((T <: Real && !(T <: Integer)) || (T <: Complex))
 

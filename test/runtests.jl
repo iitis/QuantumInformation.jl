@@ -20,19 +20,19 @@ using JET
         "matrixbases.jl",
         "permute_systems.jl",
         "randomqobjects.jl",
-        "convex.jl"
+        "convex.jl",
     ]
     for my_test in my_tests
-        @testset "$my_test" begin
+        @testset verbose=true "$my_test" begin
             include(my_test)
         end
     end
 
-    @testset "Aqua.jl" begin
+    @testset verbose=true "Aqua.jl" begin
         Aqua.test_all(QuantumInformation)
     end
 
-    @testset "JET.jl" begin
+    @testset verbose=true "JET.jl" begin
         JET.test_package(QuantumInformation; target_modules=(QuantumInformation,))
     end
 end

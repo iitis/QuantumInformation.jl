@@ -184,3 +184,29 @@ $C(\rho)=0$, then $\rho$ is separable.
 concurrence(ρ ⊗ σ)
 concurrence(proj(max_entangled(4)))
 ```
+
+## Sparse Matrix Support
+
+Many functionals in **QuantumInformation.jl** provide native support for sparse matrices. For large systems (typically larger than 32x32), we utilize iterative solvers from [Arpack.jl](https://github.com/JuliaLinearAlgebra/Arpack.jl) to efficiently compute a subset of eigenvalues or singular values.
+
+The following functionals have optimized sparse implementations:
+- `norm_trace`
+- `fidelity_sqrt`
+- `vonneumann_entropy`
+- `renyi_entropy`
+- `relative_entropy`
+- `negativity`
+- `ppt`
+
+```@example QuantumInformation
+using SparseArrays
+n = 6
+d = n^2
+ψ = max_entangled(SparseVector{ComplexF64, Int}, d)
+ρ = proj(ψ)
+negativity(ρ, [n, n], 1)
+```
+
+> [!NOTE]
+> For very large or high-rank sparse matrices, iterative solvers may have convergence issues or miss small eigenvalues. We cap the number of computed values at 32 for performance and stability.
+
