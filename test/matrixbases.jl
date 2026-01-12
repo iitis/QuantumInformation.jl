@@ -1,12 +1,13 @@
-@testset "MatrixBases" begin
+@testset verbose=true "MatrixBases" begin
+using DoubleFloats: Double64, ComplexDF64
 
-@testset "HermitianBasisIterator" begin
+@testset verbose=true "HermitianBasisIterator" begin
     d = 4
     m = collect(HermitianBasisIterator{Matrix{ComplexF64}}(d))
     @test [tr(m[i]' * m[j]) for i=1:d, j=1:d] ≈ Matrix{Float64}(I, d, d)
 end
 
-@testset "ChannelBasisIteratorsquare" begin
+@testset verbose=true "ChannelBasisIteratorsquare" begin
     idim = 2
     odim = idim 
     d = idim^2 * odim^2 - idim^2 + 1
@@ -14,7 +15,7 @@ end
     @test [tr(m[i]' * m[j]) for i=1:d, j=1:d] ≈ Matrix{Float64}(I, d, d)
 end
 
-@testset "represent, combine" begin
+@testset verbose=true "represent, combine" begin
     d = 4
     A = reshape(collect(1:16), d, d) + reshape(collect(1:16), d, d)'
     vA = represent(HermitianBasis{Matrix{ComplexF64}}(d), A)
@@ -35,7 +36,7 @@ end
     @test length(vC) == prod(size(C))
 end
 
-@testset "representchannel, combinechannel" begin
+@testset verbose=true "representchannel, combinechannel" begin
     (idim, odim) = (2,4)
     A = reshape(collect(1:16), idim * odim, idim) * reshape(collect(1:16), idim * odim, idim)'
     B = Matrix{Float64}(I, odim, odim) ⊗ (ptrace(A, [odim, idim], 1))^(-1/2)
@@ -56,14 +57,26 @@ end
 
 end
 
-@testset "hermitainbasis" begin
+@testset verbose=true "hermitainbasis" begin
     @test hermitianbasis(Matrix{Float32}, 2) == HermitianBasisIterator{Matrix{Float32}}(2)
     @test hermitianbasis(2) == HermitianBasisIterator{Matrix{ComplexF64}}(2)
 end
 
-@testset "channelbasis" begin
+@testset verbose=true "channelbasis" begin
     @test channelbasis(Matrix{Float32}, 2) == ChannelBasis{Matrix{Float32}}(2,2)
     @test channelbasis(2,3) ==  ChannelBasis{Matrix{ComplexF64}}(2,3)
+end
+
+@testset verbose=true "Double64 Support" begin
+    d = 2
+    m = collect(HermitianBasisIterator{Matrix{ComplexDF64}}(d))
+    @test eltype(m[1]) == ComplexDF64
+    @test [tr(m[i]' * m[j]) for i=1:d, j=1:d] ≈ Matrix{Double64}(I, d, d) atol=1e-15
+
+    v = represent(HermitianBasis{Matrix{ComplexDF64}}(d), m[1])
+    @test eltype(v) == Double64
+    combined = combine(HermitianBasis{Matrix{ComplexDF64}}(d), v)
+    @test combined ≈ m[1] atol=1e-25
 end
 
 end

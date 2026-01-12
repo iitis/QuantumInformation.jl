@@ -127,12 +127,15 @@ max_mixed(d::Int) = I(d)/d
 
 Return maximally entangled state \$\\frac{1}{\\sqrt{d}}\\sum_{i=0}^{\\sqrt{d}-1}|ii\\rangle\$ of length \$\\sqrt{d}\$.
 """
-function max_entangled(d::Int)
+function max_entangled(::Type{T}, d::Int) where T<:Number
     sd = isqrt(d)
-    ρ = res(Diagonal{ComplexF64}(I, sd))
+    ρ = res(Diagonal{T}(I, sd))
     renormalize!(ρ)
-    ρ
+    poster = convert(Vector{T}, ρ)
+    poster
 end
+
+max_entangled(d::Int) = max_entangled(ComplexF64, d)
 
 """
 
@@ -144,9 +147,9 @@ Returns [Werner state](http://en.wikipedia.org/wiki/Werner_state) given by
 \\left(\\sum_{i=0}^{\\sqrt{d}-1}\\langle ii|\\right)+
 \\frac{1-\\alpha}{d}\\sum_{i=0}^{d-1}|i\\rangle\\langle i|\$.
 """
-function werner_state(d::Int, α::Float64)
+function werner_state(d::Int, α::Number)
     α > 1 || α < 0 ? throw(ArgumentError("α must be in [0, 1]")) : ()
-    α * proj(max_entangled(d)) + (1 - α) * max_mixed(d)
+    α * proj(max_entangled(complex(typeof(α)), d)) + (1 - α) * max_mixed(d)
 end
 
 """

@@ -1,6 +1,7 @@
-@testset "Permute systems" begin
+@testset verbose=true "Permute systems" begin
+using DoubleFloats: Double64, ComplexDF64
 
-    @testset "Diagonal matrix" begin
+    @testset verbose=true "Diagonal matrix" begin
          initial = Matrix(Diagonal([0,0,1, 0,0,1, 0,0,1]))
          permuted = Matrix(Diagonal([0,0,0,0,0,0,1,1,1]))
          @test sum(permutesystems(initial, [3,3], [2,1]) - permuted) ≈ 0. atol=1e-15
@@ -11,7 +12,7 @@
          @test_throws ArgumentError permutesystems(ones(4, 4), [2, 2], [3])
     end
 
-    @testset "More complex diagonal matrix" begin
+    @testset verbose=true "More complex diagonal matrix" begin
         # the following example has been generated
         # using original python implementation of permute_systems
         initial_diagonal = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16]
@@ -25,7 +26,7 @@
 
     end
 
-    @testset "Different dimensions" begin
+    @testset verbose=true "Different dimensions" begin
         # the following example has been generated
         # using original python implementation of permute_systems
 
@@ -33,5 +34,13 @@
         permuted = diagm(0=>[1,13,2,14,3,15,4,16,5,17,6,18,7,19,8,20,9,21,10,22,11,23,12,24])
 
         @test sum(abs.(permutesystems(initial, [2,3,4], [2,3,1]) - permuted)) ≈ 0. atol=1e-15
+    end
+    @testset verbose=true "Double64 Support" begin
+        # Diagonal matrix with Double64
+        initial = Matrix(Diagonal(Double64[0,0,1, 0,0,1, 0,0,1]))
+        permuted = Matrix(Diagonal(Double64[0,0,0,0,0,0,1,1,1]))
+        res = permutesystems(initial, [3,3], [2,1])
+        @test eltype(res) == Double64
+        @test sum(res - permuted) ≈ 0.0 atol=1e-25
     end
 end

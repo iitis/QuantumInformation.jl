@@ -1,7 +1,7 @@
 Random.seed!(42)
 
-@testset "randomqobjects" begin
-    @testset "HaarKet" begin
+@testset verbose=true "randomqobjects" begin
+    @testset verbose=true "HaarKet" begin
         d = 10
         h1 = HaarKet{1}(d)
         h2 = HaarKet{2}(d)
@@ -24,7 +24,7 @@ Random.seed!(42)
         @test sum(abs2.(ϕ)) ≈ 1. atol=1e-15
     end
 
-    @testset "HilbertSchmidtStates" begin
+    @testset verbose=true "HilbertSchmidtStates" begin
         d = 10
         hs = HilbertSchmidtStates{1, 0.1}(d)
         ρ = rand(hs)
@@ -46,7 +46,7 @@ Random.seed!(42)
         @test HilbertSchmidtStates(d) == HilbertSchmidtStates{2, 1}(d)
     end
 
-    @testset "ChoiJamiolkowskiMatrices" begin
+    @testset verbose=true "ChoiJamiolkowskiMatrices" begin
         idim = 5
         odim = 6
         c = ChoiJamiolkowskiMatrices{1, 0.1}(idim, odim)
@@ -67,7 +67,7 @@ Random.seed!(42)
         @test ChoiJamiolkowskiMatrices(idim) == ChoiJamiolkowskiMatrices{2, 1}(idim, idim)
     end
 
-    @testset "HaarPOVMs" begin
+    @testset verbose=true "HaarPOVMs" begin
         idim = 2
         odim = 3
         c = HaarPOVM(idim, odim)
@@ -77,7 +77,7 @@ Random.seed!(42)
         @test norm(sum(p.matrices) - I) ≈ 0  atol=1e-8
     end
 
-    @testset "VonNeumannPOVMs" begin
+    @testset verbose=true "VonNeumannPOVMs" begin
         d = 3
         c = VonNeumannPOVM(d)
 
@@ -86,12 +86,25 @@ Random.seed!(42)
         @test length(p.matrices) == d
     end
 
-    @testset "WishartPOVMs" begin
+    @testset verbose=true "WishartPOVMs" begin
         idim = 2
         odim = 3
         c = WishartPOVM(idim, odim)
 
         p = rand(c)
         @test norm(sum(p.matrices) - I) ≈ 0  atol=1e-8
+    end
+
+    @testset verbose=true "Double64 Support" begin
+        d = 4
+        # Testing if we can convert generated random objects
+        hk = HaarKet(d)
+        v = rand(hk)
+        v_df = convert(Vector{ComplexDF64}, v)
+        @test norm(v_df) ≈ 1.0
+        
+        # Checking compatibility with Double64 operations
+        # If we had a Double64 constructor, we'd test it here.
+        # For now, ensuring no downstream errors when using converted types.
     end
 end

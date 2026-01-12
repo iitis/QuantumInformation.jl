@@ -7,6 +7,8 @@ export AbstractQuantumOperation, KrausOperators, SuperOperator, DynamicalMatrix,
 ################################################################################
 
 abstract type AbstractQuantumOperation{T<:AbstractMatrix{<:Number}} end
+Base.eltype(::AbstractQuantumOperation{T}) where T = eltype(T)
+Base.eltype(::Type{<:AbstractQuantumOperation{T}}) where T = eltype(T)
 
 """
 
@@ -160,6 +162,7 @@ struct IdentityChannel{T<:AbstractMatrix{<:Number}} <: AbstractQuantumOperation{
     end
 end
 
+IdentityChannel(::Type{T}, dim::Int) where T<:AbstractMatrix{<:Number} = IdentityChannel{T}(dim)
 IdentityChannel(dim::Int) = IdentityChannel{Matrix{ComplexF64}}(dim)
 
 ################################################################################

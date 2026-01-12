@@ -161,8 +161,8 @@ function iseffect(Φ::PostSelectionMeasurement{<:AbstractMatrix{<:Number}})
 end
 
 function Base.isapprox(Φ1::AbstractQuantumOperation, Φ2::AbstractQuantumOperation; kwargs...)
-    T = Matrix{ComplexF64}
-    s1 = convert(SuperOperator{T}, Φ1)
-    s2 = convert(SuperOperator{T}, Φ2)
+    T = complex(promote_type(eltype(Φ1), eltype(Φ2)))
+    s1 = convert(SuperOperator{Matrix{T}}, Φ1)
+    s2 = convert(SuperOperator{Matrix{T}}, Φ2)
     return isapprox(s1.matrix, s2.matrix; kwargs...)
 end

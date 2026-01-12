@@ -1,6 +1,7 @@
-@testset "Basic functions" begin
+@testset verbose=true "Basic functions" begin
+using DoubleFloats: Double64, ComplexDF64
 
-@testset "ket" begin
+@testset verbose=true "ket" begin
     ϕ = ket(1, 4)
     ψ = ComplexF64[1, 0, 0, 0]
     @test norm(ϕ - ψ) ≈ 0.
@@ -13,7 +14,7 @@
     @test_throws ArgumentError ket(4, 3)
 end
 
-@testset "bra" begin
+@testset verbose=true "bra" begin
     ϕ = bra(1, 4)
     ψ = ComplexF64[1 0 0 0]
     @test norm(ϕ - ψ) ≈ 0.
@@ -27,7 +28,7 @@ end
     
 end
 
-@testset "ketbra" begin
+@testset verbose=true "ketbra" begin
     ϕψ = ketbra(1, 1, 4)
     αβ = zeros(ComplexF64, 4, 4)
     αβ[1, 1] = 1
@@ -44,7 +45,7 @@ end
     @test typeof(ketbra(Matrix{ComplexF64}, 1, 1, 4)) == Matrix{ComplexF64}
 end
 
-@testset "proj" begin
+@testset verbose=true "proj" begin
     ϕ = ket(1, 4)
     ϕϕ = proj(ϕ)
     ψψ = zeros(ComplexF64, 4 ,4)
@@ -52,41 +53,41 @@ end
     @test norm(ϕϕ - ψψ) ≈ 0.
 end
 
-@testset "bloch_vector" begin
-    @testset "Test 1: Identity matrix" begin
+@testset verbose=true "bloch_vector" begin
+    @testset verbose=true "Test 1: Identity matrix" begin
         ρ = Matrix{ComplexF64}(I, 2, 2)
         @test bloch_vector(ρ) ≈ ComplexF64[0.0, 0.0, 1.0]
     end
 
-    @testset "Test 2: X basis state" begin
+    @testset verbose=true "Test 2: X basis state" begin
         ρ = [0.5 0.5; 0.5 0.5]
         @test bloch_vector(ρ) ≈ Float64[1.0, 0.0, 0.0]
     end
 
-    @testset "Test 3: Y basis state" begin
+    @testset verbose=true "Test 3: Y basis state" begin
         ρ = [0.5 0.5im; -0.5im 0.5]
         @test bloch_vector(ρ) ≈ ComplexF64[0.0, 1.0, 0.0]
     end
 
-    @testset "Test 4: Z basis state" begin
+    @testset verbose=true "Test 4: Z basis state" begin
         ρ = [1.0 0.0; 0.0 0.0]
         @test bloch_vector(ρ) ≈ Float64[0.0, 0.0, 1.0]
     end
 
-    @testset "Test 5: Arbitrary density matrix" begin
+    @testset verbose=true "Test 5: Arbitrary density matrix" begin
         ρ = [0.6 0.3-0.2im; 0.3+0.2im 0.4]
         @test bloch_vector(ρ) ≈ ComplexF64[0.6, -0.4, 0.2]
     end
 end
 
-@testset "res" begin
+@testset verbose=true "res" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     ϕ = res(ρ)
     ψ = [0.25, 0.25im, -0.25im, 0.75]
     @test norm(ϕ - ψ) ≈ 0.
 end
 
-@testset "unres" begin
+@testset verbose=true "unres" begin
     ρ = [0.25 0.25im; -0.25im 0.75]
     σ = unres(res(ρ))
     @test norm(ρ - σ) ≈ 0.
@@ -100,13 +101,13 @@ end
 end
 
 
-@testset "max_mixed" begin
+@testset verbose=true "max_mixed" begin
     d = 10
     ρ = max_mixed(d)
     @test all(diag(ρ) .≈ 1/d)
 end
 
-@testset "max_entangled" begin
+@testset verbose=true "max_entangled" begin
     ϕ = max_entangled(4)
     @test norm(ϕ) ≈ 1
     @test ϕ[1] ≈ 1/sqrt(2) atol=1e-15
@@ -115,11 +116,37 @@ end
     @test ϕ[3] ≈ 0 atol=1e-15
 end
 
-@testset "werner_state" begin
+@testset verbose=true "werner_state" begin
     ρ = werner_state(4, 0.2222)
     @test tr(ρ) ≈ 1
     @test ishermitian(ρ)
 
     @test_throws ArgumentError werner_state(4, 1.2)
 end
+@testset verbose=true "Double64 Support" begin
+    @testset verbose=true "ket" begin
+        ϕ = ket(ComplexDF64, 1, 4)
+        @test eltype(ϕ) == ComplexDF64
+        @test norm(ϕ) ≈ 1.0
+    end
+    
+    @testset verbose=true "bra" begin
+        ϕ = bra(ComplexDF64, 1, 4)
+        @test eltype(ϕ) == ComplexDF64
+        @test norm(ϕ) ≈ 1.0
+    end
+
+    @testset verbose=true "max_entangled" begin
+        ϕ = max_entangled(ComplexDF64, 4)
+        @test eltype(ϕ) == ComplexDF64
+        @test norm(ϕ) ≈ 1.0
+    end
+
+    @testset verbose=true "werner_state" begin
+        ρ = werner_state(4, Double64(0.2))
+        @test eltype(ρ) == ComplexDF64
+        @test tr(ρ) ≈ 1.0
+    end
+end
+
 end

@@ -1,5 +1,6 @@
-@testset "Reshuffle" begin
-@testset "Dense matrices" begin
+@testset verbose=true "Reshuffle" begin
+using DoubleFloats: Double64, ComplexDF64
+@testset verbose=true "Dense matrices" begin
     X = reshape([1:16;], 4, 4)'
     T = [1 2 5 6; 3 4 7 8; 9 10 13 14; 11 12 15 16]
     @test reshuffle(X) == T
@@ -22,4 +23,11 @@
 
 end
 
+@testset verbose=true "Double64 Support" begin
+    X = reshape(Double64[1:16;], 4, 4)'
+    T = Double64[1 2 5 6; 3 4 7 8; 9 10 13 14; 11 12 15 16]
+    res = reshuffle(X)
+    @test eltype(res) == Double64
+    @test res == T
+end
 end

@@ -1,6 +1,7 @@
-@testset "Gates" begin
+@testset verbose=true "Gates" begin
+using DoubleFloats: Double64, ComplexDF64
 
-@testset "QFT" begin
+@testset verbose=true "QFT" begin
     d = 10
     F = qft(d)
     @test size(F) == (d, d)
@@ -8,14 +9,14 @@
     @test norm(abs.(F) - fill(1/sqrt(d), d, d)) ≈ 0 atol=1e-13
 end
 
-@testset "Grover" begin
+@testset verbose=true "Grover" begin
     d = 10
     G = grover(d)
     @test G'*G ≈ I atol=1e-13
     @test size(G) == (d, d)
 end
 
-@testset "hadamard" begin
+@testset verbose=true "hadamard" begin
     d = 16
     H = hadamard(d)
     @test size(H) == (d, d)
@@ -24,12 +25,34 @@ end
     @test_throws ArgumentError hadamard(10)
 end
 
-@testset "Pauli matrices" begin
+@testset verbose=true "Pauli matrices" begin
     @test size(sx) == (2, 2)
     @test size(sy) == (2, 2)
     @test size(sz) == (2, 2)
 
     @test sx*sy - sy*sx == -2im * sz
+end
+
+@testset verbose=true "Double64 Support" begin
+    d = 10
+    
+    @testset verbose=true "QFT" begin
+        F = qft(ComplexDF64,d)
+        @test eltype(F) == ComplexDF64
+        @test F'*F ≈ I atol=1e-25
+    end
+
+    @testset verbose=true "Grover" begin
+        G = grover(ComplexDF64,d)
+        @test eltype(G) == ComplexDF64
+        @test G'*G ≈ I atol=1e-25
+    end
+
+    @testset verbose=true "Hadamard" begin
+        H = hadamard(Double64,16)
+        @test eltype(H) == Double64 # Note: hadamard returns real matrix
+        @test H'*H ≈ I atol=1e-25
+    end
 end
 
 end

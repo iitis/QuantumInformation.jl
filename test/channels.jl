@@ -1,21 +1,23 @@
-@testset "Channels" begin
+@testset verbose=true "Channels" begin
+
+using DoubleFloats: Double64, ComplexDF64
 
 include("test_channels.jl")
 
-@testset "KrausOperators" begin
-    @testset "construction" begin
+@testset verbose=true "KrausOperators" begin
+    @testset verbose=true "construction" begin
         kl = [[1 0; 0 1], [1 0 0; 1 0 0; 0 0 1],[1 0; 0 1]]
         @test_throws ArgumentError KrausOperators(kl)
     end
 
-    @testset "iscptp" begin
+    @testset verbose=true "iscptp" begin
         for kraus_list in kraus_set
             Φ = KrausOperators(kraus_list)
             @test iscptp(Φ) == true
         end
     end
 
-    @testset "convert to SuperOperator" begin
+    @testset verbose=true "convert to SuperOperator" begin
         ket0 = ket(1, 2)
         ket1 = ket(2, 2)
         ko = KrausOperators(kraus_list_u)
@@ -31,7 +33,7 @@ include("test_channels.jl")
         end
     end
 
-    @testset "convert to Stinespring" begin
+    @testset verbose=true "convert to Stinespring" begin
         for kraus_list in kraus_set
             ko = KrausOperators(kraus_list)
             T = typeof(ko.matrices[1])
@@ -41,7 +43,7 @@ include("test_channels.jl")
         end
     end
 
-    @testset "convert to DynamicalMatrix" begin
+    @testset verbose=true "convert to DynamicalMatrix" begin
         for kraus_list in kraus_set
             ko = KrausOperators(kraus_list)
             T = typeof(ko.matrices[1])
@@ -52,15 +54,15 @@ include("test_channels.jl")
     end
 end
 
-@testset "SuperOperator" begin
-    @testset "construction from function" begin
+@testset verbose=true "SuperOperator" begin
+    @testset verbose=true "construction from function" begin
         ρ = [0.25 0.25im; -0.25im 0.75]
         t = hcat([ComplexF64[0.25, 0.25im, -0.25im, 0.75] for i=1:4]...) #stack res ρ
         m = SuperOperator{Matrix{ComplexF64}}(x -> ρ, 2, 2).matrix
         @test norm(t-m) ≈ 0. atol=1e-15
     end
 
-    @testset "convert to KrausOperators" begin
+    @testset verbose=true "convert to KrausOperators" begin
         for kraus_list in kraus_set
             ko1 = KrausOperators(kraus_list)
             T = typeof(ko1.matrices[1])
@@ -71,7 +73,7 @@ end
             @test Φ1.matrix ≈ Φ2.matrix
         end
     end
-    @testset "convert to DynamicalMatrix" begin
+    @testset verbose=true "convert to DynamicalMatrix" begin
         for kraus_list in kraus_set
             r, c = size(kraus_list[1])
             ko = KrausOperators(kraus_list)
@@ -85,7 +87,7 @@ end
             @test isidentity(ptrace(r2, [r, c], 1)) == true
         end
     end
-    @testset "convert to Stinespring" begin
+    @testset verbose=true "convert to Stinespring" begin
         for kraus_list in kraus_set
             ko = KrausOperators(kraus_list)
             T = typeof(ko.matrices[1])
@@ -97,8 +99,8 @@ end
     end
 end
 
-@testset "DynamicalMatrix" begin
-    @testset "convert to KrausOperators" begin
+@testset verbose=true "DynamicalMatrix" begin
+    @testset verbose=true "convert to KrausOperators" begin
         for kraus_list in kraus_set
             ko = KrausOperators(kraus_list)
             T = typeof(ko.matrices[1])
@@ -107,7 +109,7 @@ end
             @test iscptp(kl) == true
         end
     end
-    @testset "convert to Stinespring" begin
+    @testset verbose=true "convert to Stinespring" begin
         for kraus_list in kraus_set
             ko = KrausOperators(kraus_list)
             T = typeof(ko.matrices[1])
@@ -117,7 +119,7 @@ end
             @test isidentity(u'*u) == true
         end
     end
-    @testset "convert to SuperOperator" begin
+    @testset verbose=true "convert to SuperOperator" begin
         for kraus_list in kraus_set
             ko = KrausOperators(kraus_list)
             T = typeof(ko.matrices[1])
@@ -130,7 +132,7 @@ end
     @test_throws ArgumentError DynamicalMatrix(rand(4,5), 4, 5)
 end
 
-@testset "UnitaryChannel" begin
+@testset verbose=true "UnitaryChannel" begin
     @test_throws ArgumentError UnitaryChannel(ones(4, 5))
     @test_throws ArgumentError UnitaryChannel(ones(4, 4), 4, 5)
 
@@ -145,8 +147,8 @@ end
     @test kron(u1, u2).matrix ≈ kron(u1.matrix, u2.matrix)
 end
 
-@testset "POVMMeasurement" begin
-    @testset "convert from KrausOperators" begin
+@testset verbose=true "POVMMeasurement" begin
+    @testset verbose=true "convert from KrausOperators" begin
         for kraus_list in kraus_set
             ko = KrausOperators(kraus_list)
             T = typeof(ko.matrices[1])
@@ -156,7 +158,7 @@ end
     end
 end
 
-@testset "Channels applications" begin
+@testset verbose=true "Channels applications" begin
     α = 0.25
     K₁ = ComplexF64[0 sqrt(α); 0 0; 0 0]
     K₂ = ComplexF64[1 0; 0 0; 0 sqrt(1 - α)]
@@ -165,14 +167,14 @@ end
 
     ξ = ComplexF64[0.4375 0 0.21650635im; 0 0 0; -0.21650635im 0 0.5625]
 
-    @testset "KrausOperators" begin
+    @testset verbose=true "KrausOperators" begin
         σ = KrausOperators(kl)(ρ)
         @test tr(σ) ≈ 1. atol=1e-15
         @test ishermitian(σ)
         @test σ ≈ ξ atol=1e-8
     end
 
-    @testset "DynamicalMatrix" begin
+    @testset verbose=true "DynamicalMatrix" begin
         ko = KrausOperators(kl)
         T = typeof(ko.matrices[1])
         Φ = convert(DynamicalMatrix{T}, ko)
@@ -182,7 +184,7 @@ end
         @test σ ≈ ξ atol=1e-8
     end
 
-    @testset "SuperOperator" begin
+    @testset verbose=true "SuperOperator" begin
         ko = KrausOperators(kl)
         T = typeof(ko.matrices[1])
         Φ = convert(SuperOperator{T}, ko)
@@ -192,7 +194,7 @@ end
         @test σ ≈ ξ atol=1e-8
     end
 
-    @testset "Stinespring" begin
+    @testset verbose=true "Stinespring" begin
         ko = KrausOperators(kl)
         T = typeof(ko.matrices[1])
         Φ = convert(Stinespring{T}, ko)
@@ -200,11 +202,32 @@ end
         @test tr(σ) ≈ 1. atol=1e-15
         @test ishermitian(σ)
         @test σ ≈ ξ atol=1e-8
-    end
+    @testset verbose=true "Double64 Support" begin
+    df_kraus_list = [Double64[1 0; 0 1], Double64[0 1; 0 0]]
+    df_ko = KrausOperators(df_kraus_list)
+    @test iscptp(df_ko) isa Bool 
+    # Check if we can convert
+    df_so = convert(SuperOperator{Matrix{Double64}}, df_ko)
+    @test df_so.matrix isa Matrix{Double64}
+    
+    # Check mix of Double64 and Complex{Double64}
+    cdf_val = Complex{Double64}(1.0, 0.0)
+    df_u = UnitaryChannel(Double64[0 1; 1 0] * cdf_val)
+    @test df_u.matrix isa Matrix{Complex{Double64}}
+    @test iscptp(df_u)
+
+    # Application
+    ρ = Double64[1 0; 0 0]
+    σ = df_ko(ρ)
+    @test σ isa Matrix{Double64}
+    @test tr(σ) ≈ 1.0
+end
+
+end
 end
 end
 
-@testset "represent" begin
+@testset verbose=true "represent" begin
     for kraus_list in kraus_set
         Φ = KrausOperators(kraus_list)
         @test represent(Φ) == kraus_list
@@ -213,7 +236,7 @@ end
     @test represent(DynamicalMatrix(J_random, 3, 3)) == J_random
 end
 
-@testset "IO and Printers" begin
+@testset verbose=true "IO and Printers" begin
     for kraus_list in kraus_set
         MT = eltype(kraus_list)
         Φ = KrausOperators(kraus_list)
@@ -225,8 +248,8 @@ end
     @test_nowarn show(devnull, UnitaryChannel(Matrix(𝕀(2))))
 end
 
-@testset "Predicates" begin
-    @testset "iscp" begin
+@testset verbose=true "Predicates" begin
+    @testset verbose=true "iscp" begin
         # SuperOperator and DynamicalMatrix are already partially covered, but let's be thorough
         for kraus_list in kraus_set
             MT = eltype(kraus_list)
@@ -239,7 +262,7 @@ end
         end
     end
 
-    @testset "istni and istp" begin
+    @testset verbose=true "istni and istp" begin
         for kraus_list in kraus_set
             MT = eltype(kraus_list)
             Φ = KrausOperators(kraus_list)
@@ -256,7 +279,7 @@ end
         end
     end
 
-    @testset "iscptp and iscptni" begin
+    @testset verbose=true "iscptp and iscptni" begin
         for kraus_list in kraus_set
             Φ = KrausOperators(kraus_list)
             @test iscptp(Φ)
@@ -264,7 +287,7 @@ end
         end
     end
 
-    @testset "ispovm and iseffect" begin
+    @testset verbose=true "ispovm and iseffect" begin
         # Valid POVM
         p = POVMMeasurement([sz/2 + 𝕀(2)/2, -sz/2 + 𝕀(2)/2])
         @test ispovm(p)
@@ -283,8 +306,8 @@ end
     end
 end
 
-@testset "Compositions" begin
-    @testset "kron" begin
+@testset verbose=true "Compositions" begin
+    @testset verbose=true "kron" begin
         u = UnitaryChannel(Matrix(I, 2, 2))
         id = IdentityChannel(2)
         @test kron(u, id) isa UnitaryChannel
@@ -296,7 +319,7 @@ end
         @test kron(u, ko) isa KrausOperators
     end
 
-    @testset "compose and *" begin
+    @testset verbose=true "compose and *" begin
         u1 = UnitaryChannel(sx)
         u2 = UnitaryChannel(sy)
         @test compose(u1, u2) ≈ UnitaryChannel(sy * sx)
@@ -312,7 +335,7 @@ end
     end
 end
 
-@testset "Channels applications - Vectors" begin
+@testset verbose=true "Channels applications - Vectors" begin
     u = UnitaryChannel(sx)
     ψ = ket(1, 2)
     @test u(ψ) ≈ sx * ψ
@@ -324,7 +347,7 @@ end
     @test ko(ψ) ≈ proj(sx * ψ)
 end
 
-@testset "Misc functions" begin
+@testset verbose=true "Misc functions" begin
     u = UnitaryChannel(sx)
     @test size(u) == (2, 2)
     @test represent(u) == sx
